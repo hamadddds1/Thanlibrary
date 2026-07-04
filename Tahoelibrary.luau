@@ -4,7 +4,7 @@
 	Inspired by macOS Tahoe
 
 	Load:
-		local MadUI = loadstring(game:HttpService:GetAsync("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/Tahoelibrary.luau"))()
+		local MadUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/Tahoelibrary.luau"))()
 
 	Quick Start:
 		local Window = MadUI:CreateWindow({
