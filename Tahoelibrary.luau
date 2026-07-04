@@ -738,7 +738,8 @@ local function _dropdown(scroll, order, cfg)
 		Font                 = Enum.Font.GothamMedium,
 		TextSize             = 11,
 		TextColor3           = T.text,
-		Text                 = " " .. selected,
+		TextXAlignment       = Enum.TextXAlignment.Left,
+		Text                 = selected,
 		AutoButtonColor      = false,
 		ClipsDescendants     = true,
 		TextTruncate         = Enum.TextTruncate.AtEnd,
@@ -746,7 +747,7 @@ local function _dropdown(scroll, order, cfg)
 	})
 	corner(dropBtn, 8)
 	stroke(dropBtn, T.border, 0.55, 1)
-	pad(dropBtn, 0, 24, 8, 4)
+	pad(dropBtn, 0, 0, 8, 24)
 
 	local chev = IconsAPI:Render(dropBtn, "chevron-down", 12, T.sub)
 	if chev then
@@ -792,7 +793,7 @@ local function _dropdown(scroll, order, cfg)
 			ob.MouseLeave:Connect(function() tween(ob, Ease.quick, { BackgroundTransparency = 0.5 }) end)
 			ob.MouseButton1Click:Connect(function()
 				selected = opt
-				dropBtn.Text = " " .. opt
+				dropBtn.Text = opt
 				closeFn()
 				if cfg.Callback then task.spawn(cfg.Callback, opt) end
 			end)
@@ -833,8 +834,8 @@ local function _dropdown(scroll, order, cfg)
 	end)
 
 	local obj = {}
-	function obj:Set(v) selected = v; dropBtn.Text = " " .. v; if cfg.Callback then task.spawn(cfg.Callback, v) end end
-	function obj:Refresh(n) options = n; if not table.find(options, selected) then selected = options[1] or ""; dropBtn.Text = " " .. selected end end
+	function obj:Set(v) selected = v; dropBtn.Text = v; if cfg.Callback then task.spawn(cfg.Callback, v) end end
+	function obj:Refresh(n) options = n; if not table.find(options, selected) then selected = options[1] or ""; dropBtn.Text = selected end end
 	function obj:Get() return selected end
 	function obj:Destroy() popup:Destroy(); row:Destroy() end
 	return obj
@@ -1028,7 +1029,7 @@ local function attachAll(target, scroll, nextOrd)
 
 		local function recalc()
 			targetH = cLay.AbsoluteContentSize.Y + 12
-			if isOpen then clip.Size = UDim2.new(1, 0, 0, targetH) end
+			if isOpen then tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, targetH) }) end
 		end
 		cLay:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(recalc)
 		task.defer(recalc)
@@ -1037,7 +1038,6 @@ local function attachAll(target, scroll, nextOrd)
 			isOpen = not isOpen
 			if isOpen then
 				recalc()
-				tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, targetH) })
 				if chevron then tween(chevron, Ease.smooth, { Rotation = 0 }) end
 			else
 				tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) })
@@ -1103,6 +1103,7 @@ function MadUI:CreateWindow(config)
 		Parent               = screenGui,
 	})
 	corner(canvas, 14)
+	stroke(canvas, T.glass, 0.84, 1.5)
 
 	-- Frame
 	local frame = make("Frame", {
@@ -1143,16 +1144,6 @@ function MadUI:CreateWindow(config)
 		BackgroundTransparency = T.sidebarTrans,
 		BorderSizePixel      = 0,
 		Parent               = frame,
-	})
-	corner(sidebar, 14)
-
-	make("Frame", {
-		Size                 = UDim2.new(0, 14, 1, 0),
-		Position             = UDim2.new(1, -14, 0, 0),
-		BackgroundColor3     = T.sidebarBg,
-		BackgroundTransparency = T.sidebarTrans,
-		BorderSizePixel      = 0,
-		Parent               = sidebar,
 	})
 
 	make("Frame", {
@@ -1569,7 +1560,7 @@ function MadUI:CreateWindow(config)
 
 		local function tsRecalc()
 			tsH = tcLay.AbsoluteContentSize.Y + 6
-			if tsOpen then tabClip.Size = UDim2.new(1, 0, 0, tsH) end
+			if tsOpen then tween(tabClip, Ease.smooth, { Size = UDim2.new(1, 0, 0, tsH) }) end
 		end
 		tcLay:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(tsRecalc)
 		task.defer(tsRecalc)
@@ -1578,7 +1569,6 @@ function MadUI:CreateWindow(config)
 			tsOpen = not tsOpen
 			if tsOpen then
 				tsRecalc()
-				tween(tabClip, Ease.smooth, { Size = UDim2.new(1, 0, 0, tsH) })
 				if chev then tween(chev, Ease.smooth, { Rotation = 0 }) end
 			else
 				tween(tabClip, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) })
