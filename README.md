@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>TahoeUI ✦ Tahoe Edition</h1>
+  <h1>MadUI ✦ Tahoe Edition</h1>
   <p><strong>A premium, Liquid-Glass UI Library for Roblox, inspired by macOS Tahoe.</strong></p>
 
   <img src="https://img.shields.io/badge/Roblox-Studio-00A2FF?style=for-the-badge&logo=roblox&logoColor=white" alt="Roblox" />
@@ -9,7 +9,7 @@
   <br><br>
 </div>
 
-TahoeUI is a state-of-the-art UI library designed for modern Roblox script execution. Focused on **OCD-level pixel perfection**, buttery-smooth animations, and a rich *Liquid-Glass* aesthetic, TahoeUI guarantees a premium experience for your users.
+MadUI is a state-of-the-art UI library designed for modern Roblox script execution. Focused on **OCD-level pixel perfection**, buttery-smooth animations, and a rich *Liquid-Glass* aesthetic, MadUI guarantees a premium experience for your users.
 
 ## ✨ Features
 - 🎨 **5 Premium Themes**: `Dark`, `Transparent`, `Midnight`, `Rose`, `Ocean`.
@@ -24,18 +24,18 @@ TahoeUI is a state-of-the-art UI library designed for modern Roblox script execu
 ## 🚀 Getting Started
 
 ### 1. Bootstrapping the Library
-To always ensure you are loading the absolute latest, cache-free version of TahoeUI, use our direct loader:
+To always ensure you are loading the absolute latest, cache-free version of MadUI, use our direct loader:
 
 ```lua
-local TahoeUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/main.lua"))()
+local MadUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/main.lua"))()
 ```
 
 ### 2. Creating a Window
 The Window is the core container of your UI.
 
 ```lua
-local Window = TahoeUI:CreateWindow({
-    Title     = "TahoeApp",
+local Window = MadUI:CreateWindow({
+    Title     = "MadApp",
     Subtitle  = "Premium Edition v2.0",
     Theme     = "Transparent", -- Dark, Transparent, Midnight, Rose, Ocean
     Size      = UDim2.fromOffset(580, 400), -- Optional
@@ -53,7 +53,7 @@ local Window = TahoeUI:CreateWindow({
 Tab Sections allow you to group multiple tabs under a collapsible header in the sidebar.
 
 ```lua
-local CombatGroup = Window:AddTabGroup({ Name = "Combat" })
+local CombatGroup = Window:CreateTabSection({ Name = "Combat" })
 ```
 
 #### Creating a Tab
@@ -61,17 +61,17 @@ Tabs hold your actual content. You can attach them to a `TabSection` or directly
 
 ```lua
 -- Attached to a TabSection:
-local AimbotTab = CombatGroup:AddTab({ Name = "Aimbot", Icon = "crosshair" })
+local AimbotTab = CombatGroup:CreateTab({ Name = "Aimbot", Icon = "crosshair" })
 
 -- Attached directly to the Window:
-local SettingsTab = Window:AddTab({ Name = "Settings", Icon = "settings" })
+local SettingsTab = Window:CreateTab({ Name = "Settings", Icon = "settings" })
 ```
 
 #### Creating a Content Section
 Inside a Tab, you can group components together inside a collapsible content section.
 
 ```lua
-local MainFeatures = AimbotTab:AddSection({ Name = "Main Features", Icon = "sword" })
+local MainFeatures = AimbotTab:CreateSection({ Name = "Main Features", Icon = "sword" })
 ```
 
 ---
@@ -82,53 +82,82 @@ All components can be created inside a `Tab` or a `Section`.
 
 #### Toggle
 ```lua
-MainFeatures:AddToggle("Enable Aimbot", false, function(Value) 
-    print("Toggled:", Value) 
-end)
+MainFeatures:CreateToggle({ 
+    Name = "Enable Aimbot", 
+    Description = "Automatically aims at players", 
+    Default = false, 
+    Callback = function(Value) 
+        print("Toggled:", Value) 
+    end 
+})
 ```
 
 #### Slider
 ```lua
-MainFeatures:AddSlider("FOV Size", 10, 360, 90, function(Value) 
-    print("Slider Value:", Value) 
-end)
+MainFeatures:CreateSlider({ 
+    Name = "FOV Size", 
+    Description = "Size of the targeting circle",
+    Min = 10, 
+    Max = 360, 
+    Default = 90, 
+    Callback = function(Value) 
+        print("Slider Value:", Value) 
+    end 
+})
 ```
 
 #### Dropdown
 ```lua
-MainFeatures:AddDropdown("Target Part", {"Head", "Torso", "Left Arm", "Right Arm"}, "Head", function(Value) 
-    print("Selected:", Value) 
-end)
+MainFeatures:CreateDropdown({
+    Name = "Target Part",
+    Options = {"Head", "Torso", "Left Arm", "Right Arm"},
+    Default = "Head",
+    Callback = function(Value) 
+        print("Selected:", Value) 
+    end
+})
 ```
 
 #### Keybind
 ```lua
-MainFeatures:AddKeybind("Lock Keybind", Enum.KeyCode.E, function(Key) 
-    print("Key pressed:", Key.Name) 
-end)
+MainFeatures:CreateKeybind({
+    Name = "Lock Keybind",
+    Default = Enum.KeyCode.E,
+    Callback = function(Key) 
+        print("Key pressed:", Key.Name) 
+    end
+})
 ```
 
 #### Input (Textbox)
 ```lua
-MainFeatures:AddInput("Config Name", "Enter name here...", function(Text) 
-    print("Input received:", Text) 
-end)
+MainFeatures:CreateInput({ 
+    Name = "Config Name", 
+    Placeholder = "Enter name here...",
+    Callback = function(Text) 
+        print("Input received:", Text) 
+    end
+})
 ```
 
 #### Button
 ```lua
-MainFeatures:AddButton("Execute Script", function() 
-    print("Button clicked!") 
-end)
+MainFeatures:CreateButton({ 
+    Name = "Execute Script", 
+    Description = "Runs the main script",
+    Callback = function() 
+        print("Button clicked!") 
+    end 
+})
 ```
 
 #### Paragraph & Label
 ```lua
 -- Label (Single line text)
-MainFeatures:AddLabel("This is a simple text label.")
+MainFeatures:CreateLabel("This is a simple text label.")
 
 -- Paragraph (Block of text)
-MainFeatures:AddParagraph({
+MainFeatures:CreateParagraph({
     Title = "Warning",
     Content = "Please use these features at your own risk. We are not responsible for bans."
 })
@@ -137,10 +166,10 @@ MainFeatures:AddParagraph({
 ---
 
 ### 🔔 Notifications
-TahoeUI features a stunning, auto-stacking notification system. 
+MadUI features a stunning, auto-stacking notification system. 
 
 ```lua
-TahoeUI:Notify({
+MadUI:Notify({
     Title    = "Success",
     Content  = "Configuration has been saved successfully!",
     Type     = "success", -- success, info, warning, error
@@ -152,14 +181,14 @@ TahoeUI:Notify({
 
 ### 🎭 Icons API (Lucide Integration)
 
-TahoeUI natively supports Lucide icons. You can register your own custom `rbxassetid` icons if needed!
+MadUI natively supports Lucide icons. You can register your own custom `rbxassetid` icons if needed!
 
 ```lua
 -- Register a single custom icon
-TahoeUI.Icons:Register("custom-sword", "rbxassetid://12345678")
+MadUI.Icons:Register("custom-sword", "rbxassetid://12345678")
 
 -- Batch register multiple
-TahoeUI.Icons:BatchRegister({
+MadUI.Icons:BatchRegister({
     ["shield"] = "rbxassetid://111111",
     ["magic"]  = "rbxassetid://222222"
 })
