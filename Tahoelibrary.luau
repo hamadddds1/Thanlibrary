@@ -1,13 +1,13 @@
 --[[
-	MadUI · v2.0.0
+	TahoeUI · v2.0.0
 	Liquid Glass UI Library for Roblox
 	Inspired by macOS Tahoe
 
 	Load:
-		local MadUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/Tahoelibrary.luau"))()
+		local TahoeUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/Tahoelibrary.luau"))()
 
 	Quick Start:
-		local Window = MadUI:CreateWindow({
+		local Window = TahoeUI:CreateWindow({
 			Title    = "My App",
 			Subtitle = "v2.0",
 			Theme    = "Dark",        -- Dark, Transparent, Midnight, Rose, Ocean
@@ -30,11 +30,11 @@
 		General:CreateButton({ Name = "Execute", Callback = function() end })
 
 		-- Icons (Lucide)
-		MadUI.Icons:Register("myicon", "rbxassetid://12345")
-		MadUI.Icons:BatchRegister({ sword = "rbxassetid://111", shield = "rbxassetid://222" })
+		TahoeUI.Icons:Register("myicon", "rbxassetid://12345")
+		TahoeUI.Icons:BatchRegister({ sword = "rbxassetid://111", shield = "rbxassetid://222" })
 
 		-- Notifications
-		MadUI:Notify({ Title = "Done", Content = "Ready!", Duration = 3, Type = "success" })
+		TahoeUI:Notify({ Title = "Done", Content = "Ready!", Duration = 3, Type = "success" })
 ]]
 
 local Players      = game:GetService("Players")
@@ -322,7 +322,7 @@ end
 
 -- ── Library State ───────────────────────────────────
 
-local MadUI         = { Icons = IconsAPI }
+local TahoeUI         = { Icons = IconsAPI }
 local screenGui     = nil
 local dropBackdrop  = nil
 local notifHolder   = nil
@@ -333,7 +333,7 @@ local function initGui()
 	if screenGui then return end
 
 	screenGui = make("ScreenGui", {
-		Name             = "MadUI",
+		Name             = "TahoeUI",
 		DisplayOrder     = 9999,
 		ZIndexBehavior   = Enum.ZIndexBehavior.Sibling,
 		ResetOnSpawn     = false,
@@ -939,21 +939,42 @@ end
 -- ═══════════════════════════════════════════════════
 
 local function attachBase(target, scroll, nextOrd)
-	function target:CreateLabel(text)     return _label(scroll, nextOrd(), text) end
-	function target:CreateParagraph(cfg)  return _paragraph(scroll, nextOrd(), cfg) end
-	function target:CreateButton(cfg)     return _button(scroll, nextOrd(), cfg) end
-	function target:CreateToggle(cfg)     return _toggle(scroll, nextOrd(), cfg) end
-	function target:CreateSlider(cfg)     return _slider(scroll, nextOrd(), cfg) end
-	function target:CreateDropdown(cfg)   return _dropdown(scroll, nextOrd(), cfg) end
-	function target:CreateInput(cfg)      return _input(scroll, nextOrd(), cfg) end
-	function target:CreateKeybind(cfg)    return _keybind(scroll, nextOrd(), cfg) end
+	function target:AddLabel(text)     return _label(scroll, nextOrd(), text) end
+	function target:AddParagraph(a, b) 
+		local cfg = type(a) == "table" and a or { Title = a, Content = b }
+		return _paragraph(scroll, nextOrd(), cfg) 
+	end
+	function target:AddButton(a, b)
+		local cfg = type(a) == "table" and a or { Name = a, Callback = b }
+		return _button(scroll, nextOrd(), cfg)
+	end
+	function target:AddToggle(a, b, c)
+		local cfg = type(a) == "table" and a or { Name = a, Default = b, Callback = c }
+		return _toggle(scroll, nextOrd(), cfg)
+	end
+	function target:AddSlider(a, b, c, d, e)
+		local cfg = type(a) == "table" and a or { Name = a, Min = b, Max = c, Default = d, Callback = e }
+		return _slider(scroll, nextOrd(), cfg)
+	end
+	function target:AddDropdown(a, b, c, d)
+		local cfg = type(a) == "table" and a or { Name = a, Options = b, Default = c, Callback = d }
+		return _dropdown(scroll, nextOrd(), cfg)
+	end
+	function target:AddInput(a, b, c)
+		local cfg = type(a) == "table" and a or { Name = a, Placeholder = b, Callback = c }
+		return _input(scroll, nextOrd(), cfg)
+	end
+	function target:AddKeybind(a, b, c)
+		local cfg = type(a) == "table" and a or { Name = a, Default = b, Callback = c }
+		return _keybind(scroll, nextOrd(), cfg)
+	end
 end
 
 local function attachAll(target, scroll, nextOrd)
 	attachBase(target, scroll, nextOrd)
 
-	function target:CreateSection(sCfg)
-		sCfg = sCfg or {}
+	function target:AddSection(sCfg, sIcon)
+		sCfg = type(sCfg) == "string" and { Name = sCfg, Icon = sIcon } or (sCfg or {})
 		local idx = nextOrd()
 
 		local outer = make("Frame", {
@@ -1071,11 +1092,11 @@ end
 -- Window
 -- ═══════════════════════════════════════════════════
 
-function MadUI:CreateWindow(config)
+function TahoeUI:CreateWindow(config)
 	initGui()
 
 	config = config or {}
-	local title     = config.Title or "MadUI"
+	local title     = config.Title or "TahoeUI"
 	local subtitle  = config.Subtitle or "v2.0"
 	local winW      = config.Size and config.Size.X.Offset or 580
 	local winH      = config.Size and config.Size.Y.Offset or 400
@@ -1297,7 +1318,7 @@ function MadUI:CreateWindow(config)
 		TextColor3           = T.dim,
 		TextTransparency     = 0.4,
 		TextXAlignment       = Enum.TextXAlignment.Left,
-		Text                 = "MadUI",
+		Text                 = "TahoeUI",
 		Parent               = sidebar,
 	})
 
@@ -1570,11 +1591,13 @@ function MadUI:CreateWindow(config)
 
 	-- ── Window API ─────────────────────────────────
 
-	function Window:CreateTab(cfg)
+	function Window:AddTab(cfg, icon)
+		if type(cfg) == "string" then cfg = { Name = cfg, Icon = icon } end
 		return createTabCore(tabScroll, cfg)
 	end
 
-	function Window:CreateTabSection(tsCfg)
+	function Window:AddTabGroup(tsCfg)
+		if type(tsCfg) == "string" then tsCfg = { Name = tsCfg } end
 		tsCfg = tsCfg or {}
 
 		local outer = make("Frame", {
@@ -1657,11 +1680,14 @@ function MadUI:CreateWindow(config)
 
 		if not tsOpen and chev then chev.Rotation = -90 end
 
-		local TabSection = {}
-		function TabSection:CreateTab(cfg)
-			return createTabCore(tabContent, cfg)
+		local Group = {}
+		function Group:AddTab(cfg, icon)
+			if type(cfg) == "string" then cfg = { Name = cfg, Icon = icon } end
+			local t = createTabCore(tabContent, cfg)
+			recalc()
+			return t
 		end
-		return TabSection
+		return Group
 	end
 
 	function Window:SetTitle(t) titleLabel.Text = t end
@@ -1681,7 +1707,7 @@ end
 -- Notifications
 -- ═══════════════════════════════════════════════════
 
-function MadUI:Notify(nCfg)
+function TahoeUI:Notify(nCfg)
 	initGui()
 	nCfg = nCfg or {}
 
@@ -1821,7 +1847,7 @@ end
 -- Cleanup
 -- ═══════════════════════════════════════════════════
 
-function MadUI:Destroy()
+function TahoeUI:Destroy()
 	for _, c in conns do
 		if typeof(c) == "RBXScriptConnection" then c:Disconnect() end
 	end
@@ -1829,4 +1855,4 @@ function MadUI:Destroy()
 	if screenGui then screenGui:Destroy(); screenGui = nil end
 end
 
-return MadUI
+return TahoeUI
