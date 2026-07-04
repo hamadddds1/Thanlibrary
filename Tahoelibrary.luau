@@ -1102,33 +1102,25 @@ function MadUI:CreateWindow(config)
 		BorderSizePixel      = 0,
 		Parent               = screenGui,
 	})
-	corner(canvas, 14)
-	stroke(canvas, T.glass, 0.84, 1.5)
 
 	-- Floating Toggle Button (For Hide/Show)
-	local floatCanvas = make("CanvasGroup", {
+	local floatBtn = make("TextButton", {
 		Size                 = UDim2.fromOffset(46, 46),
 		Position             = UDim2.new(0.5, -23, 0, 20),
 		BackgroundColor3     = T.windowBg,
-		BackgroundTransparency = T.windowTrans,
-		GroupTransparency    = 1,
+		BackgroundTransparency = 1,
+		Text                 = "",
 		Visible              = false,
 		Parent               = screenGui,
 	})
-	corner(floatCanvas, 23)
-	stroke(floatCanvas, T.glass, 0.8, 1.5)
+	corner(floatBtn, 23)
+	local fStroke = stroke(floatBtn, T.glass, 1, 1.5)
 
-	local floatBtn = make("TextButton", {
-		Size                 = UDim2.fromScale(1, 1),
-		BackgroundTransparency = 1,
-		Text                 = "",
-		Parent               = floatCanvas,
-	})
-	
 	local floatIcon = IconsAPI:Render(floatBtn, "layout-dashboard", 22, T.text) or IconsAPI:Render(floatBtn, "monitor", 22, T.text)
 	if floatIcon then
 		floatIcon.AnchorPoint = Vector2.new(0.5, 0.5)
 		floatIcon.Position = UDim2.fromScale(0.5, 0.5)
+		floatIcon.ImageTransparency = 1
 	end
 	
 	local floatDragging, floatDragStart, floatStartPos = false, Vector3.zero, UDim2.new()
@@ -1136,7 +1128,7 @@ function MadUI:CreateWindow(config)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			floatDragging = true
 			floatDragStart = input.Position
-			floatStartPos = floatCanvas.Position
+			floatStartPos = floatBtn.Position
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then floatDragging = false end
 			end)
@@ -1146,7 +1138,7 @@ function MadUI:CreateWindow(config)
 		if not floatDragging then return end
 		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 			local d = input.Position - floatDragStart
-			tween(floatCanvas, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			tween(floatBtn, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				Position = UDim2.new(floatStartPos.X.Scale, floatStartPos.X.Offset + d.X, floatStartPos.Y.Scale, floatStartPos.Y.Offset + d.Y)
 			})
 		end
@@ -1367,15 +1359,19 @@ function MadUI:CreateWindow(config)
 			canvas.Visible = true
 			tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW, winH), GroupTransparency = 0 })
 			
-			tween(floatCanvas, Ease.smooth, { GroupTransparency = 1, Size = UDim2.fromOffset(30, 30) })
-			task.delay(0.2, function() if visible then floatCanvas.Visible = false end end)
+			tween(floatBtn, Ease.smooth, { BackgroundTransparency = 1, Size = UDim2.fromOffset(30, 30) })
+			tween(fStroke, Ease.smooth, { Transparency = 1 })
+			if floatIcon then tween(floatIcon, Ease.smooth, { ImageTransparency = 1 }) end
+			task.delay(0.2, function() if visible then floatBtn.Visible = false end end)
 		else
 			local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.94, winH * 0.94), GroupTransparency = 1 })
 			tw.Completed:Connect(function() if not visible then canvas.Visible = false end end)
 			
-			floatCanvas.Visible = true
-			floatCanvas.Size = UDim2.fromOffset(30, 30)
-			tween(floatCanvas, Ease.bounce, { GroupTransparency = 0, Size = UDim2.fromOffset(46, 46) })
+			floatBtn.Visible = true
+			floatBtn.Size = UDim2.fromOffset(30, 30)
+			tween(floatBtn, Ease.bounce, { BackgroundTransparency = T.windowTrans, Size = UDim2.fromOffset(46, 46) })
+			tween(fStroke, Ease.bounce, { Transparency = 0.8 })
+			if floatIcon then tween(floatIcon, Ease.bounce, { ImageTransparency = 0 }) end
 		end
 	end
 
@@ -1392,7 +1388,7 @@ function MadUI:CreateWindow(config)
 
 	closeBtn.MouseButton1Click:Connect(function()
 		local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.88, winH * 0.88), GroupTransparency = 1 })
-		tw.Completed:Connect(function() canvas:Destroy(); floatCanvas:Destroy() end)
+		tw.Completed:Connect(function() canvas:Destroy(); floatBtn:Destroy() end)
 	end)
 
 	minBtn.MouseButton1Click:Connect(function()
@@ -1679,15 +1675,22 @@ function MadUI:Notify(nCfg)
 
 	local notif = make("CanvasGroup", {
 		Size                 = UDim2.new(1, 0, 0, 0),
-		BackgroundColor3     = T.windowBg,
-		BackgroundTransparency = 0.1,
+		BackgroundTransparency = 1,
 		GroupTransparency    = 1,
-		ClipsDescendants     = true,
 		ZIndex               = 100,
 		Parent               = notifHolder,
 	})
-	corner(notif, 12)
-	stroke(notif, T.glass, 0.84, 1)
+	
+	local notifBg = make("Frame", {
+		Size                 = UDim2.fromScale(1, 1),
+		BackgroundColor3     = T.windowBg,
+		BackgroundTransparency = 0.1,
+		ClipsDescendants     = true,
+		ZIndex               = 100,
+		Parent               = notif,
+	})
+	corner(notifBg, 12)
+	stroke(notifBg, T.glass, 0.84, 1)
 
 	local bar = make("Frame", {
 		Size                 = UDim2.new(0, 3, 1, -18),
