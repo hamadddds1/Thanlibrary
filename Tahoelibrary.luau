@@ -1105,6 +1105,47 @@ function MadUI:CreateWindow(config)
 	corner(canvas, 14)
 	stroke(canvas, T.glass, 0.84, 1.5)
 
+	-- Floating Toggle Button (For Hide/Show)
+	local floatBtn = make("TextButton", {
+		Size                 = UDim2.fromOffset(46, 46),
+		Position             = UDim2.new(0.5, -23, 0, 20),
+		BackgroundColor3     = T.windowBg,
+		BackgroundTransparency = T.windowTrans,
+		Text                 = "",
+		Visible              = false,
+		GroupTransparency    = 1,
+		Parent               = screenGui,
+	})
+	corner(floatBtn, 23)
+	stroke(floatBtn, T.glass, 0.8, 1.5)
+	
+	local floatIcon = IconsAPI:Render(floatBtn, "layout-dashboard", 22, T.text) or IconsAPI:Render(floatBtn, "monitor", 22, T.text)
+	if floatIcon then
+		floatIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+		floatIcon.Position = UDim2.fromScale(0.5, 0.5)
+	end
+	
+	local floatDragging, floatDragStart, floatStartPos = false, Vector3.zero, UDim2.new()
+	floatBtn.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			floatDragging = true
+			floatDragStart = input.Position
+			floatStartPos = floatBtn.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then floatDragging = false end
+			end)
+		end
+	end)
+	table.insert(conns, UserInput.InputChanged:Connect(function(input)
+		if not floatDragging then return end
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			local d = input.Position - floatDragStart
+			tween(floatBtn, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				Position = UDim2.new(floatStartPos.X.Scale, floatStartPos.X.Offset + d.X, floatStartPos.Y.Scale, floatStartPos.Y.Offset + d.Y)
+			})
+		end
+	end))
+
 	-- Frame
 	local frame = make("Frame", {
 		Size                 = UDim2.fromScale(1, 1),
@@ -1313,29 +1354,43 @@ function MadUI:CreateWindow(config)
 	-- ── Toggle Visibility ──────────────────────────
 
 	local visible = true
-	table.insert(conns, UserInput.InputBegan:Connect(function(input, gpe)
-		if gpe or input.KeyCode ~= toggleKey then return end
-		visible = not visible
+	
+	local function setVisibility(state)
+		visible = state
 		if visible then
 			canvas.Visible = true
 			tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW, winH), GroupTransparency = 0 })
+			
+			tween(floatBtn, Ease.smooth, { GroupTransparency = 1, Size = UDim2.fromOffset(30, 30) })
+			task.delay(0.2, function() if visible then floatBtn.Visible = false end end)
 		else
 			local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.94, winH * 0.94), GroupTransparency = 1 })
 			tw.Completed:Connect(function() if not visible then canvas.Visible = false end end)
+			
+			floatBtn.Visible = true
+			floatBtn.Size = UDim2.fromOffset(30, 30)
+			tween(floatBtn, Ease.bounce, { GroupTransparency = 0, Size = UDim2.fromOffset(46, 46) })
 		end
+	end
+
+	floatBtn.MouseButton1Click:Connect(function()
+		if not floatDragging then setVisibility(true) end
+	end)
+
+	table.insert(conns, UserInput.InputBegan:Connect(function(input, gpe)
+		if gpe or input.KeyCode ~= toggleKey then return end
+		setVisibility(not visible)
 	end))
 
 	-- ── Close / Minimize ───────────────────────────
 
 	closeBtn.MouseButton1Click:Connect(function()
 		local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.88, winH * 0.88), GroupTransparency = 1 })
-		tw.Completed:Connect(function() canvas:Destroy() end)
+		tw.Completed:Connect(function() canvas:Destroy(); floatBtn:Destroy() end)
 	end)
 
 	minBtn.MouseButton1Click:Connect(function()
-		visible = false
-		local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.94, winH * 0.94), GroupTransparency = 1 })
-		tw.Completed:Connect(function() if not visible then canvas.Visible = false end end)
+		setVisibility(false)
 	end)
 
 	-- ═══════════════════════════════════════════════
@@ -1588,14 +1643,7 @@ function MadUI:CreateWindow(config)
 	function Window:SetTitle(t) titleLabel.Text = t end
 
 	function Window:Toggle()
-		visible = not visible
-		if visible then
-			canvas.Visible = true
-			tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW, winH), GroupTransparency = 0 })
-		else
-			local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.94, winH * 0.94), GroupTransparency = 1 })
-			tw.Completed:Connect(function() if not visible then canvas.Visible = false end end)
-		end
+		setVisibility(not visible)
 	end
 
 	function Window:Destroy()
@@ -1619,12 +1667,14 @@ function MadUI:Notify(nCfg)
 		warning = T.yellow,
 		error   = T.red,
 	}
-	local accentCol = typeCol[nCfg.Type or "info"] or T.accent
+	local nType     = string.lower(nCfg.Type or "info")
+	local accentCol = typeCol[nType] or T.accent
 	local dur       = nCfg.Duration or 3
 
 	local notif = make("CanvasGroup", {
 		Size                 = UDim2.new(1, 0, 0, 0),
-		BackgroundColor3     = T.surface,
+		BackgroundColor3     = T.windowBg,
+		BackgroundTransparency = 0.1,
 		GroupTransparency    = 1,
 		ClipsDescendants     = true,
 		ZIndex               = 100,
@@ -1641,10 +1691,33 @@ function MadUI:Notify(nCfg)
 		Parent               = notif,
 	})
 	corner(bar, 2)
+	
+	local iconMap = {
+		info    = "info",
+		success = "check-circle-2",
+		warning = "alert-triangle",
+		error   = "x-circle",
+	}
+	local iName = iconMap[nType] or "info"
+	local nIcon = IconsAPI:Render(notif, iName, 22, accentCol)
+	local textOffset = 24
+	if nIcon then
+		nIcon.Position = UDim2.fromOffset(20, 22)
+		nIcon.AnchorPoint = Vector2.new(0, 0.5)
+		nIcon.ZIndex = 101
+		textOffset = 52
+		
+		-- Icon pop animation
+		nIcon.Size = UDim2.fromOffset(0, 0)
+		nIcon.Rotation = -45
+		task.delay(0.1, function()
+			tween(nIcon, Ease.bounce, { Size = UDim2.fromOffset(22, 22), Rotation = 0 })
+		end)
+	end
 
 	make("TextLabel", {
-		Size                 = UDim2.new(1, -40, 0, 15),
-		Position             = UDim2.fromOffset(24, 12),
+		Size                 = UDim2.new(1, -textOffset - 16, 0, 15),
+		Position             = UDim2.fromOffset(textOffset, 12),
 		BackgroundTransparency = 1,
 		Font                 = Enum.Font.GothamBold,
 		TextSize             = 12,
@@ -1656,8 +1729,8 @@ function MadUI:Notify(nCfg)
 	})
 
 	make("TextLabel", {
-		Size                 = UDim2.new(1, -40, 0, 26),
-		Position             = UDim2.fromOffset(24, 30),
+		Size                 = UDim2.new(1, -textOffset - 16, 0, 26),
+		Position             = UDim2.fromOffset(textOffset, 30),
 		BackgroundTransparency = 1,
 		Font                 = Enum.Font.Gotham,
 		TextSize             = 10,
