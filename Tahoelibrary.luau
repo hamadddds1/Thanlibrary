@@ -1092,16 +1092,34 @@ function MadUI:CreateWindow(config)
 		T = mergeTheme(Themes.Dark, themeCfg)
 	end
 
-	-- Canvas
-	local canvas = make("CanvasGroup", {
-		Size                 = UDim2.fromOffset(winW + 8, winH + 8),
+	-- Window Container (Handles positioning & size)
+	local windowContainer = make("Frame", {
+		Size                 = UDim2.fromOffset(winW, winH),
 		Position             = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint          = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
-		GroupTransparency    = 1,
-		BorderSizePixel      = 0,
 		Parent               = screenGui,
 	})
+
+	-- Canvas (For clipping and GroupTransparency)
+	local canvas = make("CanvasGroup", {
+		Size                 = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		GroupTransparency    = 1,
+		BorderSizePixel      = 0,
+		Parent               = windowContainer,
+	})
+	corner(canvas, 14)
+
+	-- Stroke Frame (Separate to avoid CanvasGroup ghosting bug)
+	local strokeFrame = make("Frame", {
+		Size                 = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Parent               = windowContainer,
+	})
+	corner(strokeFrame, 14)
+	local mainStroke = stroke(strokeFrame, T.glass, 0.84, 1.5)
+	mainStroke.Transparency = 1
 
 	-- Floating Toggle Button (For Hide/Show)
 	local floatBtn = make("TextButton", {
@@ -1144,18 +1162,15 @@ function MadUI:CreateWindow(config)
 		end
 	end))
 
-	-- Frame
+	-- Frame (Main content background)
 	local frame = make("Frame", {
-		Size                 = UDim2.new(1, -8, 1, -8),
-		Position             = UDim2.fromOffset(4, 4),
+		Size                 = UDim2.fromScale(1, 1),
 		BackgroundColor3     = T.windowBg,
 		BackgroundTransparency = T.windowTrans,
 		BorderSizePixel      = 0,
 		ClipsDescendants     = true,
 		Parent               = canvas,
 	})
-	corner(frame, 14)
-	stroke(frame, T.glass, 0.84, 1.5)
 
 	-- Glass sheen
 	local sheen = make("Frame", {
@@ -1314,11 +1329,11 @@ function MadUI:CreateWindow(config)
 			or input.UserInputType == Enum.UserInputType.Touch then
 			dragging  = true
 			dragStart = input.Position
-			startPos  = canvas.Position
+			startPos  = windowContainer.Position
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then 
 					dragging = false 
-					tween(canvas, Ease.smooth, { Rotation = 0 })
+					tween(windowContainer, Ease.smooth, { Rotation = 0 })
 				end
 			end)
 		end
@@ -1333,21 +1348,23 @@ function MadUI:CreateWindow(config)
 		
 		-- Smooth position tween
 		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
-		tween(canvas, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = targetPos })
+		tween(windowContainer, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = targetPos })
 		
 		-- Tilt effect based on drag velocity
 		local deltaX = input.Delta.X
 		local targetRot = math.clamp(deltaX * 0.15, -1.5, 1.5)
 		lastRot = lastRot + (targetRot - lastRot) * 0.3
-		tween(canvas, TweenInfo.new(0.1), { Rotation = lastRot })
+		tween(windowContainer, TweenInfo.new(0.1), { Rotation = lastRot })
 	end))
 
 	-- ── Open Animation ─────────────────────────────
 
-	canvas.Size              = UDim2.fromOffset(winW * 0.91, winH * 0.91)
+	windowContainer.Size = UDim2.fromOffset(winW * 0.91, winH * 0.91)
 	canvas.GroupTransparency = 1
 	task.defer(function()
-		tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW + 8, winH + 8), GroupTransparency = 0 })
+		tween(windowContainer, Ease.spring, { Size = UDim2.fromOffset(winW, winH) })
+		tween(canvas, Ease.spring, { GroupTransparency = 0 })
+		tween(mainStroke, Ease.spring, { Transparency = 0.84 })
 	end)
 
 	-- ── Toggle Visibility ──────────────────────────
@@ -1357,16 +1374,20 @@ function MadUI:CreateWindow(config)
 	local function setVisibility(state)
 		visible = state
 		if visible then
-			canvas.Visible = true
-			tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW + 8, winH + 8), GroupTransparency = 0 })
+			windowContainer.Visible = true
+			tween(windowContainer, Ease.spring, { Size = UDim2.fromOffset(winW, winH) })
+			tween(canvas, Ease.spring, { GroupTransparency = 0 })
+			tween(mainStroke, Ease.spring, { Transparency = 0.84 })
 			
 			tween(floatBtn, Ease.smooth, { BackgroundTransparency = 1, Size = UDim2.fromOffset(30, 30) })
 			tween(fStroke, Ease.smooth, { Transparency = 1 })
 			if floatIcon then tween(floatIcon, Ease.smooth, { ImageTransparency = 1 }) end
 			task.delay(0.2, function() if visible then floatBtn.Visible = false end end)
 		else
-			local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset((winW * 0.94) + 8, (winH * 0.94) + 8), GroupTransparency = 1 })
-			tw.Completed:Connect(function() if not visible then canvas.Visible = false end end)
+			local tw = tween(windowContainer, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.94, winH * 0.94) })
+			tween(canvas, Ease.smooth, { GroupTransparency = 1 })
+			tween(mainStroke, Ease.smooth, { Transparency = 1 })
+			tw.Completed:Connect(function() if not visible then windowContainer.Visible = false end end)
 			
 			floatBtn.Visible = true
 			floatBtn.Size = UDim2.fromOffset(30, 30)
@@ -1388,8 +1409,10 @@ function MadUI:CreateWindow(config)
 	-- ── Close / Minimize ───────────────────────────
 
 	closeBtn.MouseButton1Click:Connect(function()
-		local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset((winW * 0.88) + 8, (winH * 0.88) + 8), GroupTransparency = 1 })
-		tw.Completed:Connect(function() canvas:Destroy(); floatBtn:Destroy() end)
+		local tw = tween(windowContainer, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.88, winH * 0.88) })
+		tween(canvas, Ease.smooth, { GroupTransparency = 1 })
+		tween(mainStroke, Ease.smooth, { Transparency = 1 })
+		tw.Completed:Connect(function() windowContainer:Destroy(); floatBtn:Destroy() end)
 	end)
 
 	minBtn.MouseButton1Click:Connect(function()
@@ -1650,7 +1673,7 @@ function MadUI:CreateWindow(config)
 	end
 
 	function Window:Destroy()
-		canvas:Destroy()
+		windowContainer:Destroy()
 	end
 
 	return Window
@@ -1674,25 +1697,38 @@ function MadUI:Notify(nCfg)
 	local accentCol = typeCol[nType] or T.accent
 	local dur       = nCfg.Duration or 3
 
-	local notif = make("CanvasGroup", {
+	local notifContainer = make("Frame", {
 		Size                 = UDim2.new(1, 0, 0, 0),
+		BackgroundTransparency = 1,
+		Parent               = notifHolder,
+	})
+
+	local notif = make("CanvasGroup", {
+		Size                 = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		GroupTransparency    = 1,
 		ZIndex               = 100,
-		Parent               = notifHolder,
+		Parent               = notifContainer,
 	})
+	corner(notif, 12)
+	
+	local notifStroke = make("Frame", {
+		Size                 = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		ZIndex               = 100,
+		Parent               = notifContainer,
+	})
+	corner(notifStroke, 12)
+	stroke(notifStroke, T.glass, 0.84, 1)
 	
 	local notifBg = make("Frame", {
-		Size                 = UDim2.new(1, -4, 1, -4),
-		Position             = UDim2.fromOffset(2, 2),
+		Size                 = UDim2.fromScale(1, 1),
 		BackgroundColor3     = T.windowBg,
 		BackgroundTransparency = 0.1,
 		ClipsDescendants     = true,
 		ZIndex               = 100,
 		Parent               = notif,
 	})
-	corner(notifBg, 12)
-	stroke(notifBg, T.glass, 0.84, 1)
 
 	local bar = make("Frame", {
 		Size                 = UDim2.new(0, 3, 1, -18),
