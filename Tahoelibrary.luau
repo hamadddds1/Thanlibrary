@@ -381,7 +381,7 @@ end
 
 local function createRow(parent, cfg, order)
 	local hasDesc = cfg.Description and #cfg.Description > 0
-	local h = hasDesc and 58 or 42
+	local h = hasDesc and 54 or 42
 
 	local row = make("Frame", {
 		Size                 = UDim2.new(1, 0, 0, h),
@@ -409,6 +409,7 @@ local function createRow(parent, cfg, order)
 		TextSize             = 13,
 		TextColor3           = T.text,
 		TextXAlignment       = Enum.TextXAlignment.Left,
+		TextYAlignment       = Enum.TextYAlignment.Top,
 		TextTruncate         = Enum.TextTruncate.AtEnd,
 		Text                 = cfg.Name or "",
 		Parent               = row,
@@ -417,12 +418,13 @@ local function createRow(parent, cfg, order)
 	if hasDesc then
 		make("TextLabel", {
 			Size                 = UDim2.new(0.60, 0, 0, 14),
-			Position             = UDim2.fromOffset(14, 32),
+			Position             = UDim2.fromOffset(14, 26),
 			BackgroundTransparency = 1,
 			Font                 = Enum.Font.Gotham,
 			TextSize             = 11,
 			TextColor3           = T.sub,
 			TextXAlignment       = Enum.TextXAlignment.Left,
+			TextYAlignment       = Enum.TextYAlignment.Top,
 			TextTruncate         = Enum.TextTruncate.AtEnd,
 			Text                 = cfg.Description,
 			Parent               = row,
@@ -640,7 +642,7 @@ local function _slider(scroll, order, cfg)
 	local hasDesc = cfg.Description and #cfg.Description > 0
 
 	local row = createRow(scroll, cfg, order)
-	row.Size = UDim2.new(1, 0, 0, hasDesc and 68 or 52)
+	row.Size = UDim2.new(1, 0, 0, hasDesc and 62 or 52)
 
 	local valLbl = make("TextLabel", {
 		Size                 = UDim2.fromOffset(52, 16),
@@ -655,7 +657,7 @@ local function _slider(scroll, order, cfg)
 		Parent               = row,
 	})
 
-	local trackY = hasDesc and 46 or 34
+	local trackY = hasDesc and 44 or 34
 	local trackFrame = make("Frame", {
 		Size             = UDim2.new(1, -28, 0, 4),
 		Position         = UDim2.fromOffset(14, trackY),
@@ -1801,8 +1803,7 @@ function MadUI:Notify(nCfg)
 	corner(prog, 1)
 
 	local height = 64
-	notif.Size = UDim2.new(1, 0, 0, height + 4)
-	layoutNotifs()
+	notifContainer.Size = UDim2.new(1, 0, 0, height + 4)
 	
 	-- Intro
 	tween(notif, Ease.spring, { GroupTransparency = 0 })
@@ -1811,8 +1812,11 @@ function MadUI:Notify(nCfg)
 	task.delay(dur, function()
 		tween(notif, Ease.smooth, { GroupTransparency = 1 })
 		task.delay(0.28, function()
-			tween(notif, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) })
-			task.delay(0.28, function() notif:Destroy() end)
+			tween(notifContainer, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) })
+			task.delay(0.28, function() 
+				notifContainer.Visible = false
+				notifContainer:Destroy() 
+			end)
 		end)
 	end)
 end
