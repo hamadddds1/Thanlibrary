@@ -939,20 +939,20 @@ end
 -- ═══════════════════════════════════════════════════
 
 local function attachBase(target, scroll, nextOrd)
-	function target:CreateLabel(text)     return _label(scroll, nextOrd(), text) end
-	function target:CreateParagraph(cfg)  return _paragraph(scroll, nextOrd(), cfg) end
-	function target:CreateButton(cfg)     return _button(scroll, nextOrd(), cfg) end
-	function target:CreateToggle(cfg)     return _toggle(scroll, nextOrd(), cfg) end
-	function target:CreateSlider(cfg)     return _slider(scroll, nextOrd(), cfg) end
-	function target:CreateDropdown(cfg)   return _dropdown(scroll, nextOrd(), cfg) end
-	function target:CreateInput(cfg)      return _input(scroll, nextOrd(), cfg) end
-	function target:CreateKeybind(cfg)    return _keybind(scroll, nextOrd(), cfg) end
+	function target:CLabel(text)     return _label(scroll, nextOrd(), text) end
+	function target:CParagraph(cfg)  return _paragraph(scroll, nextOrd(), cfg) end
+	function target:CButton(cfg)     return _button(scroll, nextOrd(), cfg) end
+	function target:CToggle(cfg)     return _toggle(scroll, nextOrd(), cfg) end
+	function target:CSlider(cfg)     return _slider(scroll, nextOrd(), cfg) end
+	function target:CDropdown(cfg)   return _dropdown(scroll, nextOrd(), cfg) end
+	function target:CInput(cfg)      return _input(scroll, nextOrd(), cfg) end
+	function target:CKeybind(cfg)    return _keybind(scroll, nextOrd(), cfg) end
 end
 
 local function attachAll(target, scroll, nextOrd)
 	attachBase(target, scroll, nextOrd)
 
-	function target:CreateSection(sCfg)
+	function target:CSection(sCfg)
 		sCfg = sCfg or {}
 		local idx = nextOrd()
 
@@ -1570,11 +1570,11 @@ function TahoeUI:CreateWindow(config)
 
 	-- ── Window API ─────────────────────────────────
 
-	function Window:CreateTab(cfg)
+	function Window:CTab(cfg)
 		return createTabCore(tabScroll, cfg)
 	end
 
-	function Window:CreateTabSection(tsCfg)
+	function Window:CTabSection(tsCfg)
 		tsCfg = tsCfg or {}
 
 		local outer = make("Frame", {
@@ -1658,7 +1658,7 @@ function TahoeUI:CreateWindow(config)
 		if not tsOpen and chev then chev.Rotation = -90 end
 
 		local TabSection = {}
-		function TabSection:CreateTab(cfg)
+		function TabSection:CTab(cfg)
 			return createTabCore(tabContent, cfg)
 		end
 		return TabSection

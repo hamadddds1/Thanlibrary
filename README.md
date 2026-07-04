@@ -60,7 +60,7 @@ local Window = TahoeUI:CreateWindow({
 Tab Sections allow you to group multiple tabs under a collapsible header in the sidebar.
 
 ```lua
-local TSection = Window:CreateTabSection({ Name = "Combat" })
+local TSection = Window:CTabSection({ Name = "Combat" })
 ```
 
 #### Creating a Tab
@@ -68,17 +68,17 @@ Tabs hold your actual content. You can attach them to a `TabSection` or directly
 
 ```lua
 -- Attached to a TabSection:
-local T = TSection:CreateTab({ Name = "Aimbot", Icon = "crosshair" })
+local T = TSection:CTab({ Name = "Aimbot", Icon = "crosshair" })
 
 -- Attached directly to the Window:
-local T2 = Window:CreateTab({ Name = "Settings", Icon = "settings" })
+local T2 = Window:CTab({ Name = "Settings", Icon = "settings" })
 ```
 
 #### Creating a Content Section
 Inside a Tab, you can group components together inside a collapsible content section.
 
 ```lua
-local F = T:CreateSection({ Name = "Main Features", Icon = "sword" })
+local F = T:CSection({ Name = "Main Features", Icon = "sword" })
 ```
 
 ---
@@ -89,7 +89,7 @@ All components can be created inside a `Tab` or a `Section`.
 
 #### Toggle
 ```lua
-F:CreateToggle({ 
+F:CToggle({ 
     Name = "Enable Aimbot", 
     Description = "Automatically aims at players", 
     Default = false, 
@@ -101,7 +101,7 @@ F:CreateToggle({
 
 #### Slider
 ```lua
-F:CreateSlider({ 
+F:CSlider({ 
     Name = "FOV Size", 
     Description = "Size of the targeting circle",
     Min = 10, 
@@ -115,7 +115,7 @@ F:CreateSlider({
 
 #### Dropdown
 ```lua
-F:CreateDropdown({
+F:CDropdown({
     Name = "Target Part",
     Options = {"Head", "Torso", "Left Arm", "Right Arm"},
     Default = "Head",
@@ -127,7 +127,7 @@ F:CreateDropdown({
 
 #### Keybind
 ```lua
-F:CreateKeybind({
+F:CKeybind({
     Name = "Lock Keybind",
     Default = Enum.KeyCode.E,
     Callback = function(Key) 
@@ -138,7 +138,7 @@ F:CreateKeybind({
 
 #### Input (Textbox)
 ```lua
-F:CreateInput({ 
+F:CInput({ 
     Name = "Config Name", 
     Placeholder = "Enter name here...",
     Callback = function(Text) 
@@ -149,7 +149,7 @@ F:CreateInput({
 
 #### Button
 ```lua
-F:CreateButton({ 
+F:CButton({ 
     Name = "Execute Script", 
     Description = "Runs the main script",
     Callback = function() 
@@ -161,10 +161,10 @@ F:CreateButton({
 #### Paragraph & Label
 ```lua
 -- Label (Single line text)
-F:CreateLabel("This is a simple text label.")
+F:CLabel("This is a simple text label.")
 
 -- Paragraph (Block of text)
-F:CreateParagraph({
+F:CParagraph({
     Title = "Warning",
     Content = "Please use these features at your own risk. We are not responsible for bans."
 })
