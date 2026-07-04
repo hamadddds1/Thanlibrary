@@ -230,10 +230,6 @@ pcall(function()
 	FluentIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))().assets
 end)
 
-local FluentIcons = {}
-pcall(function()
-	FluentIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))().assets
-end)
 
 local IconsAPI = {}
 
