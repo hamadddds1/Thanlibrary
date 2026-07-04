@@ -47,13 +47,20 @@ local Window = TahoeUI:CreateWindow({
 
 ## 📚 Documentation
 
+> **💡 Variable Naming Convention**
+> Throughout this documentation, we use short variable names to keep the code clean and easy to read:
+> - `TSection` = Tab Section
+> - `T` = Tab
+> - `F` = Function (Content Section)
+> - `C` = Component (Sliders, Buttons, etc.)
+
 ### 📑 Navigation (Tabs & Sections)
 
 #### Creating a Tab Section
 Tab Sections allow you to group multiple tabs under a collapsible header in the sidebar.
 
 ```lua
-local CombatGroup = Window:CreateTabSection({ Name = "Combat" })
+local TSection = Window:CreateTabSection({ Name = "Combat" })
 ```
 
 #### Creating a Tab
@@ -61,17 +68,17 @@ Tabs hold your actual content. You can attach them to a `TabSection` or directly
 
 ```lua
 -- Attached to a TabSection:
-local AimbotTab = CombatGroup:CreateTab({ Name = "Aimbot", Icon = "crosshair" })
+local T = TSection:CreateTab({ Name = "Aimbot", Icon = "crosshair" })
 
 -- Attached directly to the Window:
-local SettingsTab = Window:CreateTab({ Name = "Settings", Icon = "settings" })
+local T2 = Window:CreateTab({ Name = "Settings", Icon = "settings" })
 ```
 
 #### Creating a Content Section
 Inside a Tab, you can group components together inside a collapsible content section.
 
 ```lua
-local MainFeatures = AimbotTab:CreateSection({ Name = "Main Features", Icon = "sword" })
+local F = T:CreateSection({ Name = "Main Features", Icon = "sword" })
 ```
 
 ---
@@ -82,7 +89,7 @@ All components can be created inside a `Tab` or a `Section`.
 
 #### Toggle
 ```lua
-MainFeatures:CreateToggle({ 
+F:CreateToggle({ 
     Name = "Enable Aimbot", 
     Description = "Automatically aims at players", 
     Default = false, 
@@ -94,7 +101,7 @@ MainFeatures:CreateToggle({
 
 #### Slider
 ```lua
-MainFeatures:CreateSlider({ 
+F:CreateSlider({ 
     Name = "FOV Size", 
     Description = "Size of the targeting circle",
     Min = 10, 
@@ -108,7 +115,7 @@ MainFeatures:CreateSlider({
 
 #### Dropdown
 ```lua
-MainFeatures:CreateDropdown({
+F:CreateDropdown({
     Name = "Target Part",
     Options = {"Head", "Torso", "Left Arm", "Right Arm"},
     Default = "Head",
@@ -120,7 +127,7 @@ MainFeatures:CreateDropdown({
 
 #### Keybind
 ```lua
-MainFeatures:CreateKeybind({
+F:CreateKeybind({
     Name = "Lock Keybind",
     Default = Enum.KeyCode.E,
     Callback = function(Key) 
@@ -131,7 +138,7 @@ MainFeatures:CreateKeybind({
 
 #### Input (Textbox)
 ```lua
-MainFeatures:CreateInput({ 
+F:CreateInput({ 
     Name = "Config Name", 
     Placeholder = "Enter name here...",
     Callback = function(Text) 
@@ -142,7 +149,7 @@ MainFeatures:CreateInput({
 
 #### Button
 ```lua
-MainFeatures:CreateButton({ 
+F:CreateButton({ 
     Name = "Execute Script", 
     Description = "Runs the main script",
     Callback = function() 
@@ -154,10 +161,10 @@ MainFeatures:CreateButton({
 #### Paragraph & Label
 ```lua
 -- Label (Single line text)
-MainFeatures:CreateLabel("This is a simple text label.")
+F:CreateLabel("This is a simple text label.")
 
 -- Paragraph (Block of text)
-MainFeatures:CreateParagraph({
+F:CreateParagraph({
     Title = "Warning",
     Content = "Please use these features at your own risk. We are not responsible for bans."
 })
