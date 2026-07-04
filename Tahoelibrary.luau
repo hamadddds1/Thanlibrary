@@ -157,9 +157,79 @@ local Themes = {
 
 local T = Themes.Dark -- active theme ref
 
+-- ── Utility ─────────────────────────────────────────
+
+local function make(class, props, children)
+	local inst = Instance.new(class)
+	for k, v in props do
+		if k ~= "Parent" then
+			(inst :: any)[k] = v
+		end
+	end
+	if children then
+		for _, ch in children do
+			ch.Parent = inst
+		end
+	end
+	if props.Parent then
+		inst.Parent = props.Parent
+	end
+	return inst
+end
+
+local function tween(obj, info, goals)
+	local tw = TweenService:Create(obj, info, goals)
+	tw:Play()
+	return tw
+end
+
+local function corner(parent, r)
+	return make("UICorner", { CornerRadius = UDim.new(0, r), Parent = parent })
+end
+
+local function stroke(parent, col, trans, thick)
+	return make("UIStroke", {
+		Color           = col or T.glass,
+		Transparency    = trans or 0.92,
+		Thickness       = thick or 1,
+		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+		Parent          = parent,
+	})
+end
+
+local function pad(parent, t, b, l, r)
+	return make("UIPadding", {
+		PaddingTop    = UDim.new(0, t),
+		PaddingBottom = UDim.new(0, b),
+		PaddingLeft   = UDim.new(0, l),
+		PaddingRight  = UDim.new(0, r),
+		Parent        = parent,
+	})
+end
+
+local function lay(parent, dir, gap)
+	return make("UIListLayout", {
+		FillDirection = dir or Enum.FillDirection.Vertical,
+		Padding       = UDim.new(0, gap or 4),
+		SortOrder     = Enum.SortOrder.LayoutOrder,
+		Parent        = parent,
+	})
+end
+
+local function mergeTheme(base, over)
+	local r = table.clone(base)
+	for k, v in over do r[k] = v end
+	return r
+end
+
 -- ── Icon System (Lucide-compatible) ─────────────────
 
 local IconMap = {}
+local FluentIcons = {}
+pcall(function()
+	FluentIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))().assets
+end)
+
 local ICON_TEXT = {
 	["chevron-down"]  = "▾",  ["chevron-right"] = "▸",
 	["chevron-up"]    = "▴",  ["chevron-left"]  = "◂",
@@ -202,7 +272,7 @@ function IconsAPI:Render(parent, name, size, color)
 	size  = size or 16
 	color = color or T.sub
 
-	local asset = IconMap[name]
+	local asset = IconMap[name] or FluentIcons[name] or FluentIcons["lucide-" .. name]
 	if asset then
 		return make("ImageLabel", {
 			Size                 = UDim2.fromOffset(size, size),
@@ -236,26 +306,6 @@ function IconsAPI:Render(parent, name, size, color)
 		Text                 = ch,
 		Parent               = parent,
 	})
-end
-
--- ── Utility ─────────────────────────────────────────
-
-local function make(class, props, children)
-	local inst = Instance.new(class)
-	for k, v in props do
-		if k ~= "Parent" then
-			(inst :: any)[k] = v
-		end
-	end
-	if children then
-		for _, ch in children do
-			ch.Parent = inst
-		end
-	end
-	if props.Parent then
-		inst.Parent = props.Parent
-	end
-	return inst
 end
 
 local function tween(obj, info, goals)
@@ -1106,6 +1156,16 @@ function MadUI:CreateWindow(config)
 		BorderSizePixel      = 0,
 		Parent               = frame,
 	})
+	corner(sidebar, 14)
+
+	make("Frame", {
+		Size                 = UDim2.new(0, 14, 1, 0),
+		Position             = UDim2.new(1, -14, 0, 0),
+		BackgroundColor3     = T.sidebarBg,
+		BackgroundTransparency = T.sidebarTrans,
+		BorderSizePixel      = 0,
+		Parent               = sidebar,
+	})
 
 	make("Frame", {
 		Size                 = UDim2.new(0, 1, 1, -16),
@@ -1235,17 +1295,30 @@ function MadUI:CreateWindow(config)
 			dragStart = input.Position
 			startPos  = canvas.Position
 			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then dragging = false end
+				if input.UserInputState == Enum.UserInputState.End then 
+					dragging = false 
+					tween(canvas, Ease.smooth, { Rotation = 0 })
+				end
 			end)
 		end
 	end)
 
+	local lastRot = 0
 	table.insert(conns, UserInput.InputChanged:Connect(function(input)
 		if not dragging then return end
 		if input.UserInputType ~= Enum.UserInputType.MouseMovement
 			and input.UserInputType ~= Enum.UserInputType.Touch then return end
 		local d = input.Position - dragStart
-		canvas.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+		
+		-- Smooth position tween
+		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+		tween(canvas, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = targetPos })
+		
+		-- Tilt effect based on drag velocity
+		local deltaX = input.Delta.X
+		local targetRot = math.clamp(deltaX * 0.15, -1.5, 1.5)
+		lastRot = lastRot + (targetRot - lastRot) * 0.3
+		tween(canvas, TweenInfo.new(0.1), { Rotation = lastRot })
 	end))
 
 	-- ── Open Animation ─────────────────────────────
