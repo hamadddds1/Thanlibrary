@@ -230,30 +230,10 @@ pcall(function()
 	FluentIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))().assets
 end)
 
-local ICON_TEXT = {
-	["chevron-down"]  = "▾",  ["chevron-right"] = "▸",
-	["chevron-up"]    = "▴",  ["chevron-left"]  = "◂",
-	["x"]             = "✕",  ["plus"]          = "+",
-	["minus"]         = "—",  ["check"]         = "✓",
-	["settings"]      = "⚙",  ["home"]          = "⌂",
-	["search"]        = "○",  ["menu"]          = "≡",
-	["star"]          = "★",  ["heart"]         = "♥",
-	["circle"]        = "●",  ["square"]        = "■",
-	["eye"]           = "◉",  ["target"]        = "◎",
-	["crosshair"]     = "⊕",  ["zap"]           = "⚡",
-	["arrow-right"]   = "→",  ["arrow-left"]    = "←",
-	["arrow-up"]      = "↑",  ["arrow-down"]    = "↓",
-	["info"]          = "ℹ",  ["alert"]         = "⚠",
-	["user"]          = "◯",  ["shield"]        = "◆",
-	["lock"]          = "■",  ["globe"]         = "◎",
-	["play"]          = "▶",  ["pause"]         = "❙❙",
-	["refresh"]       = "↻",  ["copy"]          = "⧉",
-	["edit"]          = "✎",  ["folder"]        = "▤",
-	["file"]          = "▥",  ["download"]      = "↧",
-	["upload"]        = "↥",  ["send"]          = "➤",
-	["sword"]         = "†",  ["wand"]          = "✦",
-	["gamepad"]       = "▣",  ["monitor"]       = "▢",
-}
+local FluentIcons = {}
+pcall(function()
+	FluentIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))().assets
+end)
 
 local IconsAPI = {}
 
@@ -296,16 +276,7 @@ function IconsAPI:Render(parent, name, size, color)
 		})
 	end
 
-	local ch = ICON_TEXT[name] or string.upper(string.sub(name, 1, 1))
-	return make("TextLabel", {
-		Size                 = UDim2.fromOffset(size, size),
-		BackgroundTransparency = 1,
-		Font                 = Enum.Font.GothamMedium,
-		TextSize             = math.floor(size * 0.78),
-		TextColor3           = color,
-		Text                 = ch,
-		Parent               = parent,
-	})
+	return nil
 end
 
 local function tween(obj, info, goals)
@@ -767,7 +738,7 @@ local function _dropdown(scroll, order, cfg)
 		Font                 = Enum.Font.GothamMedium,
 		TextSize             = 11,
 		TextColor3           = T.text,
-		Text                 = " " .. selected .. "  ▾",
+		Text                 = " " .. selected,
 		AutoButtonColor      = false,
 		ClipsDescendants     = true,
 		TextTruncate         = Enum.TextTruncate.AtEnd,
@@ -775,7 +746,13 @@ local function _dropdown(scroll, order, cfg)
 	})
 	corner(dropBtn, 8)
 	stroke(dropBtn, T.border, 0.55, 1)
-	pad(dropBtn, 0, 0, 8, 4)
+	pad(dropBtn, 0, 24, 8, 4)
+
+	local chev = IconsAPI:Render(dropBtn, "chevron-down", 12, T.sub)
+	if chev then
+		chev.AnchorPoint = Vector2.new(1, 0.5)
+		chev.Position = UDim2.new(1, -6, 0.5, 0)
+	end
 
 	local popup = make("Frame", {
 		BackgroundColor3     = T.surface,
@@ -815,7 +792,7 @@ local function _dropdown(scroll, order, cfg)
 			ob.MouseLeave:Connect(function() tween(ob, Ease.quick, { BackgroundTransparency = 0.5 }) end)
 			ob.MouseButton1Click:Connect(function()
 				selected = opt
-				dropBtn.Text = " " .. opt .. "  ▾"
+				dropBtn.Text = " " .. opt
 				closeFn()
 				if cfg.Callback then task.spawn(cfg.Callback, opt) end
 			end)
@@ -826,6 +803,7 @@ local function _dropdown(scroll, order, cfg)
 	closeFn = function()
 		if not isOpen then return end
 		isOpen = false
+		if chev then tween(chev, Ease.smooth, { Rotation = 0 }) end
 		tween(popup, Ease.quick, { Size = UDim2.fromOffset(popup.AbsoluteSize.X, 0) })
 		task.delay(0.14, function() if not isOpen then popup.Visible = false end end)
 		dropBackdrop.Visible = false
@@ -833,6 +811,7 @@ local function _dropdown(scroll, order, cfg)
 
 	local function openFn()
 		buildOpts()
+		if chev then tween(chev, Ease.smooth, { Rotation = 180 }) end
 		local ap, as = dropBtn.AbsolutePosition, dropBtn.AbsoluteSize
 		popup.Position = UDim2.fromOffset(ap.X, ap.Y + as.Y + 4)
 		popup.Size     = UDim2.fromOffset(math.max(as.X, 130), 0)
@@ -854,8 +833,8 @@ local function _dropdown(scroll, order, cfg)
 	end)
 
 	local obj = {}
-	function obj:Set(v) selected = v; dropBtn.Text = " " .. v .. "  ▾"; if cfg.Callback then task.spawn(cfg.Callback, v) end end
-	function obj:Refresh(n) options = n; if not table.find(options, selected) then selected = options[1] or ""; dropBtn.Text = " " .. selected .. "  ▾" end end
+	function obj:Set(v) selected = v; dropBtn.Text = " " .. v; if cfg.Callback then task.spawn(cfg.Callback, v) end end
+	function obj:Refresh(n) options = n; if not table.find(options, selected) then selected = options[1] or ""; dropBtn.Text = " " .. selected end end
 	function obj:Get() return selected end
 	function obj:Destroy() popup:Destroy(); row:Destroy() end
 	return obj
@@ -999,20 +978,20 @@ local function attachAll(target, scroll, nextOrd)
 		})
 		corner(hdr, 10)
 
-		local chevron = make("TextLabel", {
-			Size                 = UDim2.fromOffset(14, 32),
-			Position             = UDim2.fromOffset(10, 0),
-			BackgroundTransparency = 1,
-			Font                 = Enum.Font.GothamMedium,
-			TextSize             = 10,
-			TextColor3           = T.sub,
-			Text                 = "▾",
-			Parent               = hdr,
-		})
+		local chevron = IconsAPI:Render(hdr, "chevron-down", 14, T.sub)
+		if chevron then
+			chevron.Position = UDim2.fromOffset(10, 9)
+		end
+
+		local hasIcon = sCfg.Icon and #sCfg.Icon > 0
+		if hasIcon then
+			local sIcon = IconsAPI:Render(hdr, sCfg.Icon, 14, T.text)
+			if sIcon then sIcon.Position = UDim2.fromOffset(28, 9) end
+		end
 
 		make("TextLabel", {
 			Size                 = UDim2.new(1, -40, 1, 0),
-			Position             = UDim2.fromOffset(26, 0),
+			Position             = UDim2.fromOffset(hasIcon and 48 or 28, 0),
 			BackgroundTransparency = 1,
 			Font                 = Enum.Font.GothamBold,
 			TextSize             = 12,
@@ -1059,15 +1038,15 @@ local function attachAll(target, scroll, nextOrd)
 			if isOpen then
 				recalc()
 				tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, targetH) })
-				tween(chevron, Ease.smooth, { Rotation = 0 })
+				if chevron then tween(chevron, Ease.smooth, { Rotation = 0 }) end
 			else
 				tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) })
-				tween(chevron, Ease.smooth, { Rotation = -90 })
+				if chevron then tween(chevron, Ease.smooth, { Rotation = -90 }) end
 			end
 		end)
 
 		if not isOpen then
-			chevron.Rotation = -90
+			if chevron then chevron.Rotation = -90 end
 			clip.Size = UDim2.new(1, 0, 0, 0)
 		end
 
@@ -1076,8 +1055,14 @@ local function attachAll(target, scroll, nextOrd)
 		attachBase(Section, content, function() sIdx += 1; return sIdx end)
 		function Section:Toggle()
 			isOpen = not isOpen
-			if isOpen then recalc(); tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, targetH) }); tween(chevron, Ease.smooth, { Rotation = 0 })
-			else tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) }); tween(chevron, Ease.smooth, { Rotation = -90 }) end
+			if isOpen then 
+				recalc()
+				tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, targetH) })
+				if chevron then tween(chevron, Ease.smooth, { Rotation = 0 }) end
+			else 
+				tween(clip, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) })
+				if chevron then tween(chevron, Ease.smooth, { Rotation = -90 }) end
+			end
 		end
 		function Section:Destroy() outer:Destroy() end
 		return Section
@@ -1114,14 +1099,17 @@ function MadUI:CreateWindow(config)
 		AnchorPoint          = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
 		GroupTransparency    = 1,
+		BorderSizePixel      = 0,
 		Parent               = screenGui,
 	})
+	corner(canvas, 14)
 
 	-- Frame
 	local frame = make("Frame", {
 		Size                 = UDim2.fromScale(1, 1),
 		BackgroundColor3     = T.windowBg,
 		BackgroundTransparency = T.windowTrans,
+		BorderSizePixel      = 0,
 		ClipsDescendants     = true,
 		Parent               = canvas,
 	})
@@ -1186,32 +1174,34 @@ function MadUI:CreateWindow(config)
 	lay(trafficArea, Enum.FillDirection.Horizontal, 8)
 
 	local lights = {}
-	local function makeLight(color, sym)
+	local function makeLight(color, iconName)
 		local btn = make("TextButton", {
 			Size             = UDim2.fromOffset(12, 12),
 			BackgroundColor3 = color,
 			Text             = "",
-			Font             = Enum.Font.GothamBold,
-			TextSize         = 8,
-			TextColor3       = Color3.fromRGB(0, 0, 0),
-			TextTransparency = 0.3,
 			AutoButtonColor  = false,
 			Parent           = trafficArea,
 		})
 		corner(btn, 6)
-		table.insert(lights, { btn = btn, sym = sym })
+		local ic = IconsAPI:Render(btn, iconName, 8, Color3.new(0, 0, 0))
+		if ic then
+			ic.AnchorPoint = Vector2.new(0.5, 0.5)
+			ic.Position = UDim2.fromScale(0.5, 0.5)
+			ic.ImageTransparency = 1
+		end
+		table.insert(lights, { btn = btn, ic = ic })
 		return btn
 	end
 
-	local closeBtn = makeLight(T.red,    "✕")
-	local minBtn   = makeLight(T.yellow, "–")
-	makeLight(T.green, "+")
+	local closeBtn = makeLight(T.red,    "x")
+	local minBtn   = makeLight(T.yellow, "minus")
+	local maxBtn   = makeLight(T.green,  "plus")
 
 	trafficArea.MouseEnter:Connect(function()
-		for _, l in lights do l.btn.Text = l.sym end
+		for _, l in lights do if l.ic then l.ic.ImageTransparency = 0.4 end end
 	end)
 	trafficArea.MouseLeave:Connect(function()
-		for _, l in lights do l.btn.Text = "" end
+		for _, l in lights do if l.ic then l.ic.ImageTransparency = 1 end end
 	end)
 
 	-- Title
@@ -1548,17 +1538,11 @@ function MadUI:CreateWindow(config)
 			Parent               = hdr,
 		})
 
-		local chev = make("TextLabel", {
-			Size                 = UDim2.fromOffset(10, 22),
-			Position             = UDim2.new(1, -4, 0, 0),
-			AnchorPoint          = Vector2.new(1, 0),
-			BackgroundTransparency = 1,
-			Font                 = Enum.Font.GothamMedium,
-			TextSize             = 8,
-			TextColor3           = T.dim,
-			Text                 = "▾",
-			Parent               = hdr,
-		})
+		local chev = IconsAPI:Render(hdr, "chevron-down", 12, T.dim)
+		if chev then
+			chev.AnchorPoint = Vector2.new(1, 0.5)
+			chev.Position = UDim2.new(1, -6, 0.5, 0)
+		end
 
 		hdr.MouseEnter:Connect(function() tween(hdr, Ease.quick, { BackgroundTransparency = 0.82 }) end)
 		hdr.MouseLeave:Connect(function() tween(hdr, Ease.quick, { BackgroundTransparency = 1 }) end)
@@ -1595,14 +1579,14 @@ function MadUI:CreateWindow(config)
 			if tsOpen then
 				tsRecalc()
 				tween(tabClip, Ease.smooth, { Size = UDim2.new(1, 0, 0, tsH) })
-				tween(chev, Ease.smooth, { Rotation = 0 })
+				if chev then tween(chev, Ease.smooth, { Rotation = 0 }) end
 			else
 				tween(tabClip, Ease.smooth, { Size = UDim2.new(1, 0, 0, 0) })
-				tween(chev, Ease.smooth, { Rotation = -90 })
+				if chev then tween(chev, Ease.smooth, { Rotation = -90 }) end
 			end
 		end)
 
-		if not tsOpen then chev.Rotation = -90 end
+		if not tsOpen and chev then chev.Rotation = -90 end
 
 		local TabSection = {}
 		function TabSection:CreateTab(cfg)
