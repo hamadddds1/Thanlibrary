@@ -1,0 +1,202 @@
+<div align="center">
+  <h1>MadUI ✦ Tahoe Edition</h1>
+  <p><strong>A premium, Liquid-Glass UI Library for Roblox, inspired by macOS Tahoe.</strong></p>
+
+  <img src="https://img.shields.io/badge/Roblox-Studio-00A2FF?style=for-the-badge&logo=roblox&logoColor=white" alt="Roblox" />
+  <img src="https://img.shields.io/badge/Language-Luau-005571?style=for-the-badge&logo=lua&logoColor=white" alt="Luau" />
+  <img src="https://img.shields.io/badge/UI-Liquid%20Glass-8A5CFF?style=for-the-badge" alt="Liquid Glass UI" />
+  
+  <br><br>
+</div>
+
+MadUI is a state-of-the-art UI library designed for modern Roblox script execution. Focused on **OCD-level pixel perfection**, buttery-smooth animations, and a rich *Liquid-Glass* aesthetic, MadUI guarantees a premium experience for your users.
+
+## ✨ Features
+- 🎨 **5 Premium Themes**: `Dark`, `Transparent`, `Midnight`, `Rose`, `Ocean`.
+- 🧊 **Liquid Glass Aesthetics**: Advanced `CanvasGroup` clipping, precise corner radii, and drop-shadow styling.
+- ⚡ **Buttery Smooth Animations**: Every component uses custom spring-driven physics for interactions.
+- 📂 **Nested Layouts**: Supports `TabSections` (collapsible sidebars) and nested content `Sections`.
+- 🔔 **Built-in Notification System**: Elegant, stacking toast notifications.
+- 💎 **Lucide Icons API**: Effortlessly integrate any Lucide-compatible icon natively.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Bootstrapping the Library
+To always ensure you are loading the absolute latest, cache-free version of MadUI, use our direct loader:
+
+```lua
+local MadUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/main.lua"))()
+```
+
+### 2. Creating a Window
+The Window is the core container of your UI.
+
+```lua
+local Window = MadUI:CreateWindow({
+    Title     = "MadApp",
+    Subtitle  = "Premium Edition v2.0",
+    Theme     = "Transparent", -- Dark, Transparent, Midnight, Rose, Ocean
+    Size      = UDim2.fromOffset(580, 400), -- Optional
+    ToggleKey = Enum.KeyCode.RightControl -- Key to show/hide UI
+})
+```
+
+---
+
+## 📚 Documentation
+
+### 📑 Navigation (Tabs & Sections)
+
+#### Creating a Tab Section
+Tab Sections allow you to group multiple tabs under a collapsible header in the sidebar.
+
+```lua
+local CombatGroup = Window:CreateTabSection({ Name = "Combat" })
+```
+
+#### Creating a Tab
+Tabs hold your actual content. You can attach them to a `TabSection` or directly to the `Window`.
+
+```lua
+-- Attached to a TabSection:
+local AimbotTab = CombatGroup:CreateTab({ Name = "Aimbot", Icon = "crosshair" })
+
+-- Attached directly to the Window:
+local SettingsTab = Window:CreateTab({ Name = "Settings", Icon = "settings" })
+```
+
+#### Creating a Content Section
+Inside a Tab, you can group components together inside a collapsible content section.
+
+```lua
+local MainFeatures = AimbotTab:CreateSection({ Name = "Main Features", Icon = "sword" })
+```
+
+---
+
+### 🧩 Components
+
+All components can be created inside a `Tab` or a `Section`.
+
+#### Toggle
+```lua
+MainFeatures:CreateToggle({ 
+    Name = "Enable Aimbot", 
+    Description = "Automatically aims at players", 
+    Default = false, 
+    Callback = function(Value) 
+        print("Toggled:", Value) 
+    end 
+})
+```
+
+#### Slider
+```lua
+MainFeatures:CreateSlider({ 
+    Name = "FOV Size", 
+    Description = "Size of the targeting circle",
+    Min = 10, 
+    Max = 360, 
+    Default = 90, 
+    Callback = function(Value) 
+        print("Slider Value:", Value) 
+    end 
+})
+```
+
+#### Dropdown
+```lua
+MainFeatures:CreateDropdown({
+    Name = "Target Part",
+    Options = {"Head", "Torso", "Left Arm", "Right Arm"},
+    Default = "Head",
+    Callback = function(Value) 
+        print("Selected:", Value) 
+    end
+})
+```
+
+#### Keybind
+```lua
+MainFeatures:CreateKeybind({
+    Name = "Lock Keybind",
+    Default = Enum.KeyCode.E,
+    Callback = function(Key) 
+        print("Key pressed:", Key.Name) 
+    end
+})
+```
+
+#### Input (Textbox)
+```lua
+MainFeatures:CreateInput({ 
+    Name = "Config Name", 
+    Placeholder = "Enter name here...",
+    Callback = function(Text) 
+        print("Input received:", Text) 
+    end
+})
+```
+
+#### Button
+```lua
+MainFeatures:CreateButton({ 
+    Name = "Execute Script", 
+    Description = "Runs the main script",
+    Callback = function() 
+        print("Button clicked!") 
+    end 
+})
+```
+
+#### Paragraph & Label
+```lua
+-- Label (Single line text)
+MainFeatures:CreateLabel("This is a simple text label.")
+
+-- Paragraph (Block of text)
+MainFeatures:CreateParagraph({
+    Title = "Warning",
+    Content = "Please use these features at your own risk. We are not responsible for bans."
+})
+```
+
+---
+
+### 🔔 Notifications
+MadUI features a stunning, auto-stacking notification system. 
+
+```lua
+MadUI:Notify({
+    Title    = "Success",
+    Content  = "Configuration has been saved successfully!",
+    Type     = "success", -- success, info, warning, error
+    Duration = 3 -- Seconds before it fades out
+})
+```
+
+---
+
+### 🎭 Icons API (Lucide Integration)
+
+MadUI natively supports Lucide icons. You can register your own custom `rbxassetid` icons if needed!
+
+```lua
+-- Register a single custom icon
+MadUI.Icons:Register("custom-sword", "rbxassetid://12345678")
+
+-- Batch register multiple
+MadUI.Icons:BatchRegister({
+    ["shield"] = "rbxassetid://111111",
+    ["magic"]  = "rbxassetid://222222"
+})
+```
+*Note: We automatically fetch the Fluent/Lucide icon mappings in the background, so standard icon names like `crosshair`, `settings`, `eye` work out of the box!*
+
+---
+
+<div align="center">
+  <p>Crafted with ❤️ for the Roblox Scripting Community</p>
+</div>
