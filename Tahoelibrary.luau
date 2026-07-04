@@ -1,13 +1,13 @@
 --[[
-	MadUI · v2.0.0
+	TahoeUI · v2.0.0
 	Liquid Glass UI Library for Roblox
 	Inspired by macOS Tahoe
 
 	Load:
-		local MadUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/Tahoelibrary.luau"))()
+		local TahoeUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/Tahoelibrary.luau"))()
 
 	Quick Start:
-		local Window = MadUI:CreateWindow({
+		local Window = TahoeUI:CreateWindow({
 			Title    = "My App",
 			Subtitle = "v2.0",
 			Theme    = "Dark",        -- Dark, Transparent, Midnight, Rose, Ocean
@@ -30,11 +30,11 @@
 		General:CreateButton({ Name = "Execute", Callback = function() end })
 
 		-- Icons (Lucide)
-		MadUI.Icons:Register("myicon", "rbxassetid://12345")
-		MadUI.Icons:BatchRegister({ sword = "rbxassetid://111", shield = "rbxassetid://222" })
+		TahoeUI.Icons:Register("myicon", "rbxassetid://12345")
+		TahoeUI.Icons:BatchRegister({ sword = "rbxassetid://111", shield = "rbxassetid://222" })
 
 		-- Notifications
-		MadUI:Notify({ Title = "Done", Content = "Ready!", Duration = 3, Type = "success" })
+		TahoeUI:Notify({ Title = "Done", Content = "Ready!", Duration = 3, Type = "success" })
 ]]
 
 local Players      = game:GetService("Players")
@@ -322,7 +322,7 @@ end
 
 -- ── Library State ───────────────────────────────────
 
-local MadUI         = { Icons = IconsAPI }
+local TahoeUI         = { Icons = IconsAPI }
 local screenGui     = nil
 local dropBackdrop  = nil
 local notifHolder   = nil
@@ -333,7 +333,7 @@ local function initGui()
 	if screenGui then return end
 
 	screenGui = make("ScreenGui", {
-		Name             = "MadUI",
+		Name             = "TahoeUI",
 		DisplayOrder     = 9999,
 		ZIndexBehavior   = Enum.ZIndexBehavior.Sibling,
 		ResetOnSpawn     = false,
@@ -1071,11 +1071,11 @@ end
 -- Window
 -- ═══════════════════════════════════════════════════
 
-function MadUI:CreateWindow(config)
+function TahoeUI:CreateWindow(config)
 	initGui()
 
 	config = config or {}
-	local title     = config.Title or "MadUI"
+	local title     = config.Title or "TahoeUI"
 	local subtitle  = config.Subtitle or "v2.0"
 	local winW      = config.Size and config.Size.X.Offset or 580
 	local winH      = config.Size and config.Size.Y.Offset or 400
@@ -1297,7 +1297,7 @@ function MadUI:CreateWindow(config)
 		TextColor3           = T.dim,
 		TextTransparency     = 0.4,
 		TextXAlignment       = Enum.TextXAlignment.Left,
-		Text                 = "MadUI",
+		Text                 = "TahoeUI",
 		Parent               = sidebar,
 	})
 
@@ -1681,7 +1681,7 @@ end
 -- Notifications
 -- ═══════════════════════════════════════════════════
 
-function MadUI:Notify(nCfg)
+function TahoeUI:Notify(nCfg)
 	initGui()
 	nCfg = nCfg or {}
 
@@ -1821,7 +1821,7 @@ end
 -- Cleanup
 -- ═══════════════════════════════════════════════════
 
-function MadUI:Destroy()
+function TahoeUI:Destroy()
 	for _, c in conns do
 		if typeof(c) == "RBXScriptConnection" then c:Disconnect() end
 	end
@@ -1829,4 +1829,4 @@ function MadUI:Destroy()
 	if screenGui then screenGui:Destroy(); screenGui = nil end
 end
 
-return MadUI
+return TahoeUI

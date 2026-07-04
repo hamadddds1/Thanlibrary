@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>MadUI ✦ Tahoe Edition</h1>
+  <h1>TahoeUI ✦ Tahoe Edition</h1>
   <p><strong>A premium, Liquid-Glass UI Library for Roblox, inspired by macOS Tahoe.</strong></p>
 
   <img src="https://img.shields.io/badge/Roblox-Studio-00A2FF?style=for-the-badge&logo=roblox&logoColor=white" alt="Roblox" />
@@ -9,7 +9,7 @@
   <br><br>
 </div>
 
-MadUI is a state-of-the-art UI library designed for modern Roblox script execution. Focused on **OCD-level pixel perfection**, buttery-smooth animations, and a rich *Liquid-Glass* aesthetic, MadUI guarantees a premium experience for your users.
+TahoeUI is a state-of-the-art UI library designed for modern Roblox script execution. Focused on **OCD-level pixel perfection**, buttery-smooth animations, and a rich *Liquid-Glass* aesthetic, TahoeUI guarantees a premium experience for your users.
 
 ## ✨ Features
 - 🎨 **5 Premium Themes**: `Dark`, `Transparent`, `Midnight`, `Rose`, `Ocean`.
@@ -24,18 +24,18 @@ MadUI is a state-of-the-art UI library designed for modern Roblox script executi
 ## 🚀 Getting Started
 
 ### 1. Bootstrapping the Library
-To always ensure you are loading the absolute latest, cache-free version of MadUI, use our direct loader:
+To always ensure you are loading the absolute latest, cache-free version of TahoeUI, use our direct loader:
 
 ```lua
-local MadUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/main.lua"))()
+local TahoeUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamaddddds/Tahoe-library/main/main.lua"))()
 ```
 
 ### 2. Creating a Window
 The Window is the core container of your UI.
 
 ```lua
-local Window = MadUI:CreateWindow({
-    Title     = "MadApp",
+local Window = TahoeUI:CreateWindow({
+    Title     = "TahoeApp",
     Subtitle  = "Premium Edition v2.0",
     Theme     = "Transparent", -- Dark, Transparent, Midnight, Rose, Ocean
     Size      = UDim2.fromOffset(580, 400), -- Optional
@@ -166,10 +166,10 @@ MainFeatures:CreateParagraph({
 ---
 
 ### 🔔 Notifications
-MadUI features a stunning, auto-stacking notification system. 
+TahoeUI features a stunning, auto-stacking notification system. 
 
 ```lua
-MadUI:Notify({
+TahoeUI:Notify({
     Title    = "Success",
     Content  = "Configuration has been saved successfully!",
     Type     = "success", -- success, info, warning, error
@@ -181,14 +181,14 @@ MadUI:Notify({
 
 ### 🎭 Icons API (Lucide Integration)
 
-MadUI natively supports Lucide icons. You can register your own custom `rbxassetid` icons if needed!
+TahoeUI natively supports Lucide icons. You can register your own custom `rbxassetid` icons if needed!
 
 ```lua
 -- Register a single custom icon
-MadUI.Icons:Register("custom-sword", "rbxassetid://12345678")
+TahoeUI.Icons:Register("custom-sword", "rbxassetid://12345678")
 
 -- Batch register multiple
-MadUI.Icons:BatchRegister({
+TahoeUI.Icons:BatchRegister({
     ["shield"] = "rbxassetid://111111",
     ["magic"]  = "rbxassetid://222222"
 })
