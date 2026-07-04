@@ -1094,7 +1094,7 @@ function MadUI:CreateWindow(config)
 
 	-- Canvas
 	local canvas = make("CanvasGroup", {
-		Size                 = UDim2.fromOffset(winW, winH),
+		Size                 = UDim2.fromOffset(winW + 8, winH + 8),
 		Position             = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint          = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
@@ -1146,7 +1146,8 @@ function MadUI:CreateWindow(config)
 
 	-- Frame
 	local frame = make("Frame", {
-		Size                 = UDim2.fromScale(1, 1),
+		Size                 = UDim2.new(1, -8, 1, -8),
+		Position             = UDim2.fromOffset(4, 4),
 		BackgroundColor3     = T.windowBg,
 		BackgroundTransparency = T.windowTrans,
 		BorderSizePixel      = 0,
@@ -1346,7 +1347,7 @@ function MadUI:CreateWindow(config)
 	canvas.Size              = UDim2.fromOffset(winW * 0.91, winH * 0.91)
 	canvas.GroupTransparency = 1
 	task.defer(function()
-		tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW, winH), GroupTransparency = 0 })
+		tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW + 8, winH + 8), GroupTransparency = 0 })
 	end)
 
 	-- ── Toggle Visibility ──────────────────────────
@@ -1357,14 +1358,14 @@ function MadUI:CreateWindow(config)
 		visible = state
 		if visible then
 			canvas.Visible = true
-			tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW, winH), GroupTransparency = 0 })
+			tween(canvas, Ease.spring, { Size = UDim2.fromOffset(winW + 8, winH + 8), GroupTransparency = 0 })
 			
 			tween(floatBtn, Ease.smooth, { BackgroundTransparency = 1, Size = UDim2.fromOffset(30, 30) })
 			tween(fStroke, Ease.smooth, { Transparency = 1 })
 			if floatIcon then tween(floatIcon, Ease.smooth, { ImageTransparency = 1 }) end
 			task.delay(0.2, function() if visible then floatBtn.Visible = false end end)
 		else
-			local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.94, winH * 0.94), GroupTransparency = 1 })
+			local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset((winW * 0.94) + 8, (winH * 0.94) + 8), GroupTransparency = 1 })
 			tw.Completed:Connect(function() if not visible then canvas.Visible = false end end)
 			
 			floatBtn.Visible = true
@@ -1387,7 +1388,7 @@ function MadUI:CreateWindow(config)
 	-- ── Close / Minimize ───────────────────────────
 
 	closeBtn.MouseButton1Click:Connect(function()
-		local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.88, winH * 0.88), GroupTransparency = 1 })
+		local tw = tween(canvas, Ease.smooth, { Size = UDim2.fromOffset((winW * 0.88) + 8, (winH * 0.88) + 8), GroupTransparency = 1 })
 		tw.Completed:Connect(function() canvas:Destroy(); floatBtn:Destroy() end)
 	end)
 
@@ -1682,7 +1683,8 @@ function MadUI:Notify(nCfg)
 	})
 	
 	local notifBg = make("Frame", {
-		Size                 = UDim2.fromScale(1, 1),
+		Size                 = UDim2.new(1, -4, 1, -4),
+		Position             = UDim2.fromOffset(2, 2),
 		BackgroundColor3     = T.windowBg,
 		BackgroundTransparency = 0.1,
 		ClipsDescendants     = true,
@@ -1697,7 +1699,7 @@ function MadUI:Notify(nCfg)
 		Position             = UDim2.fromOffset(10, 9),
 		BackgroundColor3     = accentCol,
 		ZIndex               = 101,
-		Parent               = notif,
+		Parent               = notifBg,
 	})
 	corner(bar, 2)
 	
@@ -1762,7 +1764,12 @@ function MadUI:Notify(nCfg)
 	})
 	corner(prog, 1)
 
-	tween(notif, Ease.spring, { Size = UDim2.new(1, 0, 0, 66), GroupTransparency = 0 })
+	local height = 64
+	notif.Size = UDim2.new(1, 0, 0, height + 4)
+	layoutNotifs()
+	
+	-- Intro
+	tween(notif, Ease.spring, { GroupTransparency = 0 })
 	tween(prog, Ease.linear(dur), { Size = UDim2.new(0, 0, 0, 2) })
 
 	task.delay(dur, function()
