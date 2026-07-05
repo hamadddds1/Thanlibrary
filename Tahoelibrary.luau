@@ -1436,19 +1436,7 @@ function TahoeUI:CreateWindow(config)
 	})
 	lay(tabScroll, Enum.FillDirection.Vertical, 3)
 
-	-- Branding
-	make("TextLabel", {
-		Size                 = UDim2.new(1, -24, 0, 14),
-		Position             = UDim2.new(0, 16, 1, -26),
-		BackgroundTransparency = 1,
-		Font                 = Enum.Font.Gotham,
-		TextSize             = 10,
-		TextColor3           = T.dim,
-		TextTransparency     = 0.4,
-		TextXAlignment       = Enum.TextXAlignment.Left,
-		Text                 = "TahoeUI",
-		Parent               = sidebar,
-	})
+	-- Branding (Removed for Tag support)
 
 	-- ── Content Area ───────────────────────────────
 
@@ -1718,6 +1706,172 @@ function TahoeUI:CreateWindow(config)
 	end
 
 	-- ── Window API ─────────────────────────────────
+
+	local activeTag
+	function Window:Tag(cfg)
+		if activeTag then activeTag:Destroy() end
+		
+		activeTag = make("Frame", {
+			Size = UDim2.fromOffset(0, 26),
+			Position = UDim2.new(0, 16, 1, -38),
+			BackgroundColor3 = cfg.Color or T.accent,
+			Parent = sidebar
+		})
+		corner(activeTag, cfg.Radius ~= nil and cfg.Radius or 100)
+		activeTag.AutomaticSize = Enum.AutomaticSize.X
+		
+		local padFrm = make("Frame", {
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0,0,1,0),
+			AutomaticSize = Enum.AutomaticSize.X,
+			Parent = activeTag
+		})
+		local innerLay = lay(padFrm, Enum.FillDirection.Horizontal, 6)
+		innerLay.VerticalAlignment = Enum.VerticalAlignment.Center
+		pad(padFrm, 0, 0, 10, 10)
+		
+		local ctext = Color3.new(0,0,0)
+		
+		if cfg.Icon then
+			local ic = IconsAPI:Render(padFrm, cfg.Icon, 14, ctext)
+			if ic then ic.LayoutOrder = 1 end
+		end
+		
+		if cfg.Title then
+			make("TextLabel", {
+				BackgroundTransparency = 1,
+				AutomaticSize = Enum.AutomaticSize.XY,
+				Font = Enum.Font.GothamBold,
+				TextSize = 11,
+				TextColor3 = ctext,
+				Text = cfg.Title,
+				LayoutOrder = 2,
+				Parent = padFrm
+			})
+		end
+	end
+
+	function Window:Popup(cfg)
+		local popupBackdrop = make("TextButton", {
+			Size = UDim2.fromScale(1, 1),
+			BackgroundColor3 = T.surface,
+			BackgroundTransparency = 1,
+			Text = "",
+			AutoButtonColor = false,
+			ZIndex = 100,
+			Parent = screenGui
+		})
+		
+		local modal = make("Frame", {
+			Size = UDim2.fromOffset(360, 140),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
+			BackgroundColor3 = T.elevated,
+			BackgroundTransparency = 0.05,
+			ZIndex = 101,
+			ClipsDescendants = true,
+			Parent = popupBackdrop
+		})
+		local uis = make("UIScale", { Scale = 0.8, Parent = modal })
+		corner(modal, 12)
+		stroke(modal, T.border, 0.5, 1)
+		
+		tween(popupBackdrop, Ease.quick, { BackgroundTransparency = 0.4 })
+		tween(uis, Ease.bounce, { Scale = 1 })
+		
+		local closePopup = function()
+			tween(popupBackdrop, Ease.quick, { BackgroundTransparency = 1 })
+			tween(uis, Ease.quick, { Scale = 0.8 })
+			task.delay(0.2, function() popupBackdrop:Destroy() end)
+		end
+		
+		local hdr = make("Frame", {
+			Size = UDim2.new(1, 0, 0, 40),
+			BackgroundTransparency = 1,
+			ZIndex = 102,
+			Parent = modal
+		})
+		
+		local iconSize = 0
+		if cfg.Icon then
+			iconSize = 24
+			local ic = IconsAPI:Render(hdr, cfg.Icon, 18, T.dim)
+			if ic then
+				ic.AnchorPoint = Vector2.new(0, 0.5)
+				ic.Position = UDim2.new(0, 16, 0.5, 0)
+				ic.ZIndex = 102
+			end
+		end
+		
+		make("TextLabel", {
+			Size = UDim2.new(1, -(32 + iconSize), 1, 0),
+			Position = UDim2.fromOffset(16 + iconSize + (iconSize > 0 and 6 or 0), 0),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamBold,
+			TextSize = 14,
+			TextColor3 = T.text,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Text = cfg.Title or "Popup",
+			ZIndex = 102,
+			Parent = hdr
+		})
+		
+		local content = make("TextLabel", {
+			Size = UDim2.new(1, -32, 1, -94),
+			Position = UDim2.fromOffset(16, 44),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.Gotham,
+			TextSize = 12,
+			TextColor3 = T.sub,
+			TextWrapped = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+			Text = cfg.Content or "",
+			ZIndex = 102,
+			Parent = modal
+		})
+		
+		local btnArea = make("Frame", {
+			Size = UDim2.new(1, -32, 0, 32),
+			Position = UDim2.new(0, 16, 1, -44),
+			BackgroundTransparency = 1,
+			ZIndex = 102,
+			Parent = modal
+		})
+		local btnLay = lay(btnArea, Enum.FillDirection.Horizontal, 8)
+		btnLay.HorizontalAlignment = Enum.HorizontalAlignment.Right
+		
+		if cfg.Buttons then
+			for _, bCfg in cfg.Buttons do
+				local btn = make("TextButton", {
+					Size = UDim2.fromOffset(90, 32),
+					BackgroundColor3 = bCfg.Color or T.hover,
+					BackgroundTransparency = bCfg.Color and 0.4 or 0.15,
+					Font = Enum.Font.GothamMedium,
+					TextSize = 12,
+					TextColor3 = bCfg.Color and Color3.new(0,0,0) or T.text,
+					Text = bCfg.Name or "Button",
+					AutoButtonColor = false,
+					ZIndex = 103,
+					Parent = btnArea
+				})
+				corner(btn, 8)
+				if not bCfg.Color then stroke(btn, T.border, 0.5, 1) end
+				
+				btn.MouseEnter:Connect(function() tween(btn, Ease.quick, { BackgroundTransparency = bCfg.Color and 0.2 or 0.05 }) end)
+				btn.MouseLeave:Connect(function() tween(btn, Ease.quick, { BackgroundTransparency = bCfg.Color and 0.4 or 0.15 }) end)
+				
+				btn.MouseButton1Click:Connect(function()
+					closePopup()
+					if bCfg.Callback then task.spawn(bCfg.Callback) end
+				end)
+			end
+		end
+		
+		local bH = content.TextBounds.Y
+		local totalH = 44 + bH + 8 + 44
+		modal.Size = UDim2.fromOffset(360, math.max(140, totalH))
+	end
 
 	function Window:CTab(cfg)
 		return createTabCore(tabScroll, cfg)
