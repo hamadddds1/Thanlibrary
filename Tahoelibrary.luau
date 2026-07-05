@@ -335,7 +335,7 @@ local function initGui()
 	screenGui = make("ScreenGui", {
 		Name             = "TahoeUI",
 		DisplayOrder     = 9999,
-		ZIndexBehavior   = Enum.ZIndexBehavior.Global,
+		ZIndexBehavior   = Enum.ZIndexBehavior.Sibling,
 		ResetOnSpawn     = false,
 		IgnoreGuiInset   = true,
 	})
@@ -397,18 +397,9 @@ local function createRow(parent, cfg, order)
 		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
 	end)
 
-	local textContainer = make("Frame", {
-		Name                   = "TextContainer",
-		Size                   = UDim2.new(1, -120, 1, 0),
-		Position               = UDim2.fromOffset(14, 0),
-		BackgroundTransparency = 1,
-		Parent                 = row,
-	})
-
 	make("TextLabel", {
-		Name                 = "NameLabel",
-		Size                 = UDim2.new(1, 0, 0, 18),
-		Position             = UDim2.fromOffset(0, hasDesc and 10 or 12),
+		Size                 = UDim2.new(0.42, 0, 0, 18),
+		Position             = UDim2.fromOffset(14, hasDesc and 10 or 12),
 		BackgroundTransparency = 1,
 		Font                 = Enum.Font.GothamMedium,
 		TextSize             = 13,
@@ -417,14 +408,13 @@ local function createRow(parent, cfg, order)
 		TextYAlignment       = Enum.TextYAlignment.Top,
 		TextTruncate         = Enum.TextTruncate.AtEnd,
 		Text                 = cfg.Name or "",
-		Parent               = textContainer,
+		Parent               = row,
 	})
 
 	if hasDesc then
 		make("TextLabel", {
-			Name                 = "DescLabel",
-			Size                 = UDim2.new(1, 0, 0, 14),
-			Position             = UDim2.fromOffset(0, 26),
+			Size                 = UDim2.new(0.50, 0, 0, 14),
+			Position             = UDim2.fromOffset(14, 26),
 			BackgroundTransparency = 1,
 			Font                 = Enum.Font.Gotham,
 			TextSize             = 11,
@@ -433,7 +423,7 @@ local function createRow(parent, cfg, order)
 			TextYAlignment       = Enum.TextYAlignment.Top,
 			TextTruncate         = Enum.TextTruncate.AtEnd,
 			Text                 = cfg.Description,
-			Parent               = textContainer,
+			Parent               = row,
 		})
 	end
 
@@ -569,9 +559,7 @@ local function _button(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
 	local locked = false
 	local originalName = cfg.Name or ""
-	local textCont = row:FindFirstChild("TextContainer")
-	if textCont then textCont.Size = UDim2.new(1, -40, 1, 0) end
-	local nameLabel = textCont and textCont:FindFirstChild("NameLabel")
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	make("TextLabel", {
 		Size                 = UDim2.fromOffset(16, 18),
@@ -623,9 +611,7 @@ local function _toggle(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
 	local locked = false
 	local originalName = cfg.Name or ""
-	local textCont = row:FindFirstChild("TextContainer")
-	if textCont then textCont.Size = UDim2.new(1, -70, 1, 0) end
-	local nameLabel = textCont and textCont:FindFirstChild("NameLabel")
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	-- Track (pill)
 	local track = make("Frame", {
@@ -741,9 +727,7 @@ local function _slider(scroll, order, cfg)
 	row.Size = UDim2.new(1, 0, 0, hasDesc and 66 or 52)
 	local locked = false
 	local originalName = cfg.Name or ""
-	local textCont = row:FindFirstChild("TextContainer")
-	if textCont then textCont.Size = UDim2.new(1, -70, 1, 0) end
-	local nameLabel = textCont and textCont:FindFirstChild("NameLabel")
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local valLbl = make("TextLabel", {
 		Size                 = UDim2.fromOffset(52, 16),
@@ -851,9 +835,7 @@ local function _dropdown(scroll, order, cfg)
 	end
 	local locked = false
 	local originalName = cfg.Name or ""
-	local textCont = row:FindFirstChild("TextContainer")
-	if textCont then textCont.Size = UDim2.new(0.5, 0, 1, 0) end
-	local nameLabel = textCont and textCont:FindFirstChild("NameLabel")
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local dropBtn = make("TextButton", {
 		Size                 = UDim2.new(0.48, 0, 0, 24),
@@ -1081,9 +1063,7 @@ local function _input(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
 	local locked = false
 	local originalName = cfg.Name or ""
-	local textCont = row:FindFirstChild("TextContainer")
-	if textCont then textCont.Size = UDim2.new(0.5, 0, 1, 0) end
-	local nameLabel = textCont and textCont:FindFirstChild("NameLabel")
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local box = make("TextBox", {
 		Size                 = UDim2.new(0.48, 0, 0, 24),
@@ -1140,9 +1120,7 @@ local function _keybind(scroll, order, cfg)
 	local binding    = false
 	local locked = false
 	local originalName = cfg.Name or ""
-	local textCont = row:FindFirstChild("TextContainer")
-	if textCont then textCont.Size = UDim2.new(1, -110, 1, 0) end
-	local nameLabel = textCont and textCont:FindFirstChild("NameLabel")
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local keyBtn = make("TextButton", {
 		Size                 = UDim2.fromOffset(82, 24),
