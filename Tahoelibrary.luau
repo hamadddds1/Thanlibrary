@@ -1474,22 +1474,61 @@ function TahoeUI:CreateWindow(config)
 		end
 	end)
 
+	local resizing, resDragStart, resStartSize = false, Vector3.zero, UDim2.new()
+	
+	local resizeHandle = make("TextButton", {
+		Size = UDim2.fromOffset(24, 24),
+		AnchorPoint = Vector2.new(1, 1),
+		Position = UDim2.new(1, -2, 1, -2),
+		BackgroundTransparency = 1,
+		Text = "",
+		ZIndex = 10,
+		Parent = frame,
+	})
+	local resIcon = IconsAPI:Render(resizeHandle, "scaling", 16, T.sub) or IconsAPI:Render(resizeHandle, "arrow-down-right", 16, T.sub)
+	if resIcon then
+		resIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+		resIcon.Position = UDim2.fromScale(0.5, 0.5)
+	end
+	
+	resizeHandle.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			resizing = true
+			resDragStart = input.Position
+			resStartSize = windowContainer.Size
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then resizing = false end
+			end)
+		end
+	end)
+
 	local lastRot = 0
 	table.insert(conns, UserInput.InputChanged:Connect(function(input)
-		if not dragging then return end
-		if input.UserInputType ~= Enum.UserInputType.MouseMovement
-			and input.UserInputType ~= Enum.UserInputType.Touch then return end
-		local d = input.Position - dragStart
+		if dragging then
+			if input.UserInputType ~= Enum.UserInputType.MouseMovement
+				and input.UserInputType ~= Enum.UserInputType.Touch then return end
+			local d = input.Position - dragStart
+			
+			local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+			tween(windowContainer, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = targetPos })
+			
+			local deltaX = input.Delta.X
+			local targetRot = math.clamp(deltaX * 0.15, -1.5, 1.5)
+			lastRot = lastRot + (targetRot - lastRot) * 0.3
+			tween(windowContainer, TweenInfo.new(0.1), { Rotation = lastRot })
+			return
+		end
 		
-		-- Smooth position tween
-		local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
-		tween(windowContainer, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = targetPos })
-		
-		-- Tilt effect based on drag velocity
-		local deltaX = input.Delta.X
-		local targetRot = math.clamp(deltaX * 0.15, -1.5, 1.5)
-		lastRot = lastRot + (targetRot - lastRot) * 0.3
-		tween(windowContainer, TweenInfo.new(0.1), { Rotation = lastRot })
+		if resizing then
+			if input.UserInputType ~= Enum.UserInputType.MouseMovement
+				and input.UserInputType ~= Enum.UserInputType.Touch then return end
+			local d = input.Position - resDragStart
+			local newW = math.clamp(resStartSize.X.Offset + d.X, 400, 1600)
+			local newH = math.clamp(resStartSize.Y.Offset + d.Y, 300, 1200)
+			
+			tween(windowContainer, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromOffset(newW, newH) })
+			return
+		end
 	end))
 
 	-- ── Open Animation ─────────────────────────────
