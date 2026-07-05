@@ -902,6 +902,7 @@ local function _dropdown(scroll, order, cfg)
 		BorderSizePixel      = 0,
 		CanvasSize           = UDim2.new(0, 0, 0, 0),
 		AutomaticCanvasSize  = Enum.AutomaticSize.Y,
+		Active               = true,
 		LayoutOrder          = 1,
 		Parent               = popup,
 	})
@@ -1361,8 +1362,8 @@ function TahoeUI:CreateWindow(config)
 		local vp = cam.ViewportSize
 		-- If resolution is small (mobile), scale down appropriately
 		if vp.X < 1000 or vp.Y < 700 then
-			local sX = math.clamp(vp.X / 1100, 0.4, 1)
-			local sY = math.clamp(vp.Y / 750, 0.4, 1)
+			local sX = math.clamp(vp.X / 1100, 0.75, 1)
+			local sY = math.clamp(vp.Y / 750, 0.75, 1)
 			local finalScale = math.min(sX, sY)
 			uiScale.Scale = finalScale
 			if floatScale then floatScale.Scale = finalScale end
@@ -1560,6 +1561,7 @@ function TahoeUI:CreateWindow(config)
 		ScrollBarThickness   = 0,
 		CanvasSize           = UDim2.new(0, 0, 0, 0),
 		AutomaticCanvasSize  = Enum.AutomaticSize.Y,
+		Active               = true,
 		Parent               = sidebar,
 	})
 	lay(tabScroll, Enum.FillDirection.Vertical, 3)
@@ -1802,6 +1804,7 @@ function TahoeUI:CreateWindow(config)
 			TopImage             = "rbxasset://textures/ui/Scroll/scroll-middle.png",
 			MidImage             = "rbxasset://textures/ui/Scroll/scroll-middle.png",
 			BottomImage          = "rbxasset://textures/ui/Scroll/scroll-middle.png",
+			Active               = true,
 			Parent               = page,
 		})
 		pad(scr, 0, 14, 20, 20)
