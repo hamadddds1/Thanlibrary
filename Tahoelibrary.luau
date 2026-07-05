@@ -724,7 +724,7 @@ local function _slider(scroll, order, cfg)
 	local hasDesc = cfg.Description and #cfg.Description > 0
 
 	local row = createRow(scroll, cfg, order)
-	row.Size = UDim2.new(1, 0, 0, hasDesc and 60 or 48)
+	row.Size = UDim2.new(1, 0, 0, hasDesc and 66 or 52)
 	local locked = false
 	local originalName = cfg.Name or ""
 	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
@@ -1374,11 +1374,11 @@ function TahoeUI:CreateWindow(config)
 	end
 	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(UpdateUIScale)
 	
-	-- Canvas (For clipping)
-	local canvas = make("Frame", {
+	-- Canvas (For clipping and rounded corners)
+	local canvas = make("CanvasGroup", {
 		Size                 = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
-		ClipsDescendants     = true,
+		GroupTransparency    = 0,
 		BorderSizePixel      = 0,
 		Parent               = windowContainer,
 	})
@@ -1583,9 +1583,10 @@ function TahoeUI:CreateWindow(config)
 	local dragging, dragStart, startPos = false, Vector3.zero, UDim2.new()
 
 	local dragZone = make("Frame", {
-		Size                 = UDim2.new(1, 0, 0, 40),
+		Size                 = UDim2.new(1, -sideW - 1, 0, 40),
 		Position             = UDim2.fromOffset(sideW + 1, 0),
 		BackgroundTransparency = 1,
+		Active               = true,
 		Parent               = frame,
 	})
 
@@ -1664,9 +1665,10 @@ function TahoeUI:CreateWindow(config)
 	-- ── Open Animation ─────────────────────────────
 
 	windowContainer.Size = UDim2.fromOffset(winW * 0.91, winH * 0.91)
-	windowContainer.Position = UDim2.fromScale(0.5, 0.48)
+	canvas.GroupTransparency = 1
 	task.defer(function()
-		tween(windowContainer, Ease.spring, { Size = UDim2.fromOffset(winW, winH), Position = UDim2.fromScale(0.5, 0.5) })
+		tween(windowContainer, Ease.spring, { Size = UDim2.fromOffset(winW, winH) })
+		tween(canvas, Ease.spring, { GroupTransparency = 0 })
 		tween(mainStroke, Ease.spring, { Transparency = 0.84 })
 	end)
 
@@ -1681,6 +1683,7 @@ function TahoeUI:CreateWindow(config)
 		
 		if visible then
 			windowContainer.Visible = true
+			canvas.GroupTransparency = 0
 			tween(windowContainer, Ease.bounce, { Position = savedWinPos })
 			
 			tween(floatBtn, Ease.smooth, { Position = UDim2.new(1, 60, 0.5, 0), BackgroundTransparency = 1 })
@@ -1690,6 +1693,7 @@ function TahoeUI:CreateWindow(config)
 		else
 			savedWinPos = windowContainer.Position
 			local tw = tween(windowContainer, Ease.quick, { Position = UDim2.new(1, winW * 1.5, savedWinPos.Y.Scale, savedWinPos.Y.Offset) })
+			tween(canvas, Ease.quick, { GroupTransparency = 0.5 })
 			tw.Completed:Connect(function() if not visible then windowContainer.Visible = false end end)
 			
 			floatBtn.Visible = true
@@ -1713,6 +1717,7 @@ function TahoeUI:CreateWindow(config)
 
 	closeBtn.MouseButton1Click:Connect(function()
 		local tw = tween(windowContainer, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.88, winH * 0.88) })
+		tween(canvas, Ease.smooth, { GroupTransparency = 1 })
 		tween(mainStroke, Ease.smooth, { Transparency = 1 })
 		tw.Completed:Connect(function() windowContainer:Destroy(); floatBtn:Destroy() end)
 	end)
@@ -1768,10 +1773,10 @@ function TahoeUI:CreateWindow(config)
 		})
 
 		-- Content page
-		local page = make("Frame", {
+		local page = make("CanvasGroup", {
 			Size                 = UDim2.fromScale(1, 1),
 			BackgroundTransparency = 1,
-			ClipsDescendants     = true,
+			GroupTransparency    = 1,
 			Visible              = false,
 			Parent               = contentArea,
 		})
@@ -1818,6 +1823,7 @@ function TahoeUI:CreateWindow(config)
 			if currentPage and currentPage.page ~= page then
 				local old = currentPage
 				tween(old.page, Ease.smooth, {
+					GroupTransparency = 1,
 					Position = UDim2.fromOffset(-slide * dir, 0),
 				})
 				tween(old.btn, Ease.quick, { BackgroundTransparency = 1 })
@@ -1840,7 +1846,8 @@ function TahoeUI:CreateWindow(config)
 
 			page.Position         = UDim2.fromOffset(slide * dir, 0)
 			page.Visible          = true
-			tween(page, Ease.smooth, { Position = UDim2.fromOffset(0, 0) })
+			page.GroupTransparency = 1
+			tween(page, Ease.smooth, { GroupTransparency = 0, Position = UDim2.fromOffset(0, 0) })
 			tween(tabBtn, Ease.smooth, { BackgroundTransparency = 0.82 })
 			tween(tabLabel, Ease.smooth, { TextColor3 = T.text })
 			if iconEl then
