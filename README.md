@@ -15,6 +15,10 @@ TahoeUI is a state-of-the-art UI library designed for modern Roblox script execu
 - 🎨 **5 Premium Themes**: `Dark`, `Transparent`, `Midnight`, `Rose`, `Ocean`.
 - 🧊 **Liquid Glass Aesthetics**: Advanced `CanvasGroup` clipping, precise corner radii, and drop-shadow styling.
 - ⚡ **Buttery Smooth Animations**: Every component uses custom spring-driven physics for interactions.
+- 📐 **Dynamic Window**: Supports elegant slide-to-side minimizing (ToggleKey/Minimize button) and draggable corner resizing.
+- 🔒 **Component Locking**: Beautiful frosted-glass overlay for locking/unlocking components dynamically.
+- 🏷️ **Sidebar Tags**: Display versioning or status using multiple customizable tags.
+- 💬 **Modal Popups**: Built-in popup system for confirmations or important alerts.
 - 📂 **Nested Layouts**: Supports `TabSections` (collapsible sidebars) and nested content `Sections`.
 - 🔔 **Built-in Notification System**: Elegant, stacking toast notifications.
 - 💎 **Lucide Icons API**: Effortlessly integrate any Lucide-compatible icon natively.
@@ -40,6 +44,43 @@ local Window = TahoeUI:CreateWindow({
     Theme     = "Transparent", -- Dark, Transparent, Midnight, Rose, Ocean
     Size      = UDim2.fromOffset(580, 400), -- Optional
     ToggleKey = Enum.KeyCode.RightControl -- Key to show/hide UI
+})
+```
+
+### 3. Adding Sidebar Tags
+You can add elegant, customizable tags to the bottom-left of the sidebar. They stack automatically!
+
+```lua
+local Tag1 = Window:Tag({
+    Title = "v2.0",
+    Color = Color3.fromHex("#facc15"), 
+    Radius = 100
+})
+
+-- You can destroy them later:
+-- Tag1:Destroy()
+```
+
+### 4. Spawning Popups
+TahoeUI provides a built-in Modal Popup system for confirmations or alerts.
+
+```lua
+Window:Popup({
+    Title = "Warning",
+    Content = "Are you sure you want to delete this configuration?",
+    Icon = "alert-triangle",
+    Buttons = {
+        {
+            Name = "Cancel",
+            Type = "Secondary",
+            Callback = function() print("Cancelled") end
+        },
+        {
+            Name = "Delete",
+            Type = "Danger",
+            Callback = function() print("Deleted!") end
+        }
+    }
 })
 ```
 
@@ -86,6 +127,14 @@ local F = T:CSection({ Name = "Main Features", Icon = "sword" })
 ### 🧩 Components
 
 All components can be created inside a `Tab` or a `Section`.
+
+> **🔒 Component Locking**
+> Every interactive component (`Toggle`, `Slider`, `Dropdown`, `Input`, `Keybind`, `Button`) supports `.Lock(reason)` and `.Unlock()`. This adds a beautiful frosted-glass overlay with a padlock icon, disabling interaction until unlocked!
+> ```lua
+> local myBtn = F:CButton({ Name = "VIP Feature", Callback = function() end })
+> myBtn:Lock("Requires VIP") -- Locks the button
+> -- myBtn:Unlock() -- Unlocks it
+> ```
 
 #### Toggle
 ```lua
