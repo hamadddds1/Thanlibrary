@@ -322,7 +322,7 @@ end
 
 -- ── Library State ───────────────────────────────────
 
-local TahoeUI         = { Icons = IconsAPI }
+local TahoeUI         = { Icons = IconsAPI, Flags = {} }
 local screenGui     = nil
 local dropBackdrop  = nil
 local notifHolder   = nil
@@ -501,6 +501,9 @@ end
 
 local function _button(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
+	local locked = false
+	local originalName = cfg.Name or ""
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	make("TextLabel", {
 		Size                 = UDim2.fromOffset(16, 18),
@@ -523,6 +526,7 @@ local function _button(scroll, order, cfg)
 	})
 
 	click.MouseButton1Click:Connect(function()
+		if locked then return end
 		tween(row, Ease.quick, { BackgroundTransparency = 0.06 })
 		task.delay(0.1, function()
 			tween(row, Ease.smooth, { BackgroundTransparency = 0.45 })
@@ -531,12 +535,27 @@ local function _button(scroll, order, cfg)
 	end)
 
 	local obj = {}
+	function obj:Lock(reason)
+		locked = true
+		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
+		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+	end
+	function obj:Unlock()
+		locked = false
+		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
+		if nameLabel then nameLabel.Text = originalName end
+	end
 	function obj:Destroy() row:Destroy() end
+	
+	if cfg.Name then TahoeUI.Flags[cfg.Name] = obj end
 	return obj
 end
 
 local function _toggle(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
+	local locked = false
+	local originalName = cfg.Name or ""
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	-- Track (pill)
 	local track = make("Frame", {
@@ -619,14 +638,27 @@ local function _toggle(scroll, order, cfg)
 	})
 
 	click.MouseButton1Click:Connect(function()
+		if locked then return end
 		refresh(not toggled, true)
 		if cfg.Callback then task.spawn(cfg.Callback, toggled) end
 	end)
 
 	local obj = {}
+	function obj:Lock(reason)
+		locked = true
+		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
+		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+	end
+	function obj:Unlock()
+		locked = false
+		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
+		if nameLabel then nameLabel.Text = originalName end
+	end
 	function obj:Set(v) refresh(v, true); if cfg.Callback then task.spawn(cfg.Callback, toggled) end end
 	function obj:Get() return toggled end
 	function obj:Destroy() row:Destroy() end
+	
+	if cfg.Name then TahoeUI.Flags[cfg.Name] = obj end
 	return obj
 end
 
@@ -639,6 +671,9 @@ local function _slider(scroll, order, cfg)
 
 	local row = createRow(scroll, cfg, order)
 	row.Size = UDim2.new(1, 0, 0, hasDesc and 62 or 52)
+	local locked = false
+	local originalName = cfg.Name or ""
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local valLbl = make("TextLabel", {
 		Size                 = UDim2.fromOffset(52, 16),
@@ -698,16 +733,18 @@ local function _slider(scroll, order, cfg)
 	update((def - mn) / (mx - mn), false)
 
 	trackFrame.InputBegan:Connect(function(input)
+		if locked then return end
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			sliding = true
 			update(math.clamp((input.Position.X - trackFrame.AbsolutePosition.X) / trackFrame.AbsoluteSize.X, 0, 1), true)
 		end
 	end)
 	knob.InputBegan:Connect(function(input)
+		if locked then return end
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then sliding = true end
 	end)
 	table.insert(conns, UserInput.InputChanged:Connect(function(input)
-		if not sliding then return end
+		if not sliding or locked then return end
 		if input.UserInputType ~= Enum.UserInputType.MouseMovement then return end
 		update(math.clamp((input.Position.X - trackFrame.AbsolutePosition.X) / trackFrame.AbsoluteSize.X, 0, 1), true)
 	end))
@@ -716,9 +753,22 @@ local function _slider(scroll, order, cfg)
 	end))
 
 	local obj = {}
+	function obj:Lock(reason)
+		locked = true
+		sliding = false
+		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
+		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+	end
+	function obj:Unlock()
+		locked = false
+		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
+		if nameLabel then nameLabel.Text = originalName end
+	end
 	function obj:Set(v) value = math.clamp(v, mn, mx); update((value - mn) / (mx - mn), false) end
 	function obj:Get() return value end
 	function obj:Destroy() row:Destroy() end
+	
+	if cfg.Name then TahoeUI.Flags[cfg.Name] = obj end
 	return obj
 end
 
@@ -726,6 +776,9 @@ local function _dropdown(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
 	local options  = cfg.Options or {}
 	local selected = cfg.Default or options[1] or ""
+	local locked = false
+	local originalName = cfg.Name or ""
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local dropBtn = make("TextButton", {
 		Size                 = UDim2.new(0.42, 0, 0, 24),
@@ -822,6 +875,7 @@ local function _dropdown(scroll, order, cfg)
 	end
 
 	dropBtn.MouseButton1Click:Connect(function()
+		if locked then return end
 		if isOpen then
 			closeFn()
 		else
@@ -832,15 +886,31 @@ local function _dropdown(scroll, order, cfg)
 	end)
 
 	local obj = {}
+	function obj:Lock(reason)
+		locked = true
+		if isOpen then closeFn() end
+		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
+		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+	end
+	function obj:Unlock()
+		locked = false
+		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
+		if nameLabel then nameLabel.Text = originalName end
+	end
 	function obj:Set(v) selected = v; dropBtn.Text = v; if cfg.Callback then task.spawn(cfg.Callback, v) end end
 	function obj:Refresh(n) options = n; if not table.find(options, selected) then selected = options[1] or ""; dropBtn.Text = selected end end
 	function obj:Get() return selected end
 	function obj:Destroy() popup:Destroy(); row:Destroy() end
+	
+	if cfg.Name then TahoeUI.Flags[cfg.Name] = obj end
 	return obj
 end
 
 local function _input(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
+	local locked = false
+	local originalName = cfg.Name or ""
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local box = make("TextBox", {
 		Size                 = UDim2.new(0.42, 0, 0, 24),
@@ -863,6 +933,7 @@ local function _input(scroll, order, cfg)
 	pad(box, 0, 0, 8, 8)
 
 	box.Focused:Connect(function()
+		if locked then box:ReleaseFocus(); return end
 		tween(bxStroke, Ease.quick, { Color = T.accent, Transparency = 0.12 })
 	end)
 	box.FocusLost:Connect(function(enter)
@@ -871,9 +942,23 @@ local function _input(scroll, order, cfg)
 	end)
 
 	local obj = {}
+	function obj:Lock(reason)
+		locked = true
+		box.TextEditable = false
+		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
+		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+	end
+	function obj:Unlock()
+		locked = false
+		box.TextEditable = true
+		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
+		if nameLabel then nameLabel.Text = originalName end
+	end
 	function obj:Set(v) box.Text = v end
 	function obj:Get() return box.Text end
 	function obj:Destroy() row:Destroy() end
+	
+	if cfg.Name then TahoeUI.Flags[cfg.Name] = obj end
 	return obj
 end
 
@@ -881,6 +966,9 @@ local function _keybind(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
 	local currentKey = cfg.Default
 	local binding    = false
+	local locked = false
+	local originalName = cfg.Name or ""
+	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local keyBtn = make("TextButton", {
 		Size                 = UDim2.fromOffset(82, 24),
@@ -899,6 +987,7 @@ local function _keybind(scroll, order, cfg)
 	stroke(keyBtn, T.border, 0.55, 1)
 
 	keyBtn.MouseButton1Click:Connect(function()
+		if locked then return end
 		if binding then return end
 		binding = true
 		keyBtn.Text = "..."
@@ -921,6 +1010,7 @@ local function _keybind(scroll, order, cfg)
 	end)
 
 	table.insert(conns, UserInput.InputBegan:Connect(function(input, gpe)
+		if locked then return end
 		if gpe or binding then return end
 		if currentKey and input.KeyCode == currentKey then
 			if cfg.Callback then task.spawn(cfg.Callback, currentKey) end
@@ -928,9 +1018,22 @@ local function _keybind(scroll, order, cfg)
 	end))
 
 	local obj = {}
+	function obj:Lock(reason)
+		locked = true
+		if binding then binding = false; keyBtn.Text = currentKey and currentKey.Name or "None" end
+		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
+		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+	end
+	function obj:Unlock()
+		locked = false
+		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
+		if nameLabel then nameLabel.Text = originalName end
+	end
 	function obj:Set(k) currentKey = k; keyBtn.Text = k and k.Name or "None" end
 	function obj:Get() return currentKey end
 	function obj:Destroy() row:Destroy() end
+	
+	if cfg.Name then TahoeUI.Flags[cfg.Name] = obj end
 	return obj
 end
 
@@ -1827,6 +1930,40 @@ function TahoeUI:Destroy()
 	end
 	table.clear(conns)
 	if screenGui then screenGui:Destroy(); screenGui = nil end
+end
+
+function TahoeUI:SaveConfig(folderName, fileName)
+	if not isfolder(folderName) then makefolder(folderName) end
+	local data = {}
+	for name, obj in TahoeUI.Flags do
+		if obj.Get then
+			local success, value = pcall(function() return obj:Get() end)
+			if success then data[name] = value end
+		end
+	end
+	writefile(folderName .. "/" .. fileName .. ".json", game:GetService("HttpService"):JSONEncode(data))
+	TahoeUI:Notify({ Title = "Config Saved", Content = "Saved config: " .. fileName, Type = "success", Duration = 2 })
+end
+
+function TahoeUI:LoadConfig(folderName, fileName)
+	local path = folderName .. "/" .. fileName .. ".json"
+	if isfile(path) then
+		local ok, decoded = pcall(function()
+			return game:GetService("HttpService"):JSONDecode(readfile(path))
+		end)
+		if ok and type(decoded) == "table" then
+			for name, value in decoded do
+				if TahoeUI.Flags[name] and TahoeUI.Flags[name].Set then
+					pcall(function() TahoeUI.Flags[name]:Set(value) end)
+				end
+			end
+			TahoeUI:Notify({ Title = "Config Loaded", Content = "Loaded config: " .. fileName, Type = "success", Duration = 2 })
+		else
+			TahoeUI:Notify({ Title = "Config Error", Content = "Failed to parse config file.", Type = "error", Duration = 3 })
+		end
+	else
+		TahoeUI:Notify({ Title = "Config Error", Content = "Config file not found.", Type = "error", Duration = 3 })
+	end
 end
 
 return TahoeUI
