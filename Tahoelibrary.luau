@@ -1351,6 +1351,28 @@ function TahoeUI:CreateWindow(config)
 		Parent               = screenGui,
 	})
 
+	-- DPI / Resolution Scaling
+	local uiScale = make("UIScale", { Parent = windowContainer })
+	local floatScale = nil -- will be created after floatBtn
+	
+	local function UpdateUIScale()
+		local cam = workspace.CurrentCamera
+		if not cam then return end
+		local vp = cam.ViewportSize
+		-- If resolution is small (mobile), scale down appropriately
+		if vp.X < 1000 or vp.Y < 700 then
+			local sX = math.clamp(vp.X / 1100, 0.4, 1)
+			local sY = math.clamp(vp.Y / 750, 0.4, 1)
+			local finalScale = math.min(sX, sY)
+			uiScale.Scale = finalScale
+			if floatScale then floatScale.Scale = finalScale end
+		else
+			uiScale.Scale = 1
+			if floatScale then floatScale.Scale = 1 end
+		end
+	end
+	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(UpdateUIScale)
+	
 	-- Canvas (For clipping and GroupTransparency)
 	local canvas = make("CanvasGroup", {
 		Size                 = UDim2.fromScale(1, 1),
@@ -1391,6 +1413,9 @@ function TahoeUI:CreateWindow(config)
 		floatIcon.Position = UDim2.fromScale(0.5, 0.5)
 		floatIcon.ImageTransparency = 1
 	end
+	
+	floatScale = make("UIScale", { Parent = floatBtn })
+	UpdateUIScale()
 	
 	local floatDragging, floatDragStart, floatStartPos = false, Vector3.zero, UDim2.new()
 	floatBtn.InputBegan:Connect(function(input)
