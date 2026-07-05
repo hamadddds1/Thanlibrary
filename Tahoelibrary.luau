@@ -430,6 +430,62 @@ local function createRow(parent, cfg, order)
 	return row
 end
 
+local function applyLockOverlay(row, state, reason)
+	local lockOverlay = row:FindFirstChild("LockOverlay")
+	if state then
+		if not lockOverlay then
+			lockOverlay = make("Frame", {
+				Name = "LockOverlay",
+				Size = UDim2.fromScale(1, 1),
+				BackgroundColor3 = T.windowBg,
+				BackgroundTransparency = 1,
+				ZIndex = 40,
+				Parent = row
+			})
+			corner(lockOverlay, 10)
+			
+			local icon = IconsAPI:Render(lockOverlay, "lock", 16, T.text)
+			if icon then
+				icon.AnchorPoint = Vector2.new(0, 0.5)
+				icon.Position = UDim2.new(0, 16, 0.5, 0)
+				icon.ZIndex = 41
+				icon.ImageTransparency = 1
+			end
+			
+			local lbl = make("TextLabel", {
+				Name = "ReasonLbl",
+				Size = UDim2.new(1, -44, 1, 0),
+				Position = UDim2.fromOffset(40, 0),
+				BackgroundTransparency = 1,
+				Font = Enum.Font.GothamBold,
+				TextSize = 13,
+				TextColor3 = T.text,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Text = "LOCKED" .. (reason and (" - " .. reason) or ""),
+				TextTransparency = 1,
+				ZIndex = 41,
+				Parent = lockOverlay
+			})
+			
+			tween(lockOverlay, Ease.quick, { BackgroundTransparency = 0.25 })
+			if icon then tween(icon, Ease.quick, { ImageTransparency = 0 }) end
+			tween(lbl, Ease.quick, { TextTransparency = 0 })
+		else
+			local lbl = lockOverlay:FindFirstChild("ReasonLbl")
+			if lbl then lbl.Text = "LOCKED" .. (reason and (" - " .. reason) or "") end
+		end
+	else
+		if lockOverlay then
+			tween(lockOverlay, Ease.quick, { BackgroundTransparency = 1 })
+			for _, ch in lockOverlay:GetChildren() do
+				if ch:IsA("ImageLabel") then tween(ch, Ease.quick, { ImageTransparency = 1 }) end
+				if ch:IsA("TextLabel") then tween(ch, Ease.quick, { TextTransparency = 1 }) end
+			end
+			task.delay(0.2, function() lockOverlay:Destroy() end)
+		end
+	end
+end
+
 -- ═══════════════════════════════════════════════════
 -- Component Factories
 -- ═══════════════════════════════════════════════════
@@ -646,13 +702,11 @@ local function _toggle(scroll, order, cfg)
 	local obj = {}
 	function obj:Lock(reason)
 		locked = true
-		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
-		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+		applyLockOverlay(row, true, reason)
 	end
 	function obj:Unlock()
 		locked = false
-		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
-		if nameLabel then nameLabel.Text = originalName end
+		applyLockOverlay(row, false)
 	end
 	function obj:Set(v) refresh(v, true); if cfg.Callback then task.spawn(cfg.Callback, toggled) end end
 	function obj:Get() return toggled end
@@ -756,13 +810,11 @@ local function _slider(scroll, order, cfg)
 	function obj:Lock(reason)
 		locked = true
 		sliding = false
-		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
-		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+		applyLockOverlay(row, true, reason)
 	end
 	function obj:Unlock()
 		locked = false
-		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
-		if nameLabel then nameLabel.Text = originalName end
+		applyLockOverlay(row, false)
 	end
 	function obj:Set(v) value = math.clamp(v, mn, mx); update((value - mn) / (mx - mn), false) end
 	function obj:Get() return value end
@@ -889,13 +941,11 @@ local function _dropdown(scroll, order, cfg)
 	function obj:Lock(reason)
 		locked = true
 		if isOpen then closeFn() end
-		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
-		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+		applyLockOverlay(row, true, reason)
 	end
 	function obj:Unlock()
 		locked = false
-		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
-		if nameLabel then nameLabel.Text = originalName end
+		applyLockOverlay(row, false)
 	end
 	function obj:Set(v) selected = v; dropBtn.Text = v; if cfg.Callback then task.spawn(cfg.Callback, v) end end
 	function obj:Refresh(n) options = n; if not table.find(options, selected) then selected = options[1] or ""; dropBtn.Text = selected end end
@@ -945,14 +995,12 @@ local function _input(scroll, order, cfg)
 	function obj:Lock(reason)
 		locked = true
 		box.TextEditable = false
-		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
-		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+		applyLockOverlay(row, true, reason)
 	end
 	function obj:Unlock()
 		locked = false
 		box.TextEditable = true
-		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
-		if nameLabel then nameLabel.Text = originalName end
+		applyLockOverlay(row, false)
 	end
 	function obj:Set(v) box.Text = v end
 	function obj:Get() return box.Text end
@@ -1021,13 +1069,11 @@ local function _keybind(scroll, order, cfg)
 	function obj:Lock(reason)
 		locked = true
 		if binding then binding = false; keyBtn.Text = currentKey and currentKey.Name or "None" end
-		tween(row, Ease.quick, { BackgroundTransparency = 0.7 })
-		if nameLabel then nameLabel.Text = originalName .. " [LOCKED" .. (reason and ": " .. reason or "") .. "]" end
+		applyLockOverlay(row, true, reason)
 	end
 	function obj:Unlock()
 		locked = false
-		tween(row, Ease.quick, { BackgroundTransparency = 0.45 })
-		if nameLabel then nameLabel.Text = originalName end
+		applyLockOverlay(row, false)
 	end
 	function obj:Set(k) currentKey = k; keyBtn.Text = k and k.Name or "None" end
 	function obj:Get() return currentKey end
