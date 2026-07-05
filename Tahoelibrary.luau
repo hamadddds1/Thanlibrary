@@ -1513,7 +1513,8 @@ function TahoeUI:CreateWindow(config)
 		
 		if visible then
 			windowContainer.Visible = true
-			tween(windowContainer, Ease.bounce, { Position = savedWinPos, GroupTransparency = 0 })
+			tween(windowContainer, Ease.bounce, { Position = savedWinPos })
+			tween(canvas, Ease.bounce, { GroupTransparency = 0 })
 			
 			tween(floatBtn, Ease.smooth, { Position = UDim2.new(1, 60, 0.5, 0), BackgroundTransparency = 1 })
 			tween(fStroke, Ease.smooth, { Transparency = 1 })
@@ -1521,7 +1522,8 @@ function TahoeUI:CreateWindow(config)
 			task.delay(0.2, function() if visible then floatBtn.Visible = false end end)
 		else
 			savedWinPos = windowContainer.Position
-			local tw = tween(windowContainer, Ease.quick, { Position = UDim2.new(1, winW * 1.5, savedWinPos.Y.Scale, savedWinPos.Y.Offset), GroupTransparency = 0.5 })
+			local tw = tween(windowContainer, Ease.quick, { Position = UDim2.new(1, winW * 1.5, savedWinPos.Y.Scale, savedWinPos.Y.Offset) })
+			tween(canvas, Ease.quick, { GroupTransparency = 0.5 })
 			tw.Completed:Connect(function() if not visible then windowContainer.Visible = false end end)
 			
 			floatBtn.Visible = true
