@@ -827,13 +827,18 @@ end
 local function _dropdown(scroll, order, cfg)
 	local row = createRow(scroll, cfg, order)
 	local options  = cfg.Options or {}
-	local selected = cfg.Default or options[1] or ""
+	local selected
+	if cfg.Multi then
+		selected = type(cfg.Default) == "table" and cfg.Default or {}
+	else
+		selected = cfg.Default or options[1] or ""
+	end
 	local locked = false
 	local originalName = cfg.Name or ""
 	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local dropBtn = make("TextButton", {
-		Size                 = UDim2.new(0.42, 0, 0, 24),
+		Size                 = UDim2.new(0.55, 0, 0, 24),
 		Position             = UDim2.new(1, -14, 0.5, 0),
 		AnchorPoint          = Vector2.new(1, 0.5),
 		BackgroundColor3     = T.hover,
@@ -842,7 +847,7 @@ local function _dropdown(scroll, order, cfg)
 		TextSize             = 11,
 		TextColor3           = T.text,
 		TextXAlignment       = Enum.TextXAlignment.Left,
-		Text                 = selected,
+		Text                 = "",
 		AutoButtonColor      = false,
 		ClipsDescendants     = true,
 		TextTruncate         = Enum.TextTruncate.AtEnd,
@@ -869,40 +874,125 @@ local function _dropdown(scroll, order, cfg)
 	corner(popup, 10)
 	stroke(popup, T.border, 0.4, 1)
 	pad(popup, 4, 4, 4, 4)
-	local popLay = lay(popup, Enum.FillDirection.Vertical, 2)
+	local popLay = lay(popup, Enum.FillDirection.Vertical, 4)
+
+	local searchBox = make("TextBox", {
+		Size                 = UDim2.new(1, 0, 0, 26),
+		BackgroundColor3     = T.windowBg,
+		BackgroundTransparency = 0.3,
+		Font                 = Enum.Font.GothamMedium,
+		TextSize             = 11,
+		TextColor3           = T.text,
+		PlaceholderText      = "Search...",
+		PlaceholderColor3    = T.dim,
+		Text                 = "",
+		ClearTextOnFocus     = false,
+		LayoutOrder          = 0,
+		Parent               = popup,
+	})
+	corner(searchBox, 6)
+	stroke(searchBox, T.border, 0.5, 1)
+	pad(searchBox, 0, 0, 8, 8)
+
+	local scrollOpts = make("ScrollingFrame", {
+		Size                 = UDim2.new(1, 0, 0, 0),
+		BackgroundTransparency = 1,
+		ScrollBarThickness   = 2,
+		ScrollBarImageColor3 = T.text,
+		BorderSizePixel      = 0,
+		CanvasSize           = UDim2.new(0, 0, 0, 0),
+		AutomaticCanvasSize  = Enum.AutomaticSize.Y,
+		LayoutOrder          = 1,
+		Parent               = popup,
+	})
+	local soLay = lay(scrollOpts, Enum.FillDirection.Vertical, 2)
 
 	local isOpen  = false
 	local optBtns = {}
 	local closeFn
 
-	local function buildOpts()
+	local function getSelectedText()
+		if type(selected) == "table" then
+			if #selected == 0 then return "None" end
+			if #selected <= 2 then return table.concat(selected, ", ") end
+			return tostring(#selected) .. " Selected"
+		else
+			return selected
+		end
+	end
+	
+	dropBtn.Text = getSelectedText()
+
+	local function isSelected(opt)
+		if type(selected) == "table" then
+			return table.find(selected, opt) ~= nil
+		end
+		return selected == opt
+	end
+
+	local function toggleSelection(opt, ob)
+		if type(selected) == "table" then
+			local idx = table.find(selected, opt)
+			if idx then
+				table.remove(selected, idx)
+				tween(ob, Ease.quick, { TextColor3 = T.text })
+			else
+				table.insert(selected, opt)
+				tween(ob, Ease.quick, { TextColor3 = T.accent })
+			end
+			dropBtn.Text = getSelectedText()
+			if cfg.Callback then task.spawn(cfg.Callback, selected) end
+		else
+			selected = opt
+			dropBtn.Text = getSelectedText()
+			closeFn()
+			if cfg.Callback then task.spawn(cfg.Callback, opt) end
+		end
+	end
+
+	local function buildOpts(filterText)
 		for _, b in optBtns do b:Destroy() end
 		optBtns = {}
+		local count = 0
+		local lowerFilter = filterText and filterText:lower() or ""
+		
 		for i, opt in options do
+			if lowerFilter ~= "" and not string.find(opt:lower(), lowerFilter, 1, true) then continue end
+			count = count + 1
 			local ob = make("TextButton", {
 				Size                 = UDim2.new(1, 0, 0, 26),
 				BackgroundColor3     = T.elevated,
 				BackgroundTransparency = 0.5,
 				Font                 = Enum.Font.GothamMedium,
 				TextSize             = 11,
-				TextColor3           = opt == selected and T.accent or T.text,
+				TextColor3           = isSelected(opt) and T.accent or T.text,
 				Text                 = opt,
 				AutoButtonColor      = false,
 				LayoutOrder          = i,
-				Parent               = popup,
+				Parent               = scrollOpts,
 			})
 			corner(ob, 6)
 			ob.MouseEnter:Connect(function() tween(ob, Ease.quick, { BackgroundTransparency = 0.12 }) end)
 			ob.MouseLeave:Connect(function() tween(ob, Ease.quick, { BackgroundTransparency = 0.5 }) end)
-			ob.MouseButton1Click:Connect(function()
-				selected = opt
-				dropBtn.Text = opt
-				closeFn()
-				if cfg.Callback then task.spawn(cfg.Callback, opt) end
-			end)
+			ob.MouseButton1Click:Connect(function() toggleSelection(opt, ob) end)
 			table.insert(optBtns, ob)
 		end
+		
+		local sh = count * 28 - 2
+		if count == 0 then sh = 0 end
+		local clampedSh = math.min(sh, 4 * 28 - 2)
+		scrollOpts.Size = UDim2.new(1, 0, 0, clampedSh)
+		return clampedSh
 	end
+
+	searchBox.Changed:Connect(function(prop)
+		if prop == "Text" and isOpen then
+			local clampedSh = buildOpts(searchBox.Text)
+			local totalHeight = 4 + 26 + 4 + clampedSh + 4
+			if clampedSh == 0 then totalHeight = 4 + 26 + 4 end
+			tween(popup, Ease.quick, { Size = UDim2.new(0, popup.AbsoluteSize.X, 0, totalHeight) })
+		end
+	end)
 
 	closeFn = function()
 		if not isOpen then return end
@@ -914,14 +1004,16 @@ local function _dropdown(scroll, order, cfg)
 	end
 
 	local function openFn()
-		buildOpts()
+		searchBox.Text = ""
+		local clampedSh = buildOpts("")
 		if chev then tween(chev, Ease.smooth, { Rotation = 180 }) end
 		local ap, as = dropBtn.AbsolutePosition, dropBtn.AbsoluteSize
 		popup.Position = UDim2.fromOffset(ap.X, ap.Y + as.Y + 4)
 		popup.Size     = UDim2.fromOffset(math.max(as.X, 130), 0)
 		popup.Visible  = true
-		local tH = #options * 28 + math.max(#options - 1, 0) * 2 + 8
-		tween(popup, Ease.spring, { Size = UDim2.fromOffset(math.max(as.X, 130), tH) })
+		local totalHeight = 4 + 26 + 4 + clampedSh + 4
+		if clampedSh == 0 then totalHeight = 4 + 26 + 4 end
+		tween(popup, Ease.spring, { Size = UDim2.fromOffset(math.max(as.X, 130), totalHeight) })
 		dropBackdrop.Visible = true
 		isOpen = true
 	end
@@ -947,8 +1039,18 @@ local function _dropdown(scroll, order, cfg)
 		locked = false
 		applyLockOverlay(row, false)
 	end
-	function obj:Set(v) selected = v; dropBtn.Text = v; if cfg.Callback then task.spawn(cfg.Callback, v) end end
-	function obj:Refresh(n) options = n; if not table.find(options, selected) then selected = options[1] or ""; dropBtn.Text = selected end end
+	function obj:Set(v) 
+		selected = v
+		dropBtn.Text = getSelectedText()
+		if cfg.Callback then task.spawn(cfg.Callback, v) end 
+	end
+	function obj:Refresh(n) 
+		options = n
+		if type(selected) ~= "table" and not table.find(options, selected) then 
+			selected = options[1] or ""
+		end
+		dropBtn.Text = getSelectedText() 
+	end
 	function obj:Get() return selected end
 	function obj:Destroy() popup:Destroy(); row:Destroy() end
 	
@@ -963,7 +1065,7 @@ local function _input(scroll, order, cfg)
 	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local box = make("TextBox", {
-		Size                 = UDim2.new(0.42, 0, 0, 24),
+		Size                 = UDim2.new(0.55, 0, 0, 24),
 		Position             = UDim2.new(1, -14, 0.5, 0),
 		AnchorPoint          = Vector2.new(1, 0.5),
 		BackgroundColor3     = T.windowBg,
@@ -976,6 +1078,7 @@ local function _input(scroll, order, cfg)
 		Text                 = cfg.Default or "",
 		ClearTextOnFocus     = false,
 		ClipsDescendants     = true,
+		TextTruncate         = Enum.TextTruncate.AtEnd,
 		Parent               = row,
 	})
 	corner(box, 8)

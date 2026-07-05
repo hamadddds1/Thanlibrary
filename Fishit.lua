@@ -384,10 +384,11 @@ local SelectedWeathers = {}
 
 MiscWeatherSection:CDropdown({
     Name = "Weather",
+    Multi = true,
     Options = AvailableWeathers,
-    Default = AvailableWeathers[1] or "",
+    Default = {},
     Callback = function(selected)
-        SelectedWeathers = {selected}
+        SelectedWeathers = selected
     end
 })
 
