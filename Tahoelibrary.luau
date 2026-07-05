@@ -1707,15 +1707,23 @@ function TahoeUI:CreateWindow(config)
 
 	-- ── Window API ─────────────────────────────────
 
-	local activeTag
+	local tagArea
 	function Window:Tag(cfg)
-		if activeTag then activeTag:Destroy() end
+		if not tagArea then
+			tagArea = make("Frame", {
+				Size = UDim2.new(1, -32, 0, 26),
+				Position = UDim2.new(0, 16, 1, -38),
+				BackgroundTransparency = 1,
+				Parent = sidebar
+			})
+			local tLay = lay(tagArea, Enum.FillDirection.Horizontal, 6)
+			tLay.HorizontalAlignment = Enum.HorizontalAlignment.Left
+		end
 		
-		activeTag = make("Frame", {
+		local activeTag = make("Frame", {
 			Size = UDim2.fromOffset(0, 26),
-			Position = UDim2.new(0, 16, 1, -38),
 			BackgroundColor3 = cfg.Color or T.accent,
-			Parent = sidebar
+			Parent = tagArea
 		})
 		corner(activeTag, cfg.Radius ~= nil and cfg.Radius or 100)
 		activeTag.AutomaticSize = Enum.AutomaticSize.X
@@ -1728,7 +1736,7 @@ function TahoeUI:CreateWindow(config)
 		})
 		local innerLay = lay(padFrm, Enum.FillDirection.Horizontal, 6)
 		innerLay.VerticalAlignment = Enum.VerticalAlignment.Center
-		pad(padFrm, 0, 0, 10, 10)
+		pad(padFrm, 0, 0, 8, 8)
 		
 		local ctext = Color3.new(0,0,0)
 		
@@ -1749,6 +1757,10 @@ function TahoeUI:CreateWindow(config)
 				Parent = padFrm
 			})
 		end
+		
+		local obj = {}
+		function obj:Destroy() activeTag:Destroy() end
+		return obj
 	end
 
 	function Window:Popup(cfg)
