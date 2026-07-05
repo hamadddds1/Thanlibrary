@@ -1271,7 +1271,8 @@ function TahoeUI:CreateWindow(config)
 	-- Floating Toggle Button (For Hide/Show)
 	local floatBtn = make("TextButton", {
 		Size                 = UDim2.fromOffset(46, 46),
-		Position             = UDim2.new(0.5, -23, 0, 20),
+		AnchorPoint          = Vector2.new(1, 0.5),
+		Position             = UDim2.new(1, 60, 0.5, 0),
 		BackgroundColor3     = T.windowBg,
 		BackgroundTransparency = 1,
 		Text                 = "",
@@ -1281,7 +1282,7 @@ function TahoeUI:CreateWindow(config)
 	corner(floatBtn, 23)
 	local fStroke = stroke(floatBtn, T.glass, 1, 1.5)
 
-	local floatIcon = IconsAPI:Render(floatBtn, "layout-dashboard", 22, T.text) or IconsAPI:Render(floatBtn, "monitor", 22, T.text)
+	local floatIcon = IconsAPI:Render(floatBtn, "chevron-left", 24, T.text)
 	if floatIcon then
 		floatIcon.AnchorPoint = Vector2.new(0.5, 0.5)
 		floatIcon.Position = UDim2.fromScale(0.5, 0.5)
@@ -1396,7 +1397,6 @@ function TahoeUI:CreateWindow(config)
 	trafficArea.MouseLeave:Connect(function()
 		for _, l in lights do if l.ic then l.ic.ImageTransparency = 1 end end
 	end)
-
 	-- Title
 	local titleLabel = make("TextLabel", {
 		Size                 = UDim2.new(1, -24, 0, 17),
@@ -1505,28 +1505,28 @@ function TahoeUI:CreateWindow(config)
 	-- ── Toggle Visibility ──────────────────────────
 
 	local visible = true
+	local savedWinPos = UDim2.fromScale(0.5, 0.5)
 	
 	local function setVisibility(state)
+		if visible == state then return end
 		visible = state
+		
 		if visible then
 			windowContainer.Visible = true
-			tween(windowContainer, Ease.spring, { Size = UDim2.fromOffset(winW, winH) })
-			tween(canvas, Ease.spring, { GroupTransparency = 0 })
-			tween(mainStroke, Ease.spring, { Transparency = 0.84 })
+			tween(windowContainer, Ease.bounce, { Position = savedWinPos, GroupTransparency = 0 })
 			
-			tween(floatBtn, Ease.smooth, { BackgroundTransparency = 1, Size = UDim2.fromOffset(30, 30) })
+			tween(floatBtn, Ease.smooth, { Position = UDim2.new(1, 60, 0.5, 0), BackgroundTransparency = 1 })
 			tween(fStroke, Ease.smooth, { Transparency = 1 })
 			if floatIcon then tween(floatIcon, Ease.smooth, { ImageTransparency = 1 }) end
 			task.delay(0.2, function() if visible then floatBtn.Visible = false end end)
 		else
-			local tw = tween(windowContainer, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.94, winH * 0.94) })
-			tween(canvas, Ease.smooth, { GroupTransparency = 1 })
-			tween(mainStroke, Ease.smooth, { Transparency = 1 })
+			savedWinPos = windowContainer.Position
+			local tw = tween(windowContainer, Ease.quick, { Position = UDim2.new(1, winW * 1.5, savedWinPos.Y.Scale, savedWinPos.Y.Offset), GroupTransparency = 0.5 })
 			tw.Completed:Connect(function() if not visible then windowContainer.Visible = false end end)
 			
 			floatBtn.Visible = true
-			floatBtn.Size = UDim2.fromOffset(30, 30)
-			tween(floatBtn, Ease.bounce, { BackgroundTransparency = T.windowTrans, Size = UDim2.fromOffset(46, 46) })
+			floatBtn.Position = UDim2.new(1, 60, 0.5, 0)
+			tween(floatBtn, Ease.bounce, { Position = UDim2.new(1, -16, 0.5, 0), BackgroundTransparency = T.windowTrans })
 			tween(fStroke, Ease.bounce, { Transparency = 0.8 })
 			if floatIcon then tween(floatIcon, Ease.bounce, { ImageTransparency = 0 }) end
 		end
