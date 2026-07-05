@@ -724,7 +724,7 @@ local function _slider(scroll, order, cfg)
 	local hasDesc = cfg.Description and #cfg.Description > 0
 
 	local row = createRow(scroll, cfg, order)
-	row.Size = UDim2.new(1, 0, 0, hasDesc and 62 or 52)
+	row.Size = UDim2.new(1, 0, 0, hasDesc and 60 or 48)
 	local locked = false
 	local originalName = cfg.Name or ""
 	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
@@ -788,22 +788,22 @@ local function _slider(scroll, order, cfg)
 
 	trackFrame.InputBegan:Connect(function(input)
 		if locked then return end
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			sliding = true
 			update(math.clamp((input.Position.X - trackFrame.AbsolutePosition.X) / trackFrame.AbsoluteSize.X, 0, 1), true)
 		end
 	end)
 	knob.InputBegan:Connect(function(input)
 		if locked then return end
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then sliding = true end
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then sliding = true end
 	end)
 	table.insert(conns, UserInput.InputChanged:Connect(function(input)
 		if not sliding or locked then return end
-		if input.UserInputType ~= Enum.UserInputType.MouseMovement then return end
+		if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
 		update(math.clamp((input.Position.X - trackFrame.AbsolutePosition.X) / trackFrame.AbsoluteSize.X, 0, 1), true)
 	end))
 	table.insert(conns, UserInput.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then sliding = false end
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then sliding = false end
 	end))
 
 	local obj = {}
@@ -1374,11 +1374,11 @@ function TahoeUI:CreateWindow(config)
 	end
 	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(UpdateUIScale)
 	
-	-- Canvas (For clipping and GroupTransparency)
-	local canvas = make("CanvasGroup", {
+	-- Canvas (For clipping)
+	local canvas = make("Frame", {
 		Size                 = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
-		GroupTransparency    = 1,
+		ClipsDescendants     = true,
 		BorderSizePixel      = 0,
 		Parent               = windowContainer,
 	})
@@ -1664,10 +1664,9 @@ function TahoeUI:CreateWindow(config)
 	-- ── Open Animation ─────────────────────────────
 
 	windowContainer.Size = UDim2.fromOffset(winW * 0.91, winH * 0.91)
-	canvas.GroupTransparency = 1
+	windowContainer.Position = UDim2.fromScale(0.5, 0.48)
 	task.defer(function()
-		tween(windowContainer, Ease.spring, { Size = UDim2.fromOffset(winW, winH) })
-		tween(canvas, Ease.spring, { GroupTransparency = 0 })
+		tween(windowContainer, Ease.spring, { Size = UDim2.fromOffset(winW, winH), Position = UDim2.fromScale(0.5, 0.5) })
 		tween(mainStroke, Ease.spring, { Transparency = 0.84 })
 	end)
 
@@ -1683,7 +1682,6 @@ function TahoeUI:CreateWindow(config)
 		if visible then
 			windowContainer.Visible = true
 			tween(windowContainer, Ease.bounce, { Position = savedWinPos })
-			tween(canvas, Ease.bounce, { GroupTransparency = 0 })
 			
 			tween(floatBtn, Ease.smooth, { Position = UDim2.new(1, 60, 0.5, 0), BackgroundTransparency = 1 })
 			tween(fStroke, Ease.smooth, { Transparency = 1 })
@@ -1692,7 +1690,6 @@ function TahoeUI:CreateWindow(config)
 		else
 			savedWinPos = windowContainer.Position
 			local tw = tween(windowContainer, Ease.quick, { Position = UDim2.new(1, winW * 1.5, savedWinPos.Y.Scale, savedWinPos.Y.Offset) })
-			tween(canvas, Ease.quick, { GroupTransparency = 0.5 })
 			tw.Completed:Connect(function() if not visible then windowContainer.Visible = false end end)
 			
 			floatBtn.Visible = true
@@ -1716,7 +1713,6 @@ function TahoeUI:CreateWindow(config)
 
 	closeBtn.MouseButton1Click:Connect(function()
 		local tw = tween(windowContainer, Ease.smooth, { Size = UDim2.fromOffset(winW * 0.88, winH * 0.88) })
-		tween(canvas, Ease.smooth, { GroupTransparency = 1 })
 		tween(mainStroke, Ease.smooth, { Transparency = 1 })
 		tw.Completed:Connect(function() windowContainer:Destroy(); floatBtn:Destroy() end)
 	end)
@@ -1772,10 +1768,10 @@ function TahoeUI:CreateWindow(config)
 		})
 
 		-- Content page
-		local page = make("CanvasGroup", {
+		local page = make("Frame", {
 			Size                 = UDim2.fromScale(1, 1),
 			BackgroundTransparency = 1,
-			GroupTransparency    = 1,
+			ClipsDescendants     = true,
 			Visible              = false,
 			Parent               = contentArea,
 		})
@@ -1822,7 +1818,6 @@ function TahoeUI:CreateWindow(config)
 			if currentPage and currentPage.page ~= page then
 				local old = currentPage
 				tween(old.page, Ease.smooth, {
-					GroupTransparency = 1,
 					Position = UDim2.fromOffset(-slide * dir, 0),
 				})
 				tween(old.btn, Ease.quick, { BackgroundTransparency = 1 })
@@ -1845,8 +1840,7 @@ function TahoeUI:CreateWindow(config)
 
 			page.Position         = UDim2.fromOffset(slide * dir, 0)
 			page.Visible          = true
-			page.GroupTransparency = 1
-			tween(page, Ease.smooth, { GroupTransparency = 0, Position = UDim2.fromOffset(0, 0) })
+			tween(page, Ease.smooth, { Position = UDim2.fromOffset(0, 0) })
 			tween(tabBtn, Ease.smooth, { BackgroundTransparency = 0.82 })
 			tween(tabLabel, Ease.smooth, { TextColor3 = T.text })
 			if iconEl then
