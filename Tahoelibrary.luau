@@ -398,7 +398,7 @@ local function createRow(parent, cfg, order)
 	end)
 
 	make("TextLabel", {
-		Size                 = UDim2.new(0.50, 0, 0, 18),
+		Size                 = UDim2.new(0.42, 0, 0, 18),
 		Position             = UDim2.fromOffset(14, hasDesc and 10 or 12),
 		BackgroundTransparency = 1,
 		Font                 = Enum.Font.GothamMedium,
@@ -413,7 +413,7 @@ local function createRow(parent, cfg, order)
 
 	if hasDesc then
 		make("TextLabel", {
-			Size                 = UDim2.new(0.60, 0, 0, 14),
+			Size                 = UDim2.new(0.50, 0, 0, 14),
 			Position             = UDim2.fromOffset(14, 26),
 			BackgroundTransparency = 1,
 			Font                 = Enum.Font.Gotham,
@@ -838,7 +838,7 @@ local function _dropdown(scroll, order, cfg)
 	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local dropBtn = make("TextButton", {
-		Size                 = UDim2.new(0.55, 0, 0, 24),
+		Size                 = UDim2.new(0.48, 0, 0, 24),
 		Position             = UDim2.new(1, -14, 0.5, 0),
 		AnchorPoint          = Vector2.new(1, 0.5),
 		BackgroundColor3     = T.hover,
@@ -1066,7 +1066,7 @@ local function _input(scroll, order, cfg)
 	local nameLabel = row:FindFirstChildWhichIsA("TextLabel")
 
 	local box = make("TextBox", {
-		Size                 = UDim2.new(0.55, 0, 0, 24),
+		Size                 = UDim2.new(0.48, 0, 0, 24),
 		Position             = UDim2.new(1, -14, 0.5, 0),
 		AnchorPoint          = Vector2.new(1, 0.5),
 		BackgroundColor3     = T.windowBg,
