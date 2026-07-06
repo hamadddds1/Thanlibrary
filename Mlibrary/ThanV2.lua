@@ -692,26 +692,36 @@ function Chloex:Window(GuiConfig)
 
     local SearchBox = Instance.new("TextBox")
     local SearchUICorner = Instance.new("UICorner")
-    local SearchUIStroke = Instance.new("UIStroke")
+    
+    local SearchIcon = Instance.new("ImageLabel")
+    SearchIcon.Name = "SearchIcon"
+    SearchIcon.Parent = SearchBox
+    SearchIcon.BackgroundTransparency = 1
+    SearchIcon.Position = UDim2.new(0, 8, 0.5, -7)
+    SearchIcon.Size = UDim2.new(0, 14, 0, 14)
+    SearchIcon.Image = Icons["scan"] or "rbxassetid://109869955247116"
+    SearchIcon.ImageTransparency = 0.4
     
     SearchBox.Name = "SearchBox"
     SearchBox.Parent = Main
-    SearchBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    SearchBox.BackgroundTransparency = 0.935
+    SearchBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    SearchBox.BackgroundTransparency = 0.7
     SearchBox.Position = UDim2.new(0, 9, 0, 48)
     SearchBox.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 26)
-    SearchBox.Font = Enum.Font.Gotham
+    SearchBox.Font = Enum.Font.GothamBold
     SearchBox.PlaceholderText = "Search..."
+    SearchBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
     SearchBox.Text = ""
-    SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBox.TextColor3 = Color3.fromRGB(200, 200, 200)
     SearchBox.TextSize = 12
+    SearchBox.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local SearchPadding = Instance.new("UIPadding")
+    SearchPadding.PaddingLeft = UDim.new(0, 28)
+    SearchPadding.Parent = SearchBox
     
     SearchUICorner.CornerRadius = UDim.new(0, 4)
     SearchUICorner.Parent = SearchBox
-    
-    SearchUIStroke.Color = GuiConfig.Color
-    SearchUIStroke.Transparency = 0.5
-    SearchUIStroke.Parent = SearchBox
 
     local SearchDropdown = Instance.new("ScrollingFrame")
     local SearchListLayout = Instance.new("UIListLayout")
@@ -2061,13 +2071,13 @@ function Chloex:Window(GuiConfig)
 
                     local Sep = Instance.new("Frame")
                     Sep.Size = UDim2.new(0, 1, 0, 14)
-                    Sep.Position = UDim2.new(0, 32, 0, 9)
+                    Sep.Position = UDim2.new(0, 35, 0, 9)
                     Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    Sep.BackgroundTransparency = 0.8
+                    Sep.BackgroundTransparency = 0.5
                     Sep.BorderSizePixel = 0
                     Sep.Parent = Toggle
                     
-                    ToggleTitle.Position = UDim2.new(0, 40, 0, 10)
+                    ToggleTitle.Position = UDim2.new(0, 44, 0, 10)
                     ToggleTitle.Size = UDim2.new(1, -130, 0, 13)
                 else
                     ToggleTitle.Text = ToggleConfig.Title
