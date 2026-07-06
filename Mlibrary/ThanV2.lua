@@ -1131,11 +1131,6 @@ function Chloex:Window(GuiConfig)
         TabName.Position = UDim2.new(0, 30, 0, 0)
         TabName.Name = "TabName"
         TabName.Parent = Tab
-        if IsNested then
-            TabName.Text = "  " .. tostring(TabConfig.Name)
-            FeatureImg.Position = UDim2.new(0, 24, 0, 7)
-            TabName.Position = UDim2.new(0, 45, 0, 0)
-        end
 
 
         FeatureImg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1183,7 +1178,7 @@ function Chloex:Window(GuiConfig)
                     end
             end
             if FrameChoose ~= nil and Tab.LayoutOrder ~= LayersPageLayout.CurrentPage.LayoutOrder then
-                for _, TabFrame in ScrollTab:GetChildren() do
+                for _, TabFrame in ipairs(ScrollTab:GetDescendants()) do
                     if TabFrame.Name == "Tab" then
                         TweenService:Create(
                             TabFrame,
@@ -1203,7 +1198,7 @@ function Chloex:Window(GuiConfig)
                     TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
                     { Position = UDim2.new(0, 2, 0, targetY) }
                 ):Play()
-                LayersPageLayout:JumpToIndex(Tab.LayoutOrder)
+                LayersPageLayout:JumpTo(ScrolLayers)
                 task.wait(0.05)
                 NameTab.Text = TabConfig.Name
                 TweenService:Create(
@@ -3117,7 +3112,7 @@ function Chloex:Window(GuiConfig)
         SectionButton.Parent = TabSection
 
         SectionName.Font = Enum.Font.GothamBold
-        SectionName.Text = SectionConfig.Name
+        SectionName.Text = "| " .. SectionConfig.Name
         SectionName.TextColor3 = Color3.fromRGB(255, 255, 255)
         SectionName.TextSize = 13
         SectionName.TextTransparency = 0.6
