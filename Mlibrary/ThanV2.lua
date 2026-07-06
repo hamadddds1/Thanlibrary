@@ -64,12 +64,42 @@ local CustomThemes = {
 
 local Icons = {}
 
+local function IsExploit()
+    return request and true or false
+end
+
+local function Get(url)
+    if IsExploit() then
+        return game:HttpGet(url)
+    else
+        local HttpService = game:GetService("HttpService")
+        local Success, Result = pcall(function()
+            return HttpService:GetAsync(url)
+        end)
+        if Success then
+            return Result
+        else
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            return ReplicatedStorage:WaitForChild("Request", 9999):InvokeServer({ Url = url })
+        end
+    end
+end
+
+local function Loadstring(src)
+    if not IsExploit() and game:GetService("ReplicatedStorage"):FindFirstChild("Loadstring") then
+        return function()
+            return game:GetService("ReplicatedStorage"):WaitForChild("Loadstring", 9999):InvokeServer(src)
+        end
+    else
+        return loadstring(src)
+    end
+end
+
 pcall(function()
-    local lucideIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))().assets
+    local src = Get("https://raw.githubusercontent.com/Footagesus/Icons/refs/heads/main/lucide/dist/Icons.lua")
+    local lucideIcons = Loadstring(src)()
     for name, asset in pairs(lucideIcons) do
         Icons[name] = asset
-        local shortName = name:gsub("^lucide%-", "")
-        Icons[shortName] = asset
     end
 end)
 
