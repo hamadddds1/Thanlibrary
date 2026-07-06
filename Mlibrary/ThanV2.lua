@@ -589,8 +589,8 @@ function Chloex:Window(GuiConfig)
     TextLabel.BackgroundTransparency = 0.9990000128746033
     TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
     TextLabel.BorderSizePixel = 0
-    TextLabel.Size = UDim2.new(1, -100, 1, 0)
-    TextLabel.Position = UDim2.new(0, 10, 0, 0)
+    TextLabel.Size = UDim2.new(1, -100, 0, 20)
+    TextLabel.Position = UDim2.new(0, 10, 0, 2)
     TextLabel.Parent = Top
 
     UICorner1.Parent = Top
@@ -598,14 +598,14 @@ function Chloex:Window(GuiConfig)
     TextLabel1.Font = Enum.Font.GothamBold
     TextLabel1.Text = GuiConfig.Footer
     TextLabel1.TextColor3 = GuiConfig.Color
-    TextLabel1.TextSize = 14
+    TextLabel1.TextSize = 12
     TextLabel1.TextXAlignment = Enum.TextXAlignment.Left
     TextLabel1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     TextLabel1.BackgroundTransparency = 0.9990000128746033
     TextLabel1.BorderColor3 = Color3.fromRGB(0, 0, 0)
     TextLabel1.BorderSizePixel = 0
-    TextLabel1.Size = UDim2.new(1, -(TextLabel.TextBounds.X + 104), 1, 0)
-    TextLabel1.Position = UDim2.new(0, TextLabel.TextBounds.X + 15, 0, 0)
+    TextLabel1.Size = UDim2.new(1, -100, 0, 16)
+    TextLabel1.Position = UDim2.new(0, 10, 0, 20)
     TextLabel1.Parent = Top
 
     Close.Font = Enum.Font.SourceSans
