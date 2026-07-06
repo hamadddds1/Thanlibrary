@@ -1716,6 +1716,8 @@ function Chloex:Window(GuiConfig)
                 ButtonConfig.SubTitle = ButtonConfig.SubTitle or nil
                 ButtonConfig.SubCallback = ButtonConfig.SubCallback or function() end
 
+                local ButtonFunc = { Locked = false }
+
                 local Button = Instance.new("Frame")
                 Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Button.BackgroundTransparency = 0.935
@@ -1743,10 +1745,14 @@ function Chloex:Window(GuiConfig)
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
-                MainButton.MouseButton1Click:Connect(ButtonConfig.Callback)
+                MainButton.MouseButton1Click:Connect(function()
+                    if ButtonFunc.Locked then return end
+                    ButtonConfig.Callback()
+                end)
 
+                local SubButton
                 if ButtonConfig.SubTitle then
-                    local SubButton = Instance.new("TextButton")
+                    SubButton = Instance.new("TextButton")
                     SubButton.Font = Enum.Font.GothamBold
                     SubButton.Text = ButtonConfig.SubTitle
                     SubButton.TextSize = 12
@@ -1762,10 +1768,29 @@ function Chloex:Window(GuiConfig)
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
 
-                    SubButton.MouseButton1Click:Connect(ButtonConfig.SubCallback)
+                    SubButton.MouseButton1Click:Connect(function()
+                        if ButtonFunc.Locked then return end
+                        ButtonConfig.SubCallback()
+                    end)
+                end
+
+                function ButtonFunc:Lock(State)
+                    ButtonFunc.Locked = State
+                    if State then
+                        MainButton.TextTransparency = 0.7
+                        if SubButton then
+                            SubButton.TextTransparency = 0.7
+                        end
+                    else
+                        MainButton.TextTransparency = 0.3
+                        if SubButton then
+                            SubButton.TextTransparency = 0.3
+                        end
+                    end
                 end
 
                 CountItem = CountItem + 1
+                return ButtonFunc
             end
 
             function Items:AddToggle(ToggleConfig)
@@ -1781,7 +1806,7 @@ function Chloex:Window(GuiConfig)
                     ToggleConfig.Default = ConfigData[configKey]
                 end
 
-                local ToggleFunc = { Value = ToggleConfig.Default }
+                local ToggleFunc = { Value = ToggleConfig.Default, Locked = false }
 
                 local Toggle = Instance.new("Frame")
                 local UICorner20 = Instance.new("UICorner")
@@ -1905,9 +1930,27 @@ function Chloex:Window(GuiConfig)
                 UICorner23.Parent = ToggleCircle
 
                 ToggleButton.Activated:Connect(function()
+                    if ToggleFunc.Locked then return end
                     ToggleFunc.Value = not ToggleFunc.Value
                     ToggleFunc:Set(ToggleFunc.Value)
                 end)
+
+                function ToggleFunc:Lock(State)
+                    ToggleFunc.Locked = State
+                    if State then
+                        ToggleTitle.TextTransparency = 0.5
+                        ToggleContent.TextTransparency = 0.8
+                        if ToggleTitle2 then
+                            ToggleTitle2.TextTransparency = 0.5
+                        end
+                    else
+                        ToggleTitle.TextTransparency = 0
+                        ToggleContent.TextTransparency = 0.6
+                        if ToggleTitle2 then
+                            ToggleTitle2.TextTransparency = 0
+                        end
+                    end
+                end
 
                 function ToggleFunc:Set(Value)
                     if typeof(ToggleConfig.Callback) == "function" then
@@ -1958,7 +2001,7 @@ function Chloex:Window(GuiConfig)
                     SliderConfig.Default = ConfigData[configKey]
                 end
 
-                local SliderFunc = { Value = SliderConfig.Default }
+                local SliderFunc = { Value = SliderConfig.Default, Locked = false }
 
                 local Slider = Instance.new("Frame");
                 local UICorner15 = Instance.new("UICorner");
@@ -2121,6 +2164,7 @@ function Chloex:Window(GuiConfig)
                 end
 
                 SliderFrame.InputBegan:Connect(function(Input)
+                    if SliderFunc.Locked then return end
                     if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
                         Dragging = true
                         TweenService:Create(
@@ -2161,6 +2205,7 @@ function Chloex:Window(GuiConfig)
                 end)
 
                 TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+                    if SliderFunc.Locked then return end
                     local Valid = TextBox.Text:gsub("[^%d]", "")
                     if Valid ~= "" then
                         local ValidNumber = math.clamp(tonumber(Valid), SliderConfig.Min, SliderConfig.Max)
@@ -2169,6 +2214,19 @@ function Chloex:Window(GuiConfig)
                         SliderFunc:Set(SliderConfig.Min)
                     end
                 end)
+
+                function SliderFunc:Lock(State)
+                    SliderFunc.Locked = State
+                    TextBox.TextEditable = not State
+                    if State then
+                        SliderTitle.TextTransparency = 0.5
+                        SliderContent.TextTransparency = 0.8
+                    else
+                        SliderTitle.TextTransparency = 0
+                        SliderContent.TextTransparency = 0.6
+                    end
+                end
+
                 SliderFunc:Set(SliderConfig.Default)
                 CountItem = CountItem + 1
                 Elements[configKey] = SliderFunc
@@ -2187,7 +2245,7 @@ function Chloex:Window(GuiConfig)
                     InputConfig.Default = ConfigData[configKey]
                 end
 
-                local InputFunc = { Value = InputConfig.Default }
+                local InputFunc = { Value = InputConfig.Default, Locked = false }
 
                 local Input = Instance.new("Frame");
                 local UICorner12 = Instance.new("UICorner");
@@ -2298,8 +2356,21 @@ function Chloex:Window(GuiConfig)
                 InputFunc:Set(InputFunc.Value)
 
                 InputTextBox.FocusLost:Connect(function()
+                    if InputFunc.Locked then return end
                     InputFunc:Set(InputTextBox.Text)
                 end)
+
+                function InputFunc:Lock(State)
+                    InputFunc.Locked = State
+                    InputTextBox.TextEditable = not State
+                    if State then
+                        InputTitle.TextTransparency = 0.5
+                        InputContent.TextTransparency = 0.8
+                    else
+                        InputTitle.TextTransparency = 0
+                        InputContent.TextTransparency = 0.6
+                    end
+                end
                 CountItem = CountItem + 1
                 Elements[configKey] = InputFunc
                 return InputFunc
@@ -2319,7 +2390,7 @@ function Chloex:Window(GuiConfig)
                     DropdownConfig.Default = ConfigData[configKey]
                 end
 
-                local DropdownFunc = { Value = DropdownConfig.Default, Options = DropdownConfig.Options }
+                local DropdownFunc = { Value = DropdownConfig.Default, Options = DropdownConfig.Options, Locked = false }
 
                 local Dropdown = Instance.new("Frame")
                 local DropdownButton = Instance.new("TextButton")
@@ -2384,6 +2455,7 @@ function Chloex:Window(GuiConfig)
                 UICorner11.Parent = SelectOptionsFrame
 
                 DropdownButton.Activated:Connect(function()
+                    if DropdownFunc.Locked then return end
                     if not MoreBlur.Visible then
                         MoreBlur.Visible = true
                         DropPageLayout:JumpToIndex(SelectOptionsFrame.LayoutOrder)
@@ -2625,6 +2697,19 @@ function Chloex:Window(GuiConfig)
                 end
 
                 DropdownFunc:SetValues(DropdownFunc.Options, DropdownFunc.Value)
+
+                function DropdownFunc:Lock(State)
+                    DropdownFunc.Locked = State
+                    if State then
+                        DropdownTitle.TextTransparency = 0.5
+                        DropdownContent.TextTransparency = 0.8
+                        OptionSelecting.TextTransparency = 0.8
+                    else
+                        DropdownTitle.TextTransparency = 0
+                        DropdownContent.TextTransparency = 0.6
+                        OptionSelecting.TextTransparency = 0.6
+                    end
+                end
 
                 CountItem = CountItem + 1
                 CountDropdown = CountDropdown + 1

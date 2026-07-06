@@ -15,7 +15,7 @@
     - Simpan hasilnya ke variabel (biasanya 'Chloex')
 ]]
 
-local Chloex = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThanHub-GG/SpeedHubLIB/refs/heads/main/uiterbarusmooth.lua"))()
+local Chloex = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadddds1/Thanlibrary/refs/heads/main/Mlibrary/ThanV2.lua"))()
 
 -- ============================================
 -- PART 2: WINDOW CREATION
@@ -743,6 +743,44 @@ Chloex:MakeNotify({
     17. CONFIG:   ConfigData.KEY = value; SaveConfig()
     18. GLOBAL:   _G.VariableName = value
 ]]
+
+-- ============================================
+-- PART 19: LOCK COMPONENT FEATURE
+-- ============================================
+
+--[[
+    Library ini sekarang mendukung fitur "Lock" untuk komponen UI.
+    Fitur ini berguna jika Anda ingin mendisable (membuat redup dan tidak bisa diklik)
+    suatu komponen secara dinamis melalui script (misal: saat sedang proses auto-farm).
+]]
+
+local LockSection = MiscTab:AddSection("Lock Component Demo", true)
+
+-- 1. Buat komponennya dan simpan di dalam variabel
+local DemoToggle = LockSection:AddToggle({
+    Title = "Toggle Terkunci",
+    Content = "Klik tombol di bawah untuk mengunci/membuka toggle ini.",
+    Default = false,
+    Callback = function(value)
+        print("Toggle state:", value)
+    end
+})
+
+local DemoButton = LockSection:AddButton({
+    Title = "Lock/Unlock Toggle",
+    Callback = function()
+        -- 2. Panggil fungsi Lock dengan memasukkan parameter true (Kunci) atau false (Buka)
+        -- Variabel state .Locked sudah tersimpan di dalam tabel komponennya
+        local isLocked = not DemoToggle.Locked
+        
+        -- Kunci atau buka toggle
+        DemoToggle:Lock(isLocked)
+        
+        chloex(isLocked and "Toggle Berhasil Dikunci!" or "Toggle Berhasil Dibuka!")
+    end
+})
+
+-- Catatan: Fitur :Lock() juga tersedia untuk AddSlider, AddInput, AddDropdown, dan AddButton!
 
 -- ============================================
 -- END OF DOCUMENTATION
