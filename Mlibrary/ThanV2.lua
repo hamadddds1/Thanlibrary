@@ -1774,7 +1774,11 @@ function Chloex:Window(GuiConfig)
                     end)
                 end
 
-                function ButtonFunc:Lock(State)
+                function ButtonFunc:Lock(State, Reason)
+                    if type(State) == "string" then
+                        Reason = State
+                        State = true
+                    end
                     ButtonFunc.Locked = State
                     if State then
                         if not Button:FindFirstChild("LockOverlay") then
@@ -1788,17 +1792,41 @@ function Chloex:Window(GuiConfig)
                             local UIC = Instance.new("UICorner")
                             UIC.CornerRadius = UDim.new(0, 4)
                             UIC.Parent = LockOverlay
+                            
+                            local Container = Instance.new("Frame")
+                            Container.Name = "Container"
+                            Container.BackgroundTransparency = 1
+                            Container.Size = UDim2.new(1, 0, 1, 0)
+                            Container.ZIndex = 100
+                            Container.Parent = LockOverlay
+                            
+                            local UIListLayout = Instance.new("UIListLayout")
+                            UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+                            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                            UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+                            UIListLayout.Padding = UDim.new(0, 8)
+                            UIListLayout.Parent = Container
+                            
                             local LockIcon = Instance.new("ImageLabel")
-                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
-                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.Size = UDim2.new(0, 20, 0, 20)
                             LockIcon.BackgroundTransparency = 1
                             LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
                             LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                             LockIcon.ZIndex = 100
-                            LockIcon.Parent = LockOverlay
+                            LockIcon.Parent = Container
+
+                            local LockText = Instance.new("TextLabel")
+                            LockText.Name = "LockText"
+                            LockText.BackgroundTransparency = 1
+                            LockText.Font = Enum.Font.GothamBold
+                            LockText.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            LockText.TextSize = 13
+                            LockText.AutomaticSize = Enum.AutomaticSize.XY
+                            LockText.ZIndex = 100
+                            LockText.Parent = Container
                         end
                         Button.LockOverlay.Visible = true
+                        Button.LockOverlay.Container.LockText.Text = Reason and ("Locked : " .. Reason) or "Locked"
                         MainButton.TextTransparency = 0.7
                         if SubButton then
                             SubButton.TextTransparency = 0.7
@@ -1960,7 +1988,11 @@ function Chloex:Window(GuiConfig)
                     ToggleFunc:Set(ToggleFunc.Value)
                 end)
 
-                function ToggleFunc:Lock(State)
+                function ToggleFunc:Lock(State, Reason)
+                    if type(State) == "string" then
+                        Reason = State
+                        State = true
+                    end
                     ToggleFunc.Locked = State
                     if State then
                         if not Toggle:FindFirstChild("LockOverlay") then
@@ -1974,17 +2006,41 @@ function Chloex:Window(GuiConfig)
                             local UIC = Instance.new("UICorner")
                             UIC.CornerRadius = UDim.new(0, 4)
                             UIC.Parent = LockOverlay
+                            
+                            local Container = Instance.new("Frame")
+                            Container.Name = "Container"
+                            Container.BackgroundTransparency = 1
+                            Container.Size = UDim2.new(1, 0, 1, 0)
+                            Container.ZIndex = 100
+                            Container.Parent = LockOverlay
+                            
+                            local UIListLayout = Instance.new("UIListLayout")
+                            UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+                            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                            UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+                            UIListLayout.Padding = UDim.new(0, 8)
+                            UIListLayout.Parent = Container
+                            
                             local LockIcon = Instance.new("ImageLabel")
-                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
-                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.Size = UDim2.new(0, 20, 0, 20)
                             LockIcon.BackgroundTransparency = 1
                             LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
                             LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                             LockIcon.ZIndex = 100
-                            LockIcon.Parent = LockOverlay
+                            LockIcon.Parent = Container
+
+                            local LockText = Instance.new("TextLabel")
+                            LockText.Name = "LockText"
+                            LockText.BackgroundTransparency = 1
+                            LockText.Font = Enum.Font.GothamBold
+                            LockText.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            LockText.TextSize = 13
+                            LockText.AutomaticSize = Enum.AutomaticSize.XY
+                            LockText.ZIndex = 100
+                            LockText.Parent = Container
                         end
                         Toggle.LockOverlay.Visible = true
+                        Toggle.LockOverlay.Container.LockText.Text = Reason and ("Locked : " .. Reason) or "Locked"
                         ToggleTitle.TextTransparency = 0.5
                         ToggleContent.TextTransparency = 0.8
                         if ToggleTitle2 then
@@ -2265,7 +2321,11 @@ function Chloex:Window(GuiConfig)
                     end
                 end)
 
-                function SliderFunc:Lock(State)
+                function SliderFunc:Lock(State, Reason)
+                    if type(State) == "string" then
+                        Reason = State
+                        State = true
+                    end
                     SliderFunc.Locked = State
                     TextBox.TextEditable = not State
                     if State then
@@ -2280,17 +2340,41 @@ function Chloex:Window(GuiConfig)
                             local UIC = Instance.new("UICorner")
                             UIC.CornerRadius = UDim.new(0, 4)
                             UIC.Parent = LockOverlay
+                            
+                            local Container = Instance.new("Frame")
+                            Container.Name = "Container"
+                            Container.BackgroundTransparency = 1
+                            Container.Size = UDim2.new(1, 0, 1, 0)
+                            Container.ZIndex = 100
+                            Container.Parent = LockOverlay
+                            
+                            local UIListLayout = Instance.new("UIListLayout")
+                            UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+                            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                            UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+                            UIListLayout.Padding = UDim.new(0, 8)
+                            UIListLayout.Parent = Container
+                            
                             local LockIcon = Instance.new("ImageLabel")
-                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
-                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.Size = UDim2.new(0, 20, 0, 20)
                             LockIcon.BackgroundTransparency = 1
                             LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
                             LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                             LockIcon.ZIndex = 100
-                            LockIcon.Parent = LockOverlay
+                            LockIcon.Parent = Container
+
+                            local LockText = Instance.new("TextLabel")
+                            LockText.Name = "LockText"
+                            LockText.BackgroundTransparency = 1
+                            LockText.Font = Enum.Font.GothamBold
+                            LockText.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            LockText.TextSize = 13
+                            LockText.AutomaticSize = Enum.AutomaticSize.XY
+                            LockText.ZIndex = 100
+                            LockText.Parent = Container
                         end
                         Slider.LockOverlay.Visible = true
+                        Slider.LockOverlay.Container.LockText.Text = Reason and ("Locked : " .. Reason) or "Locked"
                         SliderTitle.TextTransparency = 0.5
                         SliderContent.TextTransparency = 0.8
                     else
@@ -2435,7 +2519,11 @@ function Chloex:Window(GuiConfig)
                     InputFunc:Set(InputTextBox.Text)
                 end)
 
-                function InputFunc:Lock(State)
+                function InputFunc:Lock(State, Reason)
+                    if type(State) == "string" then
+                        Reason = State
+                        State = true
+                    end
                     InputFunc.Locked = State
                     InputTextBox.TextEditable = not State
                     if State then
@@ -2450,17 +2538,41 @@ function Chloex:Window(GuiConfig)
                             local UIC = Instance.new("UICorner")
                             UIC.CornerRadius = UDim.new(0, 4)
                             UIC.Parent = LockOverlay
+                            
+                            local Container = Instance.new("Frame")
+                            Container.Name = "Container"
+                            Container.BackgroundTransparency = 1
+                            Container.Size = UDim2.new(1, 0, 1, 0)
+                            Container.ZIndex = 100
+                            Container.Parent = LockOverlay
+                            
+                            local UIListLayout = Instance.new("UIListLayout")
+                            UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+                            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                            UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+                            UIListLayout.Padding = UDim.new(0, 8)
+                            UIListLayout.Parent = Container
+                            
                             local LockIcon = Instance.new("ImageLabel")
-                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
-                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.Size = UDim2.new(0, 20, 0, 20)
                             LockIcon.BackgroundTransparency = 1
                             LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
                             LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                             LockIcon.ZIndex = 100
-                            LockIcon.Parent = LockOverlay
+                            LockIcon.Parent = Container
+
+                            local LockText = Instance.new("TextLabel")
+                            LockText.Name = "LockText"
+                            LockText.BackgroundTransparency = 1
+                            LockText.Font = Enum.Font.GothamBold
+                            LockText.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            LockText.TextSize = 13
+                            LockText.AutomaticSize = Enum.AutomaticSize.XY
+                            LockText.ZIndex = 100
+                            LockText.Parent = Container
                         end
                         Input.LockOverlay.Visible = true
+                        Input.LockOverlay.Container.LockText.Text = Reason and ("Locked : " .. Reason) or "Locked"
                         InputTitle.TextTransparency = 0.5
                         InputContent.TextTransparency = 0.8
                     else
@@ -2798,7 +2910,11 @@ function Chloex:Window(GuiConfig)
 
                 DropdownFunc:SetValues(DropdownFunc.Options, DropdownFunc.Value)
 
-                function DropdownFunc:Lock(State)
+                function DropdownFunc:Lock(State, Reason)
+                    if type(State) == "string" then
+                        Reason = State
+                        State = true
+                    end
                     DropdownFunc.Locked = State
                     if State then
                         if not Dropdown:FindFirstChild("LockOverlay") then
@@ -2812,17 +2928,41 @@ function Chloex:Window(GuiConfig)
                             local UIC = Instance.new("UICorner")
                             UIC.CornerRadius = UDim.new(0, 4)
                             UIC.Parent = LockOverlay
+                            
+                            local Container = Instance.new("Frame")
+                            Container.Name = "Container"
+                            Container.BackgroundTransparency = 1
+                            Container.Size = UDim2.new(1, 0, 1, 0)
+                            Container.ZIndex = 100
+                            Container.Parent = LockOverlay
+                            
+                            local UIListLayout = Instance.new("UIListLayout")
+                            UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+                            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                            UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+                            UIListLayout.Padding = UDim.new(0, 8)
+                            UIListLayout.Parent = Container
+                            
                             local LockIcon = Instance.new("ImageLabel")
-                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
-                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.Size = UDim2.new(0, 20, 0, 20)
                             LockIcon.BackgroundTransparency = 1
                             LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
                             LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                             LockIcon.ZIndex = 100
-                            LockIcon.Parent = LockOverlay
+                            LockIcon.Parent = Container
+
+                            local LockText = Instance.new("TextLabel")
+                            LockText.Name = "LockText"
+                            LockText.BackgroundTransparency = 1
+                            LockText.Font = Enum.Font.GothamBold
+                            LockText.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            LockText.TextSize = 13
+                            LockText.AutomaticSize = Enum.AutomaticSize.XY
+                            LockText.ZIndex = 100
+                            LockText.Parent = Container
                         end
                         Dropdown.LockOverlay.Visible = true
+                        Dropdown.LockOverlay.Container.LockText.Text = Reason and ("Locked : " .. Reason) or "Locked"
                         DropdownTitle.TextTransparency = 0.5
                         DropdownContent.TextTransparency = 0.8
                         OptionSelecting.TextTransparency = 0.8

@@ -757,30 +757,18 @@ Chloex:MakeNotify({
 local LockSection = MiscTab:AddSection("Lock Component Demo", true)
 
 -- 1. Buat komponennya dan simpan di dalam variabel
-local DemoToggle = LockSection:AddToggle({
+local lock = LockSection:AddToggle({
     Title = "Toggle Terkunci",
-    Content = "Klik tombol di bawah untuk mengunci/membuka toggle ini.",
+    Content = "Contoh toggle yang sedang belum selesai dibuat.",
     Default = false,
-    Callback = function(value)
-        print("Toggle state:", value)
-    end
+    Callback = function(value) end
 })
 
-local DemoButton = LockSection:AddButton({
-    Title = "Lock/Unlock Toggle",
-    Callback = function()
-        -- 2. Panggil fungsi Lock dengan memasukkan parameter true (Kunci) atau false (Buka)
-        -- Variabel state .Locked sudah tersimpan di dalam tabel komponennya
-        local isLocked = not DemoToggle.Locked
-        
-        -- Kunci atau buka toggle
-        DemoToggle:Lock(isLocked)
-        
-        chloex(isLocked and "Toggle Berhasil Dikunci!" or "Toggle Berhasil Dibuka!")
-    end
-})
+-- 2. Panggil fungsi Lock dengan memasukkan teks/alasan penguncian
+lock:Lock("Not finish yet")
 
--- Catatan: Fitur :Lock() juga tersedia untuk AddSlider, AddInput, AddDropdown, dan AddButton!
+-- Catatan: Jika ingin membuka kuncinya kembali, gunakan `lock:Lock(false)`
+-- Fitur :Lock() juga tersedia untuk AddSlider, AddInput, AddDropdown, dan AddButton!
 
 -- ============================================
 -- END OF DOCUMENTATION
