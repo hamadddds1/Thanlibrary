@@ -109,9 +109,7 @@ pcall(function()
     for name, asset in pairs(lucideIcons) do
         Icons[name] = asset
         local shortName = name:gsub("^lucide%-", "")
-        if not Icons[shortName] then
-            Icons[shortName] = asset
-        end
+        Icons[shortName] = asset
     end
 end)
 
