@@ -2070,7 +2070,8 @@ function Chloex:Window(GuiConfig)
                     ToggleTitle.Text = ToggleConfig.Title
                     local IconImg = Instance.new("ImageLabel")
                     IconImg.Size = UDim2.new(0, 20, 0, 20)
-                    IconImg.Position = UDim2.new(0, 10, 0, 7)
+                    IconImg.AnchorPoint = Vector2.new(0, 0.5)
+                    IconImg.Position = UDim2.new(0, 10, 0.5, 0)
                     IconImg.BackgroundTransparency = 1
                     if Icons[ToggleConfig.Icon] then
                         IconImg.Image = Icons[ToggleConfig.Icon]
@@ -2081,7 +2082,8 @@ function Chloex:Window(GuiConfig)
 
                     local Sep = Instance.new("Frame")
                     Sep.Size = UDim2.new(0, 1, 0, 16)
-                    Sep.Position = UDim2.new(0, 38, 0, 8)
+                    Sep.AnchorPoint = Vector2.new(0, 0.5)
+                    Sep.Position = UDim2.new(0, 38, 0.5, 0)
                     Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     Sep.BackgroundTransparency = 0.5
                     Sep.BorderSizePixel = 0
