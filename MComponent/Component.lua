@@ -35,6 +35,7 @@ local myButton = Section1:AddButton({
 -- TOGGLE
 local myToggle = Section1:AddToggle({
     Title = "Auto Farm",
+    Icon = "swords", -- Menggunakan icon dari lucide.dev
     Default = false,
     Callback = function(value)
         print("Auto Farm:", value)

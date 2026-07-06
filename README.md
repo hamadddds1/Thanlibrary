@@ -69,12 +69,13 @@ local MyButton = Section:AddButton({
 })
 ```
 
-### 2. Toggle
-A switch used for boolean states (ON / OFF).
+### 2. Toggle (With Lucide Icon)
+A switch used for boolean states (ON / OFF). You can use any icon name from [Lucide Icons](https://lucide.dev/icons/)!
 ```lua
 local MyToggle = Section:AddToggle({
     Title = "Auto Farm",
     Content = "Automatically kill mobs",
+    Icon = "swords", -- Just type the Lucide icon name!
     Default = false,
     Callback = function(state)
         print("Toggle is now:", state)

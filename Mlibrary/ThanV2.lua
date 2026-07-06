@@ -1902,7 +1902,6 @@ function Chloex:Window(GuiConfig)
                 ToggleTitle2.TextXAlignment = Enum.TextXAlignment.Left
                 ToggleTitle2.TextYAlignment = Enum.TextYAlignment.Top
                 ToggleTitle2.BackgroundTransparency = 1
-                ToggleTitle2.Position = UDim2.new(0, 10, 0, 23)
                 ToggleTitle2.Size = UDim2.new(1, -100, 0, 12)
                 ToggleTitle2.Name = "ToggleTitle2"
                 ToggleTitle2.Parent = Toggle
@@ -1919,13 +1918,33 @@ function Chloex:Window(GuiConfig)
                 ToggleContent.Name = "ToggleContent"
                 ToggleContent.Parent = Toggle
 
+                ToggleConfig.Icon = ToggleConfig.Icon or ""
+                local iconOffset = 10
+                if ToggleConfig.Icon ~= "" then
+                    local IconImg = Instance.new("ImageLabel")
+                    IconImg.Size = UDim2.new(0, 20, 0, 20)
+                    IconImg.Position = UDim2.new(0, 10, 0, 10)
+                    IconImg.BackgroundTransparency = 1
+                    IconImg.Name = "ToggleIcon"
+                    if Icons and Icons[ToggleConfig.Icon] then
+                        IconImg.Image = Icons[ToggleConfig.Icon]
+                    else
+                        IconImg.Image = ToggleConfig.Icon
+                    end
+                    IconImg.Parent = Toggle
+                    iconOffset = 36
+                end
+
+                ToggleTitle.Position = UDim2.new(0, iconOffset, 0, 10)
+                ToggleTitle2.Position = UDim2.new(0, iconOffset, 0, 23)
+
                 if ToggleConfig.Title2 ~= "" then
                     Toggle.Size = UDim2.new(1, 0, 0, 57)
-                    ToggleContent.Position = UDim2.new(0, 10, 0, 36)
+                    ToggleContent.Position = UDim2.new(0, iconOffset, 0, 36)
                     ToggleTitle2.Visible = true
                 else
                     Toggle.Size = UDim2.new(1, 0, 0, 46)
-                    ToggleContent.Position = UDim2.new(0, 10, 0, 23)
+                    ToggleContent.Position = UDim2.new(0, iconOffset, 0, 23)
                     ToggleTitle2.Visible = false
                 end
 
