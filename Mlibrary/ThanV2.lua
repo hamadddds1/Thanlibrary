@@ -2127,37 +2127,48 @@ function Chloex:Window(GuiConfig)
                 ToggleContent.Name = "ToggleContent"
                 ToggleContent.Parent = Toggle
 
+                ToggleConfig.Content = ToggleConfig.Content or ""
+                
                 if ToggleConfig.Title2 ~= "" then
                     Toggle.Size = UDim2.new(1, 0, 0, 57)
                     ToggleContent.Position = UDim2.new(0, iconOffset, 0, 36)
                     ToggleTitle2.Visible = true
+                    ToggleContent.Visible = true
                 else
-                    Toggle.Size = UDim2.new(1, 0, 0, 46)
-                    ToggleContent.Position = UDim2.new(0, iconOffset, 0, 23)
+                    if ToggleConfig.Content == "" then
+                        Toggle.Size = UDim2.new(1, 0, 0, 34)
+                        ToggleContent.Visible = false
+                    else
+                        Toggle.Size = UDim2.new(1, 0, 0, 46)
+                        ToggleContent.Position = UDim2.new(0, iconOffset, 0, 23)
+                        ToggleContent.Visible = true
+                    end
                     ToggleTitle2.Visible = false
                 end
 
-                ToggleContent.Size = UDim2.new(1, -100, 0,
-                    12 + (12 * (ToggleContent.TextBounds.X // ToggleContent.AbsoluteSize.X)))
-                ToggleContent.TextWrapped = true
-                if ToggleConfig.Title2 ~= "" then
-                    Toggle.Size = UDim2.new(1, 0, 0, ToggleContent.AbsoluteSize.Y + 47)
-                else
-                    Toggle.Size = UDim2.new(1, 0, 0, ToggleContent.AbsoluteSize.Y + 33)
-                end
-
-                ToggleContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-                    ToggleContent.TextWrapped = false
+                if ToggleConfig.Content ~= "" then
                     ToggleContent.Size = UDim2.new(1, -100, 0,
                         12 + (12 * (ToggleContent.TextBounds.X // ToggleContent.AbsoluteSize.X)))
+                    ToggleContent.TextWrapped = true
                     if ToggleConfig.Title2 ~= "" then
                         Toggle.Size = UDim2.new(1, 0, 0, ToggleContent.AbsoluteSize.Y + 47)
                     else
                         Toggle.Size = UDim2.new(1, 0, 0, ToggleContent.AbsoluteSize.Y + 33)
                     end
-                    ToggleContent.TextWrapped = true
-                    UpdateSizeSection()
-                end)
+
+                    ToggleContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+                        ToggleContent.TextWrapped = false
+                        ToggleContent.Size = UDim2.new(1, -100, 0,
+                            12 + (12 * (ToggleContent.TextBounds.X // ToggleContent.AbsoluteSize.X)))
+                        if ToggleConfig.Title2 ~= "" then
+                            Toggle.Size = UDim2.new(1, 0, 0, ToggleContent.AbsoluteSize.Y + 47)
+                        else
+                            Toggle.Size = UDim2.new(1, 0, 0, ToggleContent.AbsoluteSize.Y + 33)
+                        end
+                        ToggleContent.TextWrapped = true
+                        UpdateSizeSection()
+                    end)
+                end
 
                 ToggleButton.Font = Enum.Font.SourceSans
                 ToggleButton.Text = ""
