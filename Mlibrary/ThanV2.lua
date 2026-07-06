@@ -499,6 +499,8 @@ function Chloex:Window(GuiConfig)
     local Main = Instance.new("Frame");
     local UICorner = Instance.new("UICorner");
     local Top = Instance.new("Frame");
+    local TopIcon = Instance.new("ImageLabel");
+    local TopSeparator = Instance.new("Frame");
     local TextLabel = Instance.new("TextLabel");
     local UICorner1 = Instance.new("UICorner");
     local TextLabel1 = Instance.new("TextLabel");
@@ -579,6 +581,27 @@ function Chloex:Window(GuiConfig)
     Top.Size = UDim2.new(1, 0, 0, 38)
     Top.Name = "Top"
     Top.Parent = Main
+    
+    TopIcon.BackgroundTransparency = 1
+    TopIcon.Position = UDim2.new(0, 9, 0, 9)
+    TopIcon.Size = UDim2.new(0, 20, 0, 20)
+    if GuiConfig.Image and GuiConfig.Image ~= "" then
+        if Icons[GuiConfig.Image] then
+            TopIcon.Image = Icons[GuiConfig.Image]
+        else
+            TopIcon.Image = "rbxassetid://" .. tostring(GuiConfig.Image)
+        end
+    else
+        TopIcon.Image = "rbxassetid://9996720172"
+    end
+    TopIcon.Parent = Top
+    
+    TopSeparator.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    TopSeparator.BackgroundTransparency = 0.5
+    TopSeparator.BorderSizePixel = 0
+    TopSeparator.Position = UDim2.new(0, 38, 0, 9)
+    TopSeparator.Size = UDim2.new(0, 1, 0, 20)
+    TopSeparator.Parent = Top
 
     TextLabel.Font = Enum.Font.GothamBold
     TextLabel.Text = GuiConfig.Title
@@ -589,23 +612,23 @@ function Chloex:Window(GuiConfig)
     TextLabel.BackgroundTransparency = 0.9990000128746033
     TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
     TextLabel.BorderSizePixel = 0
-    TextLabel.Size = UDim2.new(1, -100, 0, 20)
-    TextLabel.Position = UDim2.new(0, 10, 0, 2)
+    TextLabel.Size = UDim2.new(1, -100, 0, 18)
+    TextLabel.Position = UDim2.new(0, 48, 0, 2)
     TextLabel.Parent = Top
 
     UICorner1.Parent = Top
 
     TextLabel1.Font = Enum.Font.GothamBold
     TextLabel1.Text = GuiConfig.Footer
-    TextLabel1.TextColor3 = GuiConfig.Color
+    TextLabel1.TextColor3 = Color3.fromRGB(150, 150, 150)
     TextLabel1.TextSize = 12
     TextLabel1.TextXAlignment = Enum.TextXAlignment.Left
     TextLabel1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     TextLabel1.BackgroundTransparency = 0.9990000128746033
     TextLabel1.BorderColor3 = Color3.fromRGB(0, 0, 0)
     TextLabel1.BorderSizePixel = 0
-    TextLabel1.Size = UDim2.new(1, -100, 0, 16)
-    TextLabel1.Position = UDim2.new(0, 10, 0, 20)
+    TextLabel1.Size = UDim2.new(1, -100, 0, 14)
+    TextLabel1.Position = UDim2.new(0, 48, 0, 20)
     TextLabel1.Parent = Top
 
     Close.Font = Enum.Font.SourceSans
