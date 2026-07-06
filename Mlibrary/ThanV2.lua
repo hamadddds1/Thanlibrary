@@ -62,47 +62,7 @@ local CustomThemes = {
     ["Ocean"]       = { Theme = 9542022979, Color = Color3.fromRGB(0, 150, 255) },
 }
 
-local Icons = {
-    ["player"]        = "rbxassetid://12120698352",
-    ["web"]           = "rbxassetid://137601480983962",
-    ["bag"]           = "rbxassetid://8601111810",
-    ["shop"]          = "rbxassetid://4985385964",
-    ["cart"]          = "rbxassetid://128874923961846",
-    ["plug"]          = "rbxassetid://137601480983962",
-    ["settings"]      = "rbxassetid://70386228443175",
-    ["loop"]          = "rbxassetid://122032243989747",
-    ["gps"]           = "rbxassetid://17824309485",
-    ["compas"]        = "rbxassetid://125300760963399",
-    ["gamepad"]       = "rbxassetid://84173963561612",
-    ["gamepad-2"]     = "rbxassetid://84173963561612",
-    ["home"]          = "rbxassetid://6031280882",
-    ["swords"]        = "rbxassetid://13511132711",
-    ["chevron-right"] = "rbxassetid://3944672659",
-    ["fishing-rod"]   = "rbxassetid://6342898951",
-    ["boss"]          = "rbxassetid://13132186360",
-    scroll    = "rbxassetid://114127804740858",
-    menu      = "rbxassetid://6340513838",
-    crosshair = "rbxassetid://12614416478",
-    user      = "rbxassetid://108483430622128",
-    stat      = "rbxassetid://12094445329",
-    eyes      = "rbxassetid://14321059114",
-    sword     = "rbxassetid://82472368671405",
-    discord   = "rbxassetid://94434236999817",
-    star      = "rbxassetid://107005941750079",
-    skeleton  = "rbxassetid://17313330026",
-    payment   = "rbxassetid://18747025078",
-    scan      = "rbxassetid://109869955247116",
-    alert     = "rbxassetid://73186275216515",
-    question  = "rbxassetid://17510196486",
-    idea      = "rbxassetid://16833255748",
-    strom     = "rbxassetid://13321880293",
-    water     = "rbxassetid://100076212630732",
-    dcs       = "rbxassetid://15310731934",
-    start     = "rbxassetid://108886429866687",
-    next      = "rbxassetid://12662718374",
-    rod       = "rbxassetid://103247953194129",
-    fish      = "rbxassetid://97167558235554",
-}
+local Icons = {}
 
 pcall(function()
     local lucideIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))().assets
