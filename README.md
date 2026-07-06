@@ -5,10 +5,12 @@
 
 ## ✨ Key Features
 - **Modern Dark Theme** with smooth micro-animations.
+- **Top Bar Customization**: Beautifully stacked Title and Footer with built-in Lucide icon support and separators.
+- **Tab Sections**: Create elegant nested dropdown tabs to categorize your features perfectly.
 - **Auto-Save & Load Configuration**: User settings are persistent across sessions.
 - **Sleek Notifications** with drop shadow effects.
 - **Lock Component Feature**: Dynamically lock and disable components that are Work-In-Progress (WIP) or during auto-farming.
-- **Lucide Icons Support**: A massive library of built-in icons ready to use.
+- **Lucide Icons Integration**: A massive library of built-in icons ready to use across the UI (Tabs, TabSections, Toggles, and Window Headers).
 
 ---
 
@@ -22,12 +24,12 @@ local Chloex = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadd
 
 -- 2. Create the Main Window
 local Window = Chloex:Window({
-    Title   = "ThanHub |",              -- Main Window Title
-    Footer  = "99Night",                -- Subtitle / Footer text
-    Image   = "85779221265543",        -- Logo Asset ID
+    Title   = "ThanHub",               -- Main Window Title (automatically separated from Footer)
+    Footer  = "99Night",                 -- Subtitle / Footer text (displays neatly below the title)
+    Image   = "gamepad-2",               -- Top Bar Logo: Supports any Lucide icon name OR an rbxassetid
     Color   = Color3.fromRGB(0, 208, 255), -- Main Theme Color
-    Theme   = 9542022979,              -- Background Image Asset ID (MUST BE A NUMBER)
-    Version = 1,                       -- Config Version (Resets config if changed)
+    Theme   = 9542022979,                -- Background Image Asset ID (MUST BE A NUMBER)
+    Version = 1,                         -- Config Version (Resets config if changed)
 })
 ```
 
@@ -43,6 +45,8 @@ local MainTab = Window:AddTab({ Name = "Main", Icon = "home" }) -- Use any Lucid
 
 -- Create a Tab Section (Expandable Dropdown for Tabs)
 local TabGroup = Window:AddTabSection({ Name = "Farming", Icon = "swords" })
+
+-- Create Nested Tabs inside the Tab Section
 local LevelTab = TabGroup:AddTab({ Name = "Level Farm", Icon = "chevron-right" })
 local BossTab = TabGroup:AddTab({ Name = "Boss Farm", Icon = "chevron-right" })
 
