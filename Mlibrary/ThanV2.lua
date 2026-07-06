@@ -2069,8 +2069,8 @@ function Chloex:Window(GuiConfig)
                 if ToggleConfig.Icon and ToggleConfig.Icon ~= "" then
                     ToggleTitle.Text = ToggleConfig.Title
                     local IconImg = Instance.new("ImageLabel")
-                    IconImg.Size = UDim2.new(0, 16, 0, 16)
-                    IconImg.Position = UDim2.new(0, 10, 0, 8)
+                    IconImg.Size = UDim2.new(0, 20, 0, 20)
+                    IconImg.Position = UDim2.new(0, 10, 0, 7)
                     IconImg.BackgroundTransparency = 1
                     if Icons[ToggleConfig.Icon] then
                         IconImg.Image = Icons[ToggleConfig.Icon]
@@ -2080,22 +2080,22 @@ function Chloex:Window(GuiConfig)
                     IconImg.Parent = Toggle
 
                     local Sep = Instance.new("Frame")
-                    Sep.Size = UDim2.new(0, 1, 0, 14)
-                    Sep.Position = UDim2.new(0, 34, 0, 9)
+                    Sep.Size = UDim2.new(0, 1, 0, 16)
+                    Sep.Position = UDim2.new(0, 38, 0, 8)
                     Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     Sep.BackgroundTransparency = 0.5
                     Sep.BorderSizePixel = 0
                     Sep.Parent = Toggle
                     
-                    iconOffset = 44
-                    ToggleTitle.Size = UDim2.new(1, -130, 0, 13)
+                    iconOffset = 48
+                    ToggleTitle.Size = UDim2.new(1, -130, 0, 14)
                 else
                     ToggleTitle.Text = ToggleConfig.Title
-                    ToggleTitle.Size = UDim2.new(1, -100, 0, 13)
+                    ToggleTitle.Size = UDim2.new(1, -100, 0, 14)
                 end
                 
                 ToggleTitle.Position = UDim2.new(0, iconOffset, 0, 10)
-                ToggleTitle.TextSize = 13
+                ToggleTitle.TextSize = 14
                 ToggleTitle.TextColor3 = Color3.fromRGB(231, 231, 231)
                 ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
                 ToggleTitle.TextYAlignment = Enum.TextYAlignment.Top
