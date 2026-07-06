@@ -28,8 +28,7 @@ local Window = Chloex:Window({
     Footer  = "99Night",                 -- Subtitle / Footer text (displays neatly below the title)
     Micon   = "85779221265543",          -- Floating Hide/Show Button Logo (rbxassetid or Lucide)
     Uicon   = "gamepad-2",               -- Top Bar Logo (rbxassetid or Lucide)
-    Color   = Color3.fromRGB(0, 208, 255), -- Main Theme Color
-    Theme   = 9542022979,                -- Background Image Asset ID (MUST BE A NUMBER)
+    Theme   = "Ruby",                    -- Custom Themes (e.g., "Dark", "Ruby", "Ocean") or a background Image ID
     Version = 1,                         -- Config Version (Resets config if changed)
 })
 ```
@@ -39,8 +38,8 @@ local Window = Chloex:Window({
 - **`Footer`**: Secondary subtitle text that perfectly stacks below the Title.
 - **`Micon`** (Main Icon): Controls the image used for the floating **Hide/Show UI button** on the screen. Accepts a Roblox Asset ID (e.g. `"85779221265543"`) or a Lucide icon string (e.g. `"gamepad-2"`).
 - **`Uicon`** (UI Icon): Controls the logo displayed inside the **Top Bar** of the UI (next to the Title). Accepts a Roblox Asset ID or a Lucide icon string.
-- **`Color`**: The primary accent color for the entire UI (text, borders, strokes).
-- **`Theme`**: A Roblox Asset ID (numbers only) used for the background image pattern of the UI.
+- **`Theme`**: You can enter a **Custom Theme Name** (e.g., `"Ruby"`, `"Ocean"`, `"Amethyst"`, `"Dark"`, `"Emerald"`, `"Sakura"`, `"Default"`) to automatically color the UI. Alternatively, you can input a custom Roblox Asset ID number for the background image.
+- **`Color`** *(Optional)*: The primary accent color for the UI. If you are using a Custom Theme Name, you can omit this entirely!
 - **`Version`**: Changing this number will automatically reset and clear old configurations for your users.
 
 ---

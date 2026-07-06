@@ -52,6 +52,16 @@ function LoadConfigElements()
     end
 end
 
+local CustomThemes = {
+    ["Default"]     = { Theme = 9542022979, Color = Color3.fromRGB(0, 208, 255) },
+    ["Dark"]        = { Theme = 9542022979, Color = Color3.fromRGB(150, 150, 150) },
+    ["Ruby"]        = { Theme = 9542022979, Color = Color3.fromRGB(255, 50, 50) },
+    ["Emerald"]     = { Theme = 9542022979, Color = Color3.fromRGB(46, 204, 113) },
+    ["Amethyst"]    = { Theme = 9542022979, Color = Color3.fromRGB(155, 89, 182) },
+    ["Sakura"]      = { Theme = 9542022979, Color = Color3.fromRGB(255, 183, 197) },
+    ["Ocean"]       = { Theme = 9542022979, Color = Color3.fromRGB(0, 150, 255) },
+}
+
 local Icons = {
     player    = "rbxassetid://12120698352",
     web       = "rbxassetid://137601480983962",
@@ -482,6 +492,13 @@ end
 
 function Chloex:Window(GuiConfig)
     GuiConfig              = GuiConfig or {}
+    
+    if GuiConfig.Theme and type(GuiConfig.Theme) == "string" and CustomThemes[GuiConfig.Theme] then
+        local SelectedTheme = CustomThemes[GuiConfig.Theme]
+        GuiConfig.Theme = SelectedTheme.Theme
+        GuiConfig.Color = GuiConfig.Color or SelectedTheme.Color
+    end
+
     GuiConfig.Title        = GuiConfig.Title or "Than-Hub"
     GuiConfig.Footer       = GuiConfig.Footer or "Chloee :3"
     GuiConfig.Color        = GuiConfig.Color or Color3.fromRGB(255, 0, 255)

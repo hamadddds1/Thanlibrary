@@ -11,8 +11,8 @@ local Window = Chloex:Window({
     Footer  = "99Night",
     Micon   = "85779221265543", -- Floating Hide/Show Button Icon (rbxassetid or Lucide)
     Uicon   = "gamepad-2",      -- Top Bar Icon (rbxassetid or Lucide)
-    Color   = Color3.fromRGB(0, 208, 255), 
-    Theme   = 9542022979, -- WAJIB ANGKA
+    -- Color   = Color3.fromRGB(0, 208, 255), -- Not needed if using a custom theme
+    Theme   = "Ruby", -- Custom themes: "Default", "Dark", "Ruby", "Emerald", "Amethyst", "Sakura", "Ocean"
     Version = 1,                        
 })
 
