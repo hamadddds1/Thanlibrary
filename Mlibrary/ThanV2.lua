@@ -690,107 +690,114 @@ function Chloex:Window(GuiConfig)
     ImageLabel2.Size = UDim2.new(1, -9, 1, -9)
     ImageLabel2.Parent = Min
 
-    local SearchBox = Instance.new("TextBox")
-    local SearchUICorner = Instance.new("UICorner")
-    
-    local SearchIcon = Instance.new("ImageLabel")
-    SearchIcon.Name = "SearchIcon"
-    SearchIcon.Parent = SearchBox
-    SearchIcon.BackgroundTransparency = 1
-    SearchIcon.Position = UDim2.new(0, 8, 0.5, -7)
-    SearchIcon.Size = UDim2.new(0, 14, 0, 14)
-    SearchIcon.Image = Icons["scan"] or "rbxassetid://109869955247116"
-    SearchIcon.ImageTransparency = 0.4
-    
-    SearchBox.Name = "SearchBox"
-    SearchBox.Parent = Main
-    SearchBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    SearchBox.BackgroundTransparency = 0.7
-    SearchBox.Position = UDim2.new(0, 9, 0, 48)
-    SearchBox.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 26)
-    SearchBox.Font = Enum.Font.GothamBold
-    SearchBox.PlaceholderText = "Search..."
-    SearchBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
-    SearchBox.Text = ""
-    SearchBox.TextColor3 = Color3.fromRGB(200, 200, 200)
-    SearchBox.TextSize = 12
-    SearchBox.TextXAlignment = Enum.TextXAlignment.Left
-    
-    local SearchPadding = Instance.new("UIPadding")
-    SearchPadding.PaddingLeft = UDim.new(0, 28)
-    SearchPadding.Parent = SearchBox
-    
-    SearchUICorner.CornerRadius = UDim.new(0, 4)
-    SearchUICorner.Parent = SearchBox
-
-    local SearchDropdown = Instance.new("ScrollingFrame")
-    local SearchListLayout = Instance.new("UIListLayout")
-    
-    SearchDropdown.Name = "SearchDropdown"
-    SearchDropdown.Parent = Main
-    SearchDropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    SearchDropdown.BackgroundTransparency = 0.05
-    SearchDropdown.BorderSizePixel = 0
-    SearchDropdown.Position = UDim2.new(0, 9, 0, 78)
-    SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 0)
-    SearchDropdown.ZIndex = 10
-    SearchDropdown.ScrollBarThickness = 2
-    SearchDropdown.ClipsDescendants = true
-    SearchDropdown.Visible = false
-    
-    SearchListLayout.Parent = SearchDropdown
-    SearchListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    SearchListLayout.Padding = UDim.new(0, 2)
-
-    SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-        local txt = string.lower(SearchBox.Text)
-        for _, child in pairs(SearchDropdown:GetChildren()) do
-            if child:IsA("TextButton") then
-                child:Destroy()
-            end
-        end
-        if txt == "" then
-            SearchDropdown.Visible = false
-            SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 0)
-            return
-        end
+    if GuiConfig.Search ~= false then
+        local SearchBox = Instance.new("TextBox")
+        local SearchUICorner = Instance.new("UICorner")
         
-        SearchDropdown.Visible = true
-        local count = 0
-        for _, comp in pairs(GuiFunc.ComponentRegistry) do
-            if string.find(string.lower(comp.Name), txt) then
-                count = count + 1
-                local resultBtn = Instance.new("TextButton")
-                resultBtn.Size = UDim2.new(1, 0, 0, 24)
-                resultBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                resultBtn.BackgroundTransparency = 0.95
-                resultBtn.Text = "  " .. comp.Name
-                resultBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                resultBtn.TextSize = 11
-                resultBtn.Font = Enum.Font.Gotham
-                resultBtn.TextXAlignment = Enum.TextXAlignment.Left
-                resultBtn.Parent = SearchDropdown
-                resultBtn.ZIndex = 11
-                
-                resultBtn.MouseButton1Click:Connect(function()
-                    SearchBox.Text = ""
-                    SearchBox:ReleaseFocus()
-                    if comp.JumpFunc then
-                        comp.JumpFunc()
-                    end
-                end)
+        local SearchIcon = Instance.new("ImageLabel")
+        SearchIcon.Name = "SearchIcon"
+        SearchIcon.Parent = SearchBox
+        SearchIcon.BackgroundTransparency = 1
+        SearchIcon.Position = UDim2.new(0, 8, 0.5, -7)
+        SearchIcon.Size = UDim2.new(0, 14, 0, 14)
+        SearchIcon.Image = Icons["scan"] or "rbxassetid://109869955247116"
+        SearchIcon.ImageTransparency = 0.4
+        
+        SearchBox.Name = "SearchBox"
+        SearchBox.Parent = Main
+        SearchBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        SearchBox.BackgroundTransparency = 0.7
+        SearchBox.Position = UDim2.new(0, 9, 0, 48)
+        SearchBox.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 26)
+        SearchBox.Font = Enum.Font.GothamBold
+        SearchBox.PlaceholderText = "Search..."
+        SearchBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+        SearchBox.Text = ""
+        SearchBox.TextColor3 = Color3.fromRGB(200, 200, 200)
+        SearchBox.TextSize = 12
+        SearchBox.TextXAlignment = Enum.TextXAlignment.Left
+        
+        local SearchPadding = Instance.new("UIPadding")
+        SearchPadding.PaddingLeft = UDim.new(0, 28)
+        SearchPadding.Parent = SearchBox
+        
+        SearchUICorner.CornerRadius = UDim.new(0, 4)
+        SearchUICorner.Parent = SearchBox
+
+        local SearchDropdown = Instance.new("ScrollingFrame")
+        local SearchListLayout = Instance.new("UIListLayout")
+        
+        SearchDropdown.Name = "SearchDropdown"
+        SearchDropdown.Parent = Main
+        SearchDropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        SearchDropdown.BackgroundTransparency = 0.05
+        SearchDropdown.BorderSizePixel = 0
+        SearchDropdown.Position = UDim2.new(0, 9, 0, 78)
+        SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 0)
+        SearchDropdown.ZIndex = 10
+        SearchDropdown.ScrollBarThickness = 2
+        SearchDropdown.ClipsDescendants = true
+        SearchDropdown.Visible = false
+        
+        SearchListLayout.Parent = SearchDropdown
+        SearchListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        SearchListLayout.Padding = UDim.new(0, 2)
+
+        SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+            local txt = string.lower(SearchBox.Text)
+            for _, child in pairs(SearchDropdown:GetChildren()) do
+                if child:IsA("TextButton") then
+                    child:Destroy()
+                end
             end
-        end
-        SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, math.clamp(count * 26, 0, 150))
-        SearchDropdown.CanvasSize = UDim2.new(0, 0, 0, count * 26)
-    end)
+            if txt == "" then
+                SearchDropdown.Visible = false
+                SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 0)
+                return
+            end
+            
+            SearchDropdown.Visible = true
+            local count = 0
+            for _, comp in pairs(GuiFunc.ComponentRegistry) do
+                if string.find(string.lower(comp.Name), txt) then
+                    count = count + 1
+                    local resultBtn = Instance.new("TextButton")
+                    resultBtn.Size = UDim2.new(1, 0, 0, 24)
+                    resultBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    resultBtn.BackgroundTransparency = 0.95
+                    resultBtn.Text = "  " .. comp.Name
+                    resultBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    resultBtn.TextSize = 11
+                    resultBtn.Font = Enum.Font.Gotham
+                    resultBtn.TextXAlignment = Enum.TextXAlignment.Left
+                    resultBtn.Parent = SearchDropdown
+                    resultBtn.ZIndex = 11
+                    
+                    resultBtn.MouseButton1Click:Connect(function()
+                        SearchBox.Text = ""
+                        SearchBox:ReleaseFocus()
+                        if comp.JumpFunc then
+                            comp.JumpFunc()
+                        end
+                    end)
+                end
+            end
+            SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, math.clamp(count * 26, 0, 150))
+            SearchDropdown.CanvasSize = UDim2.new(0, 0, 0, count * 26)
+        end)
+    end
 
     LayersTab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     LayersTab.BackgroundTransparency = 0.9990000128746033
     LayersTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
     LayersTab.BorderSizePixel = 0
-    LayersTab.Position = UDim2.new(0, 9, 0, 80)
-    LayersTab.Size = UDim2.new(0, GuiConfig["Tab Width"], 1, -89)
+    if GuiConfig.Search ~= false then
+        LayersTab.Position = UDim2.new(0, 9, 0, 80)
+        LayersTab.Size = UDim2.new(0, GuiConfig["Tab Width"], 1, -89)
+    else
+        LayersTab.Position = UDim2.new(0, 9, 0, 48)
+        LayersTab.Size = UDim2.new(0, GuiConfig["Tab Width"], 1, -57)
+    end
     LayersTab.Name = "LayersTab"
     LayersTab.Parent = Main
 
