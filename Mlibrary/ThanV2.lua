@@ -1306,7 +1306,8 @@ function Chloex:Window(GuiConfig)
             end
         end
 
-        TabFunc.JumpFunc = function()
+        local Sections = {}
+        Sections.JumpFunc = function()
             CircleClick(TabButton, 0, 0)
             local FrameChoose
             for _, v in ipairs(ScrollTab:GetDescendants()) do
@@ -1354,9 +1355,8 @@ function Chloex:Window(GuiConfig)
                 ):Play()
             end
         end
-        TabButton.Activated:Connect(function() TabFunc.JumpFunc() end)
+        TabButton.Activated:Connect(function() Sections.JumpFunc() end)
         --// Section
-        local Sections = {}
         local CountSection = 0
         function Sections:AddSection(Title, AlwaysOpen)
             local Title = Title or "Title"
@@ -1858,6 +1858,11 @@ function Chloex:Window(GuiConfig)
                 ButtonConfig.SubCallback = ButtonConfig.SubCallback or function() end
 
                 local ButtonFunc = { Locked = false }
+                
+                table.insert(GuiFunc.ComponentRegistry, {
+                    Name = ButtonConfig.Title,
+                    JumpFunc = Sections.JumpFunc
+                })
 
                 local Button = Instance.new("Frame")
                 Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1872,7 +1877,31 @@ function Chloex:Window(GuiConfig)
 
                 local MainButton = Instance.new("TextButton")
                 MainButton.Font = Enum.Font.GothamBold
-                MainButton.Text = ButtonConfig.Title
+                if ButtonConfig.Icon and ButtonConfig.Icon ~= "" then
+                    MainButton.Text = "          " .. ButtonConfig.Title
+                    MainButton.TextXAlignment = Enum.TextXAlignment.Left
+
+                    local IconImg = Instance.new("ImageLabel")
+                    IconImg.Size = UDim2.new(0, 16, 0, 16)
+                    IconImg.Position = UDim2.new(0, 10, 0.5, -8)
+                    IconImg.BackgroundTransparency = 1
+                    if Icons[ButtonConfig.Icon] then
+                        IconImg.Image = Icons[ButtonConfig.Icon]
+                    else
+                        IconImg.Image = "rbxassetid://" .. tostring(ButtonConfig.Icon)
+                    end
+                    IconImg.Parent = MainButton
+
+                    local Sep = Instance.new("Frame")
+                    Sep.Size = UDim2.new(0, 1, 0, 14)
+                    Sep.Position = UDim2.new(0, 32, 0.5, -7)
+                    Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Sep.BackgroundTransparency = 0.8
+                    Sep.BorderSizePixel = 0
+                    Sep.Parent = MainButton
+                else
+                    MainButton.Text = ButtonConfig.Title
+                end
                 MainButton.TextSize = 12
                 MainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
                 MainButton.TextTransparency = 0.3
@@ -2004,7 +2033,7 @@ function Chloex:Window(GuiConfig)
                 
                 table.insert(GuiFunc.ComponentRegistry, {
                     Name = ToggleConfig.Title,
-                    JumpFunc = TabFunc.JumpFunc
+                    JumpFunc = Sections.JumpFunc
                 })
 
                 local Toggle = Instance.new("Frame")
@@ -2301,7 +2330,7 @@ function Chloex:Window(GuiConfig)
                 
                 table.insert(GuiFunc.ComponentRegistry, {
                     Name = SliderConfig.Title,
-                    JumpFunc = TabFunc.JumpFunc
+                    JumpFunc = Sections.JumpFunc
                 })
 
                 local Slider = Instance.new("Frame");
@@ -2626,7 +2655,7 @@ function Chloex:Window(GuiConfig)
                 
                 table.insert(GuiFunc.ComponentRegistry, {
                     Name = InputConfig.Title,
-                    JumpFunc = TabFunc.JumpFunc
+                    JumpFunc = Sections.JumpFunc
                 })
 
                 local Input = Instance.new("Frame");
@@ -2852,7 +2881,7 @@ function Chloex:Window(GuiConfig)
                 
                 table.insert(GuiFunc.ComponentRegistry, {
                     Name = DropdownConfig.Title,
-                    JumpFunc = TabFunc.JumpFunc
+                    JumpFunc = Sections.JumpFunc
                 })
 
                 local Dropdown = Instance.new("Frame")
