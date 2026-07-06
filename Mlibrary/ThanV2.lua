@@ -1192,11 +1192,13 @@ function Chloex:Window(GuiConfig)
                     TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
                     { BackgroundTransparency = 0.9200000166893005 }
                 ):Play()
-                local targetY = 9 + (Tab.AbsolutePosition.Y - FrameChoose.Parent.AbsolutePosition.Y)
+                local oldAbsoluteY = FrameChoose.AbsolutePosition.Y
+                FrameChoose.Parent = Tab
+                FrameChoose.Position = UDim2.new(0, 2, 0, oldAbsoluteY - Tab.AbsolutePosition.Y)
                 TweenService:Create(
                     FrameChoose,
                     TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
-                    { Position = UDim2.new(0, 2, 0, targetY) }
+                    { Position = UDim2.new(0, 2, 0, 9) }
                 ):Play()
                 LayersPageLayout:JumpTo(ScrolLayers)
                 task.wait(0.05)
@@ -3180,6 +3182,53 @@ function Chloex:Window(GuiConfig)
                 TweenService:Create(FeatureImg, TweenInfo.new(0.3), {ImageTransparency = 0.6}):Play()
                 TweenService:Create(ArrowImg, TweenInfo.new(0.3), {ImageTransparency = 0.6, Rotation = 0}):Play()
             end
+            
+            local FrameChoose
+            for _, v in ipairs(ScrollTab:GetDescendants()) do
+                if v.Name == "ChooseFrame" then
+                    FrameChoose = v
+                    break
+                end
+            end
+            
+            if FrameChoose then
+                local isActiveInsideUs = false
+                local activeNestedTab = nil
+                
+                if FrameChoose.Parent == TabSection then
+                    isActiveInsideUs = true
+                    local activeIndex = TabSection:GetAttribute("ActiveNestedTabIndex")
+                    if activeIndex then
+                        activeNestedTab = InnerFrame:GetChildren()[activeIndex]
+                    end
+                elseif FrameChoose.Parent and FrameChoose.Parent.Parent == InnerFrame then
+                    isActiveInsideUs = true
+                    activeNestedTab = FrameChoose.Parent
+                    for i, child in ipairs(InnerFrame:GetChildren()) do
+                        if child == activeNestedTab then
+                            TabSection:SetAttribute("ActiveNestedTabIndex", i)
+                            break
+                        end
+                    end
+                end
+                
+                if isActiveInsideUs then
+                    if not opened then
+                        local oldY = FrameChoose.AbsolutePosition.Y
+                        FrameChoose.Parent = TabSection
+                        FrameChoose.Position = UDim2.new(0, 2, 0, oldY - TabSection.AbsolutePosition.Y)
+                        TweenService:Create(FrameChoose, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0, 2, 0, 9)}):Play()
+                    else
+                        if activeNestedTab then
+                            local oldY = FrameChoose.AbsolutePosition.Y
+                            FrameChoose.Parent = activeNestedTab
+                            FrameChoose.Position = UDim2.new(0, 2, 0, oldY - activeNestedTab.AbsolutePosition.Y)
+                            TweenService:Create(FrameChoose, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0, 2, 0, 9)}):Play()
+                        end
+                    end
+                end
+            end
+            
             UpdateSectionSize()
         end)
 
