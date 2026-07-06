@@ -1,71 +1,210 @@
-# Than Hub UI Library (Chloex)
+<div align="center">
+  <h1>🌟 Than Hub UI Library (Chloex)</h1>
+  <p>A modern, responsive, and feature-rich Roblox UI Library designed to streamline Hub script creation. Packed with interactive components, robust notification support, auto-save configuration, and a dynamic Component Lock feature.</p>
+</div>
 
-Sebuah UI Library Roblox modern, responsif, dan kaya fitur yang dikembangkan untuk mempermudah pembuatan script Hub di Roblox. Dilengkapi dengan berbagai komponen interaktif, dukungan notifikasi, auto-save konfigurasi, hingga fitur penguncian (*Lock Component*) dinamis.
-
-## 🌟 Fitur Utama
-- **Desain Modern & Gelap (Dark Theme)** dengan *smooth animations*.
-- **Auto-Save & Load Configuration**: Pengaturan pengguna tidak akan hilang!
-- **Notifikasi Keren** dengan *drop shadow*.
-- **Mendukung Fitur Lock**: Kunci komponen dengan mudah jika fitur belum selesai (*WIP*) atau sedang *auto-farming*.
-- **Mendukung Lucide Icons**: Banyak ikon bawaan yang bisa langsung dipakai.
+## ✨ Key Features
+- **Modern Dark Theme** with smooth micro-animations.
+- **Auto-Save & Load Configuration**: User settings are persistent across sessions.
+- **Sleek Notifications** with drop shadow effects.
+- **Lock Component Feature**: Dynamically lock and disable components that are Work-In-Progress (WIP) or during auto-farming.
+- **Lucide Icons Support**: A massive library of built-in icons ready to use.
 
 ---
 
-## 🚀 Quick Start / Cara Penggunaan
+## 🚀 Initialization
 
-Cukup salin script ini ke dalam executor Anda untuk melihat demo *Than Hub*:
+To start using the library, load it via `loadstring` and initialize the main window.
 
 ```lua
--- 1. Load Library
+-- 1. Load the Library
 local Chloex = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadddds1/Thanlibrary/refs/heads/main/Mlibrary/ThanV2.lua"))()
 
--- 2. Membuat Window Utama
+-- 2. Create the Main Window
 local Window = Chloex:Window({
-    Title   = "ThanHub |",              
-    Footer  = "99Night",                
-    Image   = "85779221265543",        
-    Color   = Color3.fromRGB(0, 208, 255), 
-    Theme   = 9542022979,  -- WAJIB MENGGUNAKAN ANGKA ASSET ID INI
-    Version = 1,                        
+    Title   = "ThanHub |",              -- Main Window Title
+    Footer  = "99Night",                -- Subtitle / Footer text
+    Image   = "85779221265543",        -- Logo Asset ID
+    Color   = Color3.fromRGB(0, 208, 255), -- Main Theme Color
+    Theme   = 9542022979,              -- Background Image Asset ID (MUST BE A NUMBER)
+    Version = 1,                       -- Config Version (Resets config if changed)
 })
+```
 
--- 3. Membuat Tab & Section
-local MainTab = Window:AddTab({ Name = "Demo", Icon = "rbxassetid://108483430622128" })
-local Section = MainTab:AddSection("Fitur Dasar", true)
+---
 
--- 4. Contoh Komponen (Toggle)
-local myToggle = Section:AddToggle({
-    Title = "Auto Farm",
-    Default = false,
-    Callback = function(value)
-        print("Status Toggle:", value)
+## 📑 Tabs and Sections
+
+Organize your user interface efficiently using Tabs, Sections, and SubSections.
+
+```lua
+-- Create a Tab
+local MainTab = Window:AddTab({ Name = "Main", Icon = "rbxassetid://108483430622128" })
+
+-- Create a Section (Set the second parameter to 'true' to keep it open by default)
+local Section = MainTab:AddSection("Basic Features", true)
+
+-- Create a SubSection (Great for grouping related elements together inside a section)
+local SubSection = Section:AddSubSection("Combat Settings")
+```
+
+---
+
+## 🧩 Components API
+
+Here is a comprehensive list of all the interactive elements you can add to your sections or subsections.
+
+### 1. Button
+A simple clickable button. It can optionally have a sub-button attached to it.
+```lua
+local MyButton = Section:AddButton({
+    Title = "Click Me",
+    SubTitle = "Optional secondary button", -- Remove if not needed
+    Callback = function()
+        print("Main button clicked!")
+    end,
+    SubCallback = function()
+        print("Sub-button clicked!")
     end
 })
 ```
 
+### 2. Toggle
+A switch used for boolean states (ON / OFF).
+```lua
+local MyToggle = Section:AddToggle({
+    Title = "Auto Farm",
+    Content = "Automatically kill mobs",
+    Default = false,
+    Callback = function(state)
+        print("Toggle is now:", state)
+    end
+})
+```
+
+### 3. Slider
+A draggable slider for selecting a numeric value within a specific range.
+```lua
+local MySlider = Section:AddSlider({
+    Title = "Walk Speed",
+    Content = "Adjust player speed",
+    Min = 16,
+    Max = 100,
+    Increment = 1,
+    Default = 16,
+    Callback = function(value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+    end
+})
+```
+
+### 4. Dropdown
+A selectable list of options. Supports both single-selection and multi-selection.
+```lua
+local MyDropdown = Section:AddDropdown({
+    Title = "Select Weapon",
+    Content = "Choose your preferred weapon",
+    Options = {"Sword", "Gun", "Bow"},
+    Multi = false, -- Set to true to allow multiple selections
+    Default = "Sword", -- Use a table e.g., {"Sword"} if Multi is true
+    Callback = function(value)
+        print("Selected:", value)
+    end
+})
+
+-- Dynamic Dropdown (Update options dynamically later on)
+MyDropdown:SetValues({"Axe", "Spear"}, "Axe")
+```
+
+### 5. Input (TextBox)
+A text field allowing users to type custom strings or numbers.
+```lua
+local MyInput = Section:AddInput({
+    Title = "Webhook URL",
+    Content = "Enter your Discord Webhook",
+    Default = "",
+    Callback = function(value)
+        print("Input received:", value)
+    end
+})
+```
+
+### 6. Additional Layout Elements
+```lua
+-- Paragraph: Display static text with an optional button
+Section:AddParagraph({
+    Title = "Information",
+    Content = "Welcome to Than Hub. Enjoy your stay!",
+    Icon = "rbxassetid://108483430622128",
+    ButtonText = "Copy Discord Link",
+    ButtonCallback = function()
+        setclipboard("https://discord.gg/yourlink")
+    end
+})
+
+-- Divider: A simple horizontal line to separate components
+Section:AddDivider()
+```
+
 ---
 
-## 🔒 Fitur Lock Component (Baru!)
+## 🔒 Lock Component Feature (WIP Indicator)
 
-Kini Anda dapat dengan mudah **menonaktifkan / mengunci** sebuah komponen secara dinamis. Fitur ini sangat berguna untuk menampilkan bahwa suatu fitur masih dalam tahap pengerjaan (*Work in Progress / WIP*).
+You can easily **disable / lock** any interactive component dynamically. This is extremely useful for showcasing features that are currently under development (Work-In-Progress) or temporarily disabling inputs while an automated task is running.
 
 ```lua
--- Buat Toggle
-local myWIP_Toggle = Section:AddToggle({
-    Title = "Fitur Rahasia",
+local lockedToggle = Section:AddToggle({
+    Title = "Auto Boss (WIP)",
     Default = false,
     Callback = function(value) end
 })
 
--- Kunci toggle dengan memberikan alasan!
-myWIP_Toggle:Lock("Not finish yet")
+-- Lock the component and provide a reason!
+lockedToggle:Lock("Not finish yet")
 ```
+When locked, the component is covered by a dark overlay featuring a Padlock icon and the text **"Locked : Not finish yet"**. It becomes entirely unclickable. 
+To unlock it later, simply call: `lockedToggle:Lock(false)`
 
-Saat dikunci, komponen akan diselimuti *overlay gelap* dengan logo Gembok (Lock) dan teks **"Locked : Not finish yet"** di atasnya. Komponen juga otomatis tidak bisa diklik!
+*(Note: The `:Lock(reason)` method is supported on Toggles, Sliders, Dropdowns, Inputs, and Buttons!)*
 
 ---
 
-## 📚 Dokumentasi Lebih Lanjut
-Untuk melihat contoh script penggunaan seluruh komponen (Button, Slider, Input, Dropdown), silakan buka file [`MComponent/Component.lua`](https://github.com/hamadddds1/Thanlibrary/blob/main/MComponent/Component.lua) di repository ini.
+## 🔔 Notifications
 
-**Developed with ❤️ by Than**
+Trigger beautiful, non-intrusive popup notifications on the screen.
+
+```lua
+-- Detailed Notification
+Chloex:MakeNotify({
+    Title = "System",
+    Description = "Loaded Successfully!",
+    Content = "Enjoy using the script.",
+    Color = Color3.fromRGB(0, 208, 255),
+    Delay = 3 -- Time in seconds before it disappears
+})
+
+-- Short Notification (Quick Pop-up)
+chloex("Welcome back!") 
+-- alternatively: than("Welcome back!")
+```
+
+---
+
+## ⚙️ Configuration System (Auto-Save)
+
+The library automatically handles saving most component states. However, you can save custom data manually to the configuration file.
+
+```lua
+-- 1. Save data to the config table
+ConfigData.MyCustomSetting = "Hello World"
+
+-- 2. Call SaveConfig() to write it to the local file
+SaveConfig()
+```
+
+*(Note: Changing the `Version` parameter during `Chloex:Window` initialization will automatically wipe and reset the configuration file for the user.)*
+
+---
+<div align="center">
+  <b>Developed with ❤️ by Than</b>
+</div>
