@@ -585,11 +585,11 @@ function Chloex:Window(GuiConfig)
     TopIcon.BackgroundTransparency = 1
     TopIcon.Position = UDim2.new(0, 9, 0, 9)
     TopIcon.Size = UDim2.new(0, 20, 0, 20)
-    if GuiConfig.Image and GuiConfig.Image ~= "" then
-        if Icons[GuiConfig.Image] then
-            TopIcon.Image = Icons[GuiConfig.Image]
+    if GuiConfig.Uicon and GuiConfig.Uicon ~= "" then
+        if Icons[GuiConfig.Uicon] then
+            TopIcon.Image = Icons[GuiConfig.Uicon]
         else
-            TopIcon.Image = "rbxassetid://" .. tostring(GuiConfig.Image)
+            TopIcon.Image = "rbxassetid://" .. tostring(GuiConfig.Uicon)
         end
     else
         TopIcon.Image = "rbxassetid://9996720172"
@@ -910,11 +910,11 @@ function Chloex:Window(GuiConfig)
         MainButton.Size = UDim2.new(0, 40, 0, 40)
         MainButton.Position = UDim2.new(0, 20, 0, 100)
         MainButton.BackgroundTransparency = 1
-        if GuiConfig.Image and GuiConfig.Image ~= "" then
-            if Icons[GuiConfig.Image] then
-                MainButton.Image = Icons[GuiConfig.Image]
+        if GuiConfig.Micon and GuiConfig.Micon ~= "" then
+            if Icons[GuiConfig.Micon] then
+                MainButton.Image = Icons[GuiConfig.Micon]
             else
-                MainButton.Image = "rbxassetid://" .. tostring(GuiConfig.Image)
+                MainButton.Image = "rbxassetid://" .. tostring(GuiConfig.Micon)
             end
         else
             MainButton.Image = "rbxassetid://9996720172"

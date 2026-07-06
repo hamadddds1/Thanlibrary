@@ -8,8 +8,9 @@ local Chloex = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadd
 -- 2. CREATE WINDOW
 local Window = Chloex:Window({
     Title   = "ThanHub",              
-    Footer  = "99Night",                
-    Image   = "gamepad-2", -- Supports rbxassetid OR Lucide Icons (e.g. "swords", "home", "gamepad-2")        
+    Footer  = "99Night",
+    Micon   = "85779221265543", -- Floating Hide/Show Button Icon (rbxassetid or Lucide)
+    Uicon   = "gamepad-2",      -- Top Bar Icon (rbxassetid or Lucide)
     Color   = Color3.fromRGB(0, 208, 255), 
     Theme   = 9542022979, -- WAJIB ANGKA
     Version = 1,                        
