@@ -3526,6 +3526,42 @@ function Chloex:Window(GuiConfig)
         return SectionTabs
     end
 
+    function Tabs:ChangeTheme(ThemeName)
+        if CustomThemes[ThemeName] then
+            local SelectedTheme = CustomThemes[ThemeName]
+            GuiConfig.Theme = SelectedTheme.Theme
+            GuiConfig.Color = SelectedTheme.Color
+
+            if Main:IsA("ImageLabel") then
+                Main.Image = "rbxassetid://" .. SelectedTheme.Theme
+            end
+            if TextLabel then
+                TextLabel.TextColor3 = SelectedTheme.Color
+            end
+            
+            -- Update UI colors dynamically
+            for _, obj in ipairs(Main:GetDescendants()) do
+                if obj:IsA("Frame") and obj.Name == "ChooseFrame" and obj.BackgroundTransparency == 0 then
+                    obj.BackgroundColor3 = SelectedTheme.Color
+                elseif obj:IsA("UIStroke") and obj.Name == "UIStroke2" then
+                    obj.Color = SelectedTheme.Color
+                elseif obj:IsA("UIStroke") and obj.Name == "UIStroke15" then
+                    obj.Color = SelectedTheme.Color
+                elseif obj:IsA("UIGradient") and obj.Name == "UIGradient" then
+                    obj.Color = ColorSequence.new({
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+                        ColorSequenceKeypoint.new(0.5, SelectedTheme.Color),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+                    })
+                elseif obj:IsA("Frame") and (obj.Name == "SliderInput" or obj.Name == "SliderDraggable" or obj.Name == "SliderCircle") then
+                    obj.BackgroundColor3 = SelectedTheme.Color
+                elseif obj:IsA("UIStroke") and obj.Name == "UIStroke6" then
+                    obj.Color = SelectedTheme.Color
+                end
+            end
+        end
+    end
+
     return Tabs
 end
 

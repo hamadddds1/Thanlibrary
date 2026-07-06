@@ -2,8 +2,14 @@
 -- THAN HUB UI LIBRARY - QUICK START GUIDE
 -- ==========================================
 
--- 1. LOAD LIBRARY
-local Chloex = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadddds1/Thanlibrary/refs/heads/main/Mlibrary/ThanV2.lua"))()
+-- 1. LOAD LIBRARY (Robust method to prevent intermittent network errors)
+local Chloex
+repeat
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadddds1/Thanlibrary/refs/heads/main/Mlibrary/ThanV2.lua"))()
+    end)
+    if success and result then Chloex = result else task.wait(0.5) end
+until Chloex
 
 -- 2. CREATE WINDOW
 local Window = Chloex:Window({

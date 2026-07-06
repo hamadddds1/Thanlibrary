@@ -19,8 +19,14 @@
 To start using the library, load it via `loadstring` and initialize the main window.
 
 ```lua
--- 1. Load the Library
-local Chloex = loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadddds1/Thanlibrary/refs/heads/main/Mlibrary/ThanV2.lua"))()
+-- 1. Load the Library (Robust method to prevent intermittent network errors)
+local Chloex
+repeat
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/hamadddds1/Thanlibrary/refs/heads/main/Mlibrary/ThanV2.lua"))()
+    end)
+    if success and result then Chloex = result else task.wait(0.5) end
+until Chloex
 
 -- 2. Create the Main Window
 local Window = Chloex:Window({
@@ -139,6 +145,18 @@ local MyDropdown = Section:AddDropdown({
 
 -- Dynamic Dropdown (Update options dynamically later on)
 MyDropdown:SetValues({"Axe", "Spear"}, "Axe")
+
+-- You can also use a Dropdown to change the UI Theme dynamically!
+Section:AddDropdown({
+    Title = "Change Theme",
+    Content = "Switch UI Theme on the fly",
+    Icon = "palette",
+    Options = {"Default", "Dark", "Ruby", "Emerald", "Amethyst", "Sakura", "Ocean"},
+    Default = "Ruby",
+    Callback = function(value)
+        Window:ChangeTheme(value)
+    end
+})
 ```
 
 ### 5. Input (TextBox)
