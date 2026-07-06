@@ -34,9 +34,18 @@ local Window = Chloex:Window({
 })
 ```
 
+### Window Configuration Explained:
+- **`Title`**: The primary title text at the top-left of the UI.
+- **`Footer`**: Secondary subtitle text that perfectly stacks below the Title.
+- **`Micon`** (Main Icon): Controls the image used for the floating **Hide/Show UI button** on the screen. Accepts a Roblox Asset ID (e.g. `"85779221265543"`) or a Lucide icon string (e.g. `"gamepad-2"`).
+- **`Uicon`** (UI Icon): Controls the logo displayed inside the **Top Bar** of the UI (next to the Title). Accepts a Roblox Asset ID or a Lucide icon string.
+- **`Color`**: The primary accent color for the entire UI (text, borders, strokes).
+- **`Theme`**: A Roblox Asset ID (numbers only) used for the background image pattern of the UI.
+- **`Version`**: Changing this number will automatically reset and clear old configurations for your users.
+
 ---
 
-## 📑 Tabs and Sections
+## 🚀 Tabs and Sections
 
 Organize your user interface efficiently using Tabs, Sections, and SubSections.
 
