@@ -1219,6 +1219,7 @@ function Chloex:Window(GuiConfig)
                 ):Play()
             end
         end)
+    end
 
 
     function Tabs:AddTab(TabConfig)
@@ -1337,7 +1338,6 @@ function Chloex:Window(GuiConfig)
         end
 
         return SectionTabs
-    end
         --// Section
         local Sections = {}
         local CountSection = 0
