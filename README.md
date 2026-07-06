@@ -39,7 +39,7 @@ Organize your user interface efficiently using Tabs, Sections, and SubSections.
 
 ```lua
 -- Create a Tab
-local MainTab = Window:AddTab({ Name = "Main", Icon = "rbxassetid://108483430622128" })
+local MainTab = Window:AddTab({ Name = "Main", Icon = "home" }) -- Use any Lucide icon name!
 
 -- Create a Section (Set the second parameter to 'true' to keep it open by default)
 local Section = MainTab:AddSection("Basic Features", true)

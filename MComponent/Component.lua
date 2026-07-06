@@ -16,8 +16,8 @@ local Window = Chloex:Window({
 })
 
 -- 3. CREATE TABS
-local MainTab = Window:AddTab({ Name = "Utama", Icon = "rbxassetid://108483430622128" })
-local SettingsTab = Window:AddTab({ Name = "Pengaturan", Icon = "rbxassetid://70386228443175" })
+local MainTab = Window:AddTab({ Name = "Utama", Icon = "home" })
+local SettingsTab = Window:AddTab({ Name = "Pengaturan", Icon = "settings" })
 
 -- ==========================================
 -- CONTOH PENGGUNAAN KOMPONEN
