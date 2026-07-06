@@ -1057,7 +1057,7 @@ function Chloex:Window(GuiConfig)
     local Tabs = {}
     local CountTab = 0
     local CountDropdown = 0
-    function Tabs:AddTab(TabConfig)
+    local function InternalAddTab(TabConfig, ParentFrame, IsNested)
         local TabConfig = TabConfig or {}
         TabConfig.Name = TabConfig.Name or "Tab"
         TabConfig.Icon = TabConfig.Icon or ""
@@ -1100,7 +1100,7 @@ function Chloex:Window(GuiConfig)
         Tab.LayoutOrder = CountTab
         Tab.Size = UDim2.new(1, 0, 0, 30)
         Tab.Name = "Tab"
-        Tab.Parent = ScrollTab
+        Tab.Parent = ParentFrame or ScrollTab
 
         UICorner3.CornerRadius = UDim.new(0, 4)
         UICorner3.Parent = Tab
@@ -1131,6 +1131,12 @@ function Chloex:Window(GuiConfig)
         TabName.Position = UDim2.new(0, 30, 0, 0)
         TabName.Name = "TabName"
         TabName.Parent = Tab
+        if IsNested then
+            TabName.Text = "  " .. tostring(TabConfig.Name)
+            FeatureImg.Position = UDim2.new(0, 24, 0, 7)
+            TabName.Position = UDim2.new(0, 45, 0, 0)
+        end
+
 
         FeatureImg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         FeatureImg.BackgroundTransparency = 0.9990000128746033
@@ -1170,8 +1176,7 @@ function Chloex:Window(GuiConfig)
         TabButton.Activated:Connect(function()
             CircleClick(TabButton, Mouse.X, Mouse.Y)
             local FrameChoose
-            for a, s in ScrollTab:GetChildren() do
-                for i, v in s:GetChildren() do
+            for _, v in ipairs(ScrollTab:GetDescendants()) do
                     if v.Name == "ChooseFrame" then
                         FrameChoose = v
                         break
@@ -1193,10 +1198,11 @@ function Chloex:Window(GuiConfig)
                     TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
                     { BackgroundTransparency = 0.9200000166893005 }
                 ):Play()
+                local targetY = 9 + (Tab.AbsolutePosition.Y - FrameChoose.Parent.AbsolutePosition.Y)
                 TweenService:Create(
                     FrameChoose,
                     TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
-                    { Position = UDim2.new(0, 2, 0, 9 + (33 * Tab.LayoutOrder)) }
+                    { Position = UDim2.new(0, 2, 0, targetY) }
                 ):Play()
                 LayersPageLayout:JumpToIndex(Tab.LayoutOrder)
                 task.wait(0.05)
@@ -1214,6 +1220,125 @@ function Chloex:Window(GuiConfig)
                 ):Play()
             end
         end)
+
+
+    function Tabs:AddTab(TabConfig)
+        return InternalAddTab(TabConfig, ScrollTab, false)
+    end
+
+
+    function Tabs:AddTabSection(SectionConfig)
+        SectionConfig = SectionConfig or {}
+        SectionConfig.Name = SectionConfig.Name or "Section"
+        SectionConfig.Icon = SectionConfig.Icon or ""
+
+        local TabSection = Instance.new("Frame")
+        local UICorner = Instance.new("UICorner")
+        local SectionButton = Instance.new("TextButton")
+        local SectionName = Instance.new("TextLabel")
+        local FeatureImg = Instance.new("ImageLabel")
+        local ArrowImg = Instance.new("ImageLabel")
+        local InnerFrame = Instance.new("Frame")
+        local InnerLayout = Instance.new("UIListLayout")
+
+        TabSection.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        TabSection.BackgroundTransparency = 0.999
+        TabSection.BorderSizePixel = 0
+        TabSection.LayoutOrder = CountTab
+        TabSection.Size = UDim2.new(1, 0, 0, 30)
+        TabSection.ClipsDescendants = true
+        TabSection.Name = "TabSection"
+        TabSection.Parent = ScrollTab
+
+        UICorner.CornerRadius = UDim.new(0, 4)
+        UICorner.Parent = TabSection
+
+        SectionButton.Font = Enum.Font.GothamBold
+        SectionButton.Text = ""
+        SectionButton.BackgroundTransparency = 1
+        SectionButton.Size = UDim2.new(1, 0, 0, 30)
+        SectionButton.ZIndex = 2
+        SectionButton.Parent = TabSection
+
+        SectionName.Font = Enum.Font.GothamBold
+        SectionName.Text = SectionConfig.Name
+        SectionName.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SectionName.TextSize = 13
+        SectionName.TextTransparency = 0.6
+        SectionName.TextXAlignment = Enum.TextXAlignment.Left
+        SectionName.BackgroundTransparency = 1
+        SectionName.Size = UDim2.new(1, -60, 0, 30)
+        SectionName.Position = UDim2.new(0, 30, 0, 0)
+        SectionName.Parent = TabSection
+
+        FeatureImg.BackgroundTransparency = 1
+        FeatureImg.Position = UDim2.new(0, 9, 0, 7)
+        FeatureImg.Size = UDim2.new(0, 16, 0, 16)
+        if SectionConfig.Icon ~= "" then
+            if Icons[SectionConfig.Icon] then
+                FeatureImg.Image = Icons[SectionConfig.Icon]
+            else
+                FeatureImg.Image = SectionConfig.Icon
+            end
+        end
+        FeatureImg.ImageTransparency = 0.6
+        FeatureImg.Parent = TabSection
+
+        ArrowImg.BackgroundTransparency = 1
+        ArrowImg.Position = UDim2.new(1, -25, 0, 7)
+        ArrowImg.Size = UDim2.new(0, 16, 0, 16)
+        ArrowImg.Image = Icons["chevron-down"] or "rbxassetid://7733771804"
+        ArrowImg.ImageTransparency = 0.6
+        ArrowImg.Parent = TabSection
+
+        InnerFrame.BackgroundTransparency = 1
+        InnerFrame.Position = UDim2.new(0, 0, 0, 30)
+        InnerFrame.Size = UDim2.new(1, 0, 1, -30)
+        InnerFrame.Parent = TabSection
+
+        InnerLayout.Padding = UDim.new(0, 3)
+        InnerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        InnerLayout.Parent = InnerFrame
+
+        local opened = false
+
+        local function UpdateSectionSize()
+            local innerHeight = InnerLayout.AbsoluteContentSize.Y
+            if innerHeight > 0 then innerHeight = innerHeight + 3 end
+            if opened then
+                TweenService:Create(TabSection, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 30 + innerHeight)}):Play()
+            else
+                TweenService:Create(TabSection, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 30)}):Play()
+            end
+        end
+
+        InnerLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            if opened then
+                UpdateSectionSize()
+            end
+        end)
+
+        SectionButton.Activated:Connect(function()
+            opened = not opened
+            if opened then
+                TweenService:Create(SectionName, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+                TweenService:Create(FeatureImg, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
+                TweenService:Create(ArrowImg, TweenInfo.new(0.3), {ImageTransparency = 0, Rotation = 180}):Play()
+            else
+                TweenService:Create(SectionName, TweenInfo.new(0.3), {TextTransparency = 0.6}):Play()
+                TweenService:Create(FeatureImg, TweenInfo.new(0.3), {ImageTransparency = 0.6}):Play()
+                TweenService:Create(ArrowImg, TweenInfo.new(0.3), {ImageTransparency = 0.6, Rotation = 0}):Play()
+            end
+            UpdateSectionSize()
+        end)
+
+        local SectionTabs = {}
+        function SectionTabs:AddTab(SubTabConfig)
+            return InternalAddTab(SubTabConfig, InnerFrame, true)
+        end
+
+        return SectionTabs
+    end
         --// Section
         local Sections = {}
         local CountSection = 0

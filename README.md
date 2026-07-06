@@ -41,7 +41,12 @@ Organize your user interface efficiently using Tabs, Sections, and SubSections.
 -- Create a Tab
 local MainTab = Window:AddTab({ Name = "Main", Icon = "home" }) -- Use any Lucide icon name!
 
--- Create a Section (Set the second parameter to 'true' to keep it open by default)
+-- Create a Tab Section (Expandable Dropdown for Tabs)
+local TabGroup = Window:AddTabSection({ Name = "Farming", Icon = "swords" })
+local LevelTab = TabGroup:AddTab({ Name = "Level Farm", Icon = "chevron-right" })
+local BossTab = TabGroup:AddTab({ Name = "Boss Farm", Icon = "chevron-right" })
+
+-- Create a Section inside a Tab
 local Section = MainTab:AddSection("Basic Features", true)
 
 -- Create a SubSection (Great for grouping related elements together inside a section)

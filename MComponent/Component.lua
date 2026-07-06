@@ -19,6 +19,11 @@ local Window = Chloex:Window({
 local MainTab = Window:AddTab({ Name = "Utama", Icon = "home" })
 local SettingsTab = Window:AddTab({ Name = "Pengaturan", Icon = "settings" })
 
+-- 4. CREATE TAB SECTION (Dropdown Tab)
+local TabGroup = Window:AddTabSection({ Name = "Dungeon", Icon = "swords" })
+local Dungeon1Tab = TabGroup:AddTab({ Name = "Level 1", Icon = "chevron-right" })
+local Dungeon2Tab = TabGroup:AddTab({ Name = "Level 2", Icon = "chevron-right" })
+
 -- ==========================================
 -- CONTOH PENGGUNAAN KOMPONEN
 -- ==========================================
