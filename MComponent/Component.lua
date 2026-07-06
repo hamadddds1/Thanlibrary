@@ -13,6 +13,7 @@ local Window = Chloex:Window({
     Uicon   = "gamepad-2",      -- Top Bar Icon (rbxassetid or Lucide)
     -- Color   = Color3.fromRGB(0, 208, 255), -- Not needed if using a custom theme
     Theme   = "Ruby", -- Custom themes: "Default", "Dark", "Ruby", "Emerald", "Amethyst", "Sakura", "Ocean"
+    Search  = true,   -- Set to false to disable the search box
     Version = 1,                        
 })
 

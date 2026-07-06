@@ -29,6 +29,7 @@ local Window = Chloex:Window({
     Micon   = "85779221265543",          -- Floating Hide/Show Button Logo (rbxassetid or Lucide)
     Uicon   = "gamepad-2",               -- Top Bar Logo (rbxassetid or Lucide)
     Theme   = "Ruby",                    -- Custom Themes (e.g., "Dark", "Ruby", "Ocean") or a background Image ID
+    Search  = true,                      -- Set to false to hide the search box
     Version = 1,                         -- Config Version (Resets config if changed)
 })
 ```
@@ -39,6 +40,7 @@ local Window = Chloex:Window({
 - **`Micon`** (Main Icon): Controls the image used for the floating **Hide/Show UI button** on the screen. Accepts a Roblox Asset ID (e.g. `"85779221265543"`) or a Lucide icon string (e.g. `"gamepad-2"`).
 - **`Uicon`** (UI Icon): Controls the logo displayed inside the **Top Bar** of the UI (next to the Title). Accepts a Roblox Asset ID or a Lucide icon string.
 - **`Theme`**: You can enter a **Custom Theme Name** (e.g., `"Ruby"`, `"Ocean"`, `"Amethyst"`, `"Dark"`, `"Emerald"`, `"Sakura"`, `"Default"`) to automatically color the UI. Alternatively, you can input a custom Roblox Asset ID number for the background image.
+- **`Search`**: Boolean value (`true`/`false`). Enable or disable the built-in search box. Defaults to `true`.
 - **`Color`** *(Optional)*: The primary accent color for the UI. If you are using a Custom Theme Name, you can omit this entirely!
 - **`Version`**: Changing this number will automatically reset and clear old configurations for your users.
 
