@@ -33,6 +33,7 @@ local Section1 = MainTab:AddSection("Fitur Dasar", true)
 -- BUTTON
 local myButton = Section1:AddButton({
     Title = "Klik Saya",
+    Icon = "chevron-right",
     Callback = function()
         chloex("Tombol berhasil diklik!")
     end
@@ -41,7 +42,7 @@ local myButton = Section1:AddButton({
 -- TOGGLE
 local myToggle = Section1:AddToggle({
     Title = "Auto Farm",
-    Icon = "swords", -- Menggunakan icon dari lucide.dev
+    Icon = "swords", -- Menggunakan icon lucide
     Default = false,
     Callback = function(value)
         print("Auto Farm:", value)
@@ -50,10 +51,13 @@ local myToggle = Section1:AddToggle({
 
 -- SLIDER
 local mySlider = Section1:AddSlider({
-    Title = "Kecepatan Lari",
+    Title = "Kecepatan",
+    Content = "Atur kecepatan jalan",
+    Icon = "gamepad-2",
     Min = 16,
     Max = 100,
     Default = 16,
+    Increment = 1,
     Callback = function(value)
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
     end
@@ -62,6 +66,8 @@ local mySlider = Section1:AddSlider({
 -- DROPDOWN
 local myDropdown = Section1:AddDropdown({
     Title = "Pilih Senjata",
+    Content = "Senjata utama untuk farm",
+    Icon = "player",
     Options = {"Pedang", "Pistol", "Busur"},
     Default = "Pedang",
     Callback = function(value)

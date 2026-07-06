@@ -63,18 +63,23 @@ local CustomThemes = {
 }
 
 local Icons = {
-    player    = "rbxassetid://12120698352",
-    web       = "rbxassetid://137601480983962",
-    bag       = "rbxassetid://8601111810",
-    shop      = "rbxassetid://4985385964",
-    cart      = "rbxassetid://128874923961846",
-    plug      = "rbxassetid://137601480983962",
-    settings  = "rbxassetid://70386228443175",
-    loop      = "rbxassetid://122032243989747",
-    gps       = "rbxassetid://17824309485",
-    compas    = "rbxassetid://125300760963399",
-    gamepad   = "rbxassetid://84173963561612",
-    boss      = "rbxassetid://13132186360",
+    ["player"]        = "rbxassetid://12120698352",
+    ["web"]           = "rbxassetid://137601480983962",
+    ["bag"]           = "rbxassetid://8601111810",
+    ["shop"]          = "rbxassetid://4985385964",
+    ["cart"]          = "rbxassetid://128874923961846",
+    ["plug"]          = "rbxassetid://137601480983962",
+    ["settings"]      = "rbxassetid://70386228443175",
+    ["loop"]          = "rbxassetid://122032243989747",
+    ["gps"]           = "rbxassetid://17824309485",
+    ["compas"]        = "rbxassetid://125300760963399",
+    ["gamepad"]       = "rbxassetid://84173963561612",
+    ["gamepad-2"]     = "rbxassetid://84173963561612",
+    ["home"]          = "rbxassetid://6031280882",
+    ["swords"]        = "rbxassetid://13511132711",
+    ["chevron-right"] = "rbxassetid://3944672659",
+    ["fishing-rod"]   = "rbxassetid://6342898951",
+    ["boss"]          = "rbxassetid://13132186360",
     scroll    = "rbxassetid://114127804740858",
     menu      = "rbxassetid://6340513838",
     crosshair = "rbxassetid://12614416478",
@@ -508,7 +513,7 @@ function Chloex:Window(GuiConfig)
     CURRENT_VERSION        = GuiConfig.Version
     LoadConfigFromFile()
 
-    local GuiFunc = {}
+    local GuiFunc = { ComponentRegistry = {} }
 
     local Chloeex = Instance.new("ScreenGui");
     local DropShadowHolder = Instance.new("Frame");
@@ -697,12 +702,97 @@ function Chloex:Window(GuiConfig)
     ImageLabel2.Size = UDim2.new(1, -9, 1, -9)
     ImageLabel2.Parent = Min
 
+    local SearchBox = Instance.new("TextBox")
+    local SearchUICorner = Instance.new("UICorner")
+    local SearchUIStroke = Instance.new("UIStroke")
+    
+    SearchBox.Name = "SearchBox"
+    SearchBox.Parent = Main
+    SearchBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBox.BackgroundTransparency = 0.935
+    SearchBox.Position = UDim2.new(0, 9, 0, 48)
+    SearchBox.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 26)
+    SearchBox.Font = Enum.Font.Gotham
+    SearchBox.PlaceholderText = "Search..."
+    SearchBox.Text = ""
+    SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBox.TextSize = 12
+    
+    SearchUICorner.CornerRadius = UDim.new(0, 4)
+    SearchUICorner.Parent = SearchBox
+    
+    SearchUIStroke.Color = GuiConfig.Color
+    SearchUIStroke.Transparency = 0.5
+    SearchUIStroke.Parent = SearchBox
+
+    local SearchDropdown = Instance.new("ScrollingFrame")
+    local SearchListLayout = Instance.new("UIListLayout")
+    
+    SearchDropdown.Name = "SearchDropdown"
+    SearchDropdown.Parent = Main
+    SearchDropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    SearchDropdown.BackgroundTransparency = 0.05
+    SearchDropdown.BorderSizePixel = 0
+    SearchDropdown.Position = UDim2.new(0, 9, 0, 78)
+    SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 0)
+    SearchDropdown.ZIndex = 10
+    SearchDropdown.ScrollBarThickness = 2
+    SearchDropdown.ClipsDescendants = true
+    SearchDropdown.Visible = false
+    
+    SearchListLayout.Parent = SearchDropdown
+    SearchListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    SearchListLayout.Padding = UDim.new(0, 2)
+
+    SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+        local txt = string.lower(SearchBox.Text)
+        for _, child in pairs(SearchDropdown:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
+        if txt == "" then
+            SearchDropdown.Visible = false
+            SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 0)
+            return
+        end
+        
+        SearchDropdown.Visible = true
+        local count = 0
+        for _, comp in pairs(GuiFunc.ComponentRegistry) do
+            if string.find(string.lower(comp.Name), txt) then
+                count = count + 1
+                local resultBtn = Instance.new("TextButton")
+                resultBtn.Size = UDim2.new(1, 0, 0, 24)
+                resultBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                resultBtn.BackgroundTransparency = 0.95
+                resultBtn.Text = "  " .. comp.Name
+                resultBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                resultBtn.TextSize = 11
+                resultBtn.Font = Enum.Font.Gotham
+                resultBtn.TextXAlignment = Enum.TextXAlignment.Left
+                resultBtn.Parent = SearchDropdown
+                resultBtn.ZIndex = 11
+                
+                resultBtn.MouseButton1Click:Connect(function()
+                    SearchBox.Text = ""
+                    SearchBox:ReleaseFocus()
+                    if comp.JumpFunc then
+                        comp.JumpFunc()
+                    end
+                end)
+            end
+        end
+        SearchDropdown.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, math.clamp(count * 26, 0, 150))
+        SearchDropdown.CanvasSize = UDim2.new(0, 0, 0, count * 26)
+    end)
+
     LayersTab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     LayersTab.BackgroundTransparency = 0.9990000128746033
     LayersTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
     LayersTab.BorderSizePixel = 0
-    LayersTab.Position = UDim2.new(0, 9, 0, 50)
-    LayersTab.Size = UDim2.new(0, GuiConfig["Tab Width"], 1, -59)
+    LayersTab.Position = UDim2.new(0, 9, 0, 80)
+    LayersTab.Size = UDim2.new(0, GuiConfig["Tab Width"], 1, -89)
     LayersTab.Name = "LayersTab"
     LayersTab.Parent = Main
 
@@ -1216,8 +1306,8 @@ function Chloex:Window(GuiConfig)
             end
         end
 
-        TabButton.Activated:Connect(function()
-            CircleClick(TabButton, Mouse.X, Mouse.Y)
+        TabFunc.JumpFunc = function()
+            CircleClick(TabButton, 0, 0)
             local FrameChoose
             for _, v in ipairs(ScrollTab:GetDescendants()) do
                     if v.Name == "ChooseFrame" then
@@ -1263,7 +1353,8 @@ function Chloex:Window(GuiConfig)
                     { Size = UDim2.new(0, 1, 0, 12) }
                 ):Play()
             end
-        end)
+        end
+        TabButton.Activated:Connect(function() TabFunc.JumpFunc() end)
         --// Section
         local Sections = {}
         local CountSection = 0
@@ -1910,6 +2001,11 @@ function Chloex:Window(GuiConfig)
                 end
 
                 local ToggleFunc = { Value = ToggleConfig.Default, Locked = false }
+                
+                table.insert(GuiFunc.ComponentRegistry, {
+                    Name = ToggleConfig.Title,
+                    JumpFunc = TabFunc.JumpFunc
+                })
 
                 local Toggle = Instance.new("Frame")
                 local UICorner20 = Instance.new("UICorner")
@@ -1933,14 +2029,39 @@ function Chloex:Window(GuiConfig)
                 UICorner20.Parent = Toggle
 
                 ToggleTitle.Font = Enum.Font.GothamBold
-                ToggleTitle.Text = ToggleConfig.Title
+                if ToggleConfig.Icon and ToggleConfig.Icon ~= "" then
+                    ToggleTitle.Text = ToggleConfig.Title
+                    local IconImg = Instance.new("ImageLabel")
+                    IconImg.Size = UDim2.new(0, 16, 0, 16)
+                    IconImg.Position = UDim2.new(0, 10, 0, 8)
+                    IconImg.BackgroundTransparency = 1
+                    if Icons[ToggleConfig.Icon] then
+                        IconImg.Image = Icons[ToggleConfig.Icon]
+                    else
+                        IconImg.Image = "rbxassetid://" .. tostring(ToggleConfig.Icon)
+                    end
+                    IconImg.Parent = Toggle
+
+                    local Sep = Instance.new("Frame")
+                    Sep.Size = UDim2.new(0, 1, 0, 14)
+                    Sep.Position = UDim2.new(0, 32, 0, 9)
+                    Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Sep.BackgroundTransparency = 0.8
+                    Sep.BorderSizePixel = 0
+                    Sep.Parent = Toggle
+                    
+                    ToggleTitle.Position = UDim2.new(0, 40, 0, 10)
+                    ToggleTitle.Size = UDim2.new(1, -130, 0, 13)
+                else
+                    ToggleTitle.Text = ToggleConfig.Title
+                    ToggleTitle.Position = UDim2.new(0, 10, 0, 10)
+                    ToggleTitle.Size = UDim2.new(1, -100, 0, 13)
+                end
                 ToggleTitle.TextSize = 13
                 ToggleTitle.TextColor3 = Color3.fromRGB(231, 231, 231)
                 ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
                 ToggleTitle.TextYAlignment = Enum.TextYAlignment.Top
                 ToggleTitle.BackgroundTransparency = 1
-                ToggleTitle.Position = UDim2.new(0, 10, 0, 10)
-                ToggleTitle.Size = UDim2.new(1, -100, 0, 13)
                 ToggleTitle.Name = "ToggleTitle"
                 ToggleTitle.Parent = Toggle
 
@@ -2177,6 +2298,11 @@ function Chloex:Window(GuiConfig)
                 end
 
                 local SliderFunc = { Value = SliderConfig.Default, Locked = false }
+                
+                table.insert(GuiFunc.ComponentRegistry, {
+                    Name = SliderConfig.Title,
+                    JumpFunc = TabFunc.JumpFunc
+                })
 
                 local Slider = Instance.new("Frame");
                 local UICorner15 = Instance.new("UICorner");
@@ -2208,17 +2334,40 @@ function Chloex:Window(GuiConfig)
                 UICorner15.Parent = Slider
 
                 SliderTitle.Font = Enum.Font.GothamBold
-                SliderTitle.Text = SliderConfig.Title
-                SliderTitle.TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)
+                if SliderConfig.Icon and SliderConfig.Icon ~= "" then
+                    SliderTitle.Text = SliderConfig.Title
+                    local IconImg = Instance.new("ImageLabel")
+                    IconImg.Size = UDim2.new(0, 16, 0, 16)
+                    IconImg.Position = UDim2.new(0, 10, 0, 8)
+                    IconImg.BackgroundTransparency = 1
+                    if Icons[SliderConfig.Icon] then
+                        IconImg.Image = Icons[SliderConfig.Icon]
+                    else
+                        IconImg.Image = "rbxassetid://" .. tostring(SliderConfig.Icon)
+                    end
+                    IconImg.Parent = Slider
+
+                    local Sep = Instance.new("Frame")
+                    Sep.Size = UDim2.new(0, 1, 0, 14)
+                    Sep.Position = UDim2.new(0, 32, 0, 9)
+                    Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Sep.BackgroundTransparency = 0.8
+                    Sep.BorderSizePixel = 0
+                    Sep.Parent = Slider
+                    
+                    SliderTitle.Position = UDim2.new(0, 40, 0, 10)
+                    SliderTitle.Size = UDim2.new(1, -210, 0, 13)
+                else
+                    SliderTitle.Text = SliderConfig.Title
+                    SliderTitle.Position = UDim2.new(0, 10, 0, 10)
+                    SliderTitle.Size = UDim2.new(1, -180, 0, 13)
+                end
+                SliderTitle.TextColor3 = Color3.fromRGB(230.77, 230.77, 230.77)
                 SliderTitle.TextSize = 13
                 SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
                 SliderTitle.TextYAlignment = Enum.TextYAlignment.Top
                 SliderTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SliderTitle.BackgroundTransparency = 0.9990000128746033
-                SliderTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                SliderTitle.BorderSizePixel = 0
-                SliderTitle.Position = UDim2.new(0, 10, 0, 10)
-                SliderTitle.Size = UDim2.new(1, -180, 0, 13)
+                SliderTitle.BackgroundTransparency = 1
                 SliderTitle.Name = "SliderTitle"
                 SliderTitle.Parent = Slider
 
@@ -2474,6 +2623,11 @@ function Chloex:Window(GuiConfig)
                 end
 
                 local InputFunc = { Value = InputConfig.Default, Locked = false }
+                
+                table.insert(GuiFunc.ComponentRegistry, {
+                    Name = InputConfig.Title,
+                    JumpFunc = TabFunc.JumpFunc
+                })
 
                 local Input = Instance.new("Frame");
                 local UICorner12 = Instance.new("UICorner");
@@ -2496,17 +2650,40 @@ function Chloex:Window(GuiConfig)
                 UICorner12.Parent = Input
 
                 InputTitle.Font = Enum.Font.GothamBold
-                InputTitle.Text = InputConfig.Title or "TextBox"
-                InputTitle.TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)
+                if InputConfig.Icon and InputConfig.Icon ~= "" then
+                    InputTitle.Text = InputConfig.Title or "TextBox"
+                    local IconImg = Instance.new("ImageLabel")
+                    IconImg.Size = UDim2.new(0, 16, 0, 16)
+                    IconImg.Position = UDim2.new(0, 10, 0, 8)
+                    IconImg.BackgroundTransparency = 1
+                    if Icons[InputConfig.Icon] then
+                        IconImg.Image = Icons[InputConfig.Icon]
+                    else
+                        IconImg.Image = "rbxassetid://" .. tostring(InputConfig.Icon)
+                    end
+                    IconImg.Parent = Input
+
+                    local Sep = Instance.new("Frame")
+                    Sep.Size = UDim2.new(0, 1, 0, 14)
+                    Sep.Position = UDim2.new(0, 32, 0, 9)
+                    Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Sep.BackgroundTransparency = 0.8
+                    Sep.BorderSizePixel = 0
+                    Sep.Parent = Input
+                    
+                    InputTitle.Position = UDim2.new(0, 40, 0, 10)
+                    InputTitle.Size = UDim2.new(1, -210, 0, 13)
+                else
+                    InputTitle.Text = InputConfig.Title or "TextBox"
+                    InputTitle.Position = UDim2.new(0, 10, 0, 10)
+                    InputTitle.Size = UDim2.new(1, -180, 0, 13)
+                end
+                InputTitle.TextColor3 = Color3.fromRGB(230.77, 230.77, 230.77)
                 InputTitle.TextSize = 13
                 InputTitle.TextXAlignment = Enum.TextXAlignment.Left
                 InputTitle.TextYAlignment = Enum.TextYAlignment.Top
                 InputTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                InputTitle.BackgroundTransparency = 0.9990000128746033
-                InputTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                InputTitle.BorderSizePixel = 0
-                InputTitle.Position = UDim2.new(0, 10, 0, 10)
-                InputTitle.Size = UDim2.new(1, -180, 0, 13)
+                InputTitle.BackgroundTransparency = 1
                 InputTitle.Name = "InputTitle"
                 InputTitle.Parent = Input
 
@@ -2672,6 +2849,11 @@ function Chloex:Window(GuiConfig)
                 end
 
                 local DropdownFunc = { Value = DropdownConfig.Default, Options = DropdownConfig.Options, Locked = false }
+                
+                table.insert(GuiFunc.ComponentRegistry, {
+                    Name = DropdownConfig.Title,
+                    JumpFunc = TabFunc.JumpFunc
+                })
 
                 local Dropdown = Instance.new("Frame")
                 local DropdownButton = Instance.new("TextButton")
@@ -2701,13 +2883,38 @@ function Chloex:Window(GuiConfig)
                 UICorner10.Parent = Dropdown
 
                 DropdownTitle.Font = Enum.Font.GothamBold
-                DropdownTitle.Text = DropdownConfig.Title
+                if DropdownConfig.Icon and DropdownConfig.Icon ~= "" then
+                    DropdownTitle.Text = DropdownConfig.Title
+                    local IconImg = Instance.new("ImageLabel")
+                    IconImg.Size = UDim2.new(0, 16, 0, 16)
+                    IconImg.Position = UDim2.new(0, 10, 0, 8)
+                    IconImg.BackgroundTransparency = 1
+                    if Icons[DropdownConfig.Icon] then
+                        IconImg.Image = Icons[DropdownConfig.Icon]
+                    else
+                        IconImg.Image = "rbxassetid://" .. tostring(DropdownConfig.Icon)
+                    end
+                    IconImg.Parent = Dropdown
+
+                    local Sep = Instance.new("Frame")
+                    Sep.Size = UDim2.new(0, 1, 0, 14)
+                    Sep.Position = UDim2.new(0, 32, 0, 9)
+                    Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Sep.BackgroundTransparency = 0.8
+                    Sep.BorderSizePixel = 0
+                    Sep.Parent = Dropdown
+                    
+                    DropdownTitle.Position = UDim2.new(0, 40, 0, 10)
+                    DropdownTitle.Size = UDim2.new(1, -210, 0, 13)
+                else
+                    DropdownTitle.Text = DropdownConfig.Title
+                    DropdownTitle.Position = UDim2.new(0, 10, 0, 10)
+                    DropdownTitle.Size = UDim2.new(1, -180, 0, 13)
+                end
                 DropdownTitle.TextColor3 = Color3.fromRGB(230, 230, 230)
                 DropdownTitle.TextSize = 13
                 DropdownTitle.TextXAlignment = Enum.TextXAlignment.Left
                 DropdownTitle.BackgroundTransparency = 1
-                DropdownTitle.Position = UDim2.new(0, 10, 0, 10)
-                DropdownTitle.Size = UDim2.new(1, -180, 0, 13)
                 DropdownTitle.Name = "DropdownTitle"
                 DropdownTitle.Parent = Dropdown
 
