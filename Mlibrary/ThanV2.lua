@@ -1181,7 +1181,6 @@ function Chloex:Window(GuiConfig)
                         FrameChoose = v
                         break
                     end
-                end
             end
             if FrameChoose ~= nil and Tab.LayoutOrder ~= LayersPageLayout.CurrentPage.LayoutOrder then
                 for _, TabFrame in ScrollTab:GetChildren() do
