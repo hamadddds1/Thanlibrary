@@ -1777,11 +1777,36 @@ function Chloex:Window(GuiConfig)
                 function ButtonFunc:Lock(State)
                     ButtonFunc.Locked = State
                     if State then
+                        if not Button:FindFirstChild("LockOverlay") then
+                            local LockOverlay = Instance.new("Frame")
+                            LockOverlay.Name = "LockOverlay"
+                            LockOverlay.Size = UDim2.new(1, 0, 1, 0)
+                            LockOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                            LockOverlay.BackgroundTransparency = 0.5
+                            LockOverlay.ZIndex = 99
+                            LockOverlay.Parent = Button
+                            local UIC = Instance.new("UICorner")
+                            UIC.CornerRadius = UDim.new(0, 4)
+                            UIC.Parent = LockOverlay
+                            local LockIcon = Instance.new("ImageLabel")
+                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
+                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.BackgroundTransparency = 1
+                            LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
+                            LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                            LockIcon.ZIndex = 100
+                            LockIcon.Parent = LockOverlay
+                        end
+                        Button.LockOverlay.Visible = true
                         MainButton.TextTransparency = 0.7
                         if SubButton then
                             SubButton.TextTransparency = 0.7
                         end
                     else
+                        if Button:FindFirstChild("LockOverlay") then
+                            Button.LockOverlay.Visible = false
+                        end
                         MainButton.TextTransparency = 0.3
                         if SubButton then
                             SubButton.TextTransparency = 0.3
@@ -1938,12 +1963,37 @@ function Chloex:Window(GuiConfig)
                 function ToggleFunc:Lock(State)
                     ToggleFunc.Locked = State
                     if State then
+                        if not Toggle:FindFirstChild("LockOverlay") then
+                            local LockOverlay = Instance.new("Frame")
+                            LockOverlay.Name = "LockOverlay"
+                            LockOverlay.Size = UDim2.new(1, 0, 1, 0)
+                            LockOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                            LockOverlay.BackgroundTransparency = 0.5
+                            LockOverlay.ZIndex = 99
+                            LockOverlay.Parent = Toggle
+                            local UIC = Instance.new("UICorner")
+                            UIC.CornerRadius = UDim.new(0, 4)
+                            UIC.Parent = LockOverlay
+                            local LockIcon = Instance.new("ImageLabel")
+                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
+                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.BackgroundTransparency = 1
+                            LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
+                            LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                            LockIcon.ZIndex = 100
+                            LockIcon.Parent = LockOverlay
+                        end
+                        Toggle.LockOverlay.Visible = true
                         ToggleTitle.TextTransparency = 0.5
                         ToggleContent.TextTransparency = 0.8
                         if ToggleTitle2 then
                             ToggleTitle2.TextTransparency = 0.5
                         end
                     else
+                        if Toggle:FindFirstChild("LockOverlay") then
+                            Toggle.LockOverlay.Visible = false
+                        end
                         ToggleTitle.TextTransparency = 0
                         ToggleContent.TextTransparency = 0.6
                         if ToggleTitle2 then
@@ -2219,9 +2269,34 @@ function Chloex:Window(GuiConfig)
                     SliderFunc.Locked = State
                     TextBox.TextEditable = not State
                     if State then
+                        if not Slider:FindFirstChild("LockOverlay") then
+                            local LockOverlay = Instance.new("Frame")
+                            LockOverlay.Name = "LockOverlay"
+                            LockOverlay.Size = UDim2.new(1, 0, 1, 0)
+                            LockOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                            LockOverlay.BackgroundTransparency = 0.5
+                            LockOverlay.ZIndex = 99
+                            LockOverlay.Parent = Slider
+                            local UIC = Instance.new("UICorner")
+                            UIC.CornerRadius = UDim.new(0, 4)
+                            UIC.Parent = LockOverlay
+                            local LockIcon = Instance.new("ImageLabel")
+                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
+                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.BackgroundTransparency = 1
+                            LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
+                            LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                            LockIcon.ZIndex = 100
+                            LockIcon.Parent = LockOverlay
+                        end
+                        Slider.LockOverlay.Visible = true
                         SliderTitle.TextTransparency = 0.5
                         SliderContent.TextTransparency = 0.8
                     else
+                        if Slider:FindFirstChild("LockOverlay") then
+                            Slider.LockOverlay.Visible = false
+                        end
                         SliderTitle.TextTransparency = 0
                         SliderContent.TextTransparency = 0.6
                     end
@@ -2364,9 +2439,34 @@ function Chloex:Window(GuiConfig)
                     InputFunc.Locked = State
                     InputTextBox.TextEditable = not State
                     if State then
+                        if not Input:FindFirstChild("LockOverlay") then
+                            local LockOverlay = Instance.new("Frame")
+                            LockOverlay.Name = "LockOverlay"
+                            LockOverlay.Size = UDim2.new(1, 0, 1, 0)
+                            LockOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                            LockOverlay.BackgroundTransparency = 0.5
+                            LockOverlay.ZIndex = 99
+                            LockOverlay.Parent = Input
+                            local UIC = Instance.new("UICorner")
+                            UIC.CornerRadius = UDim.new(0, 4)
+                            UIC.Parent = LockOverlay
+                            local LockIcon = Instance.new("ImageLabel")
+                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
+                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.BackgroundTransparency = 1
+                            LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
+                            LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                            LockIcon.ZIndex = 100
+                            LockIcon.Parent = LockOverlay
+                        end
+                        Input.LockOverlay.Visible = true
                         InputTitle.TextTransparency = 0.5
                         InputContent.TextTransparency = 0.8
                     else
+                        if Input:FindFirstChild("LockOverlay") then
+                            Input.LockOverlay.Visible = false
+                        end
                         InputTitle.TextTransparency = 0
                         InputContent.TextTransparency = 0.6
                     end
@@ -2701,10 +2801,35 @@ function Chloex:Window(GuiConfig)
                 function DropdownFunc:Lock(State)
                     DropdownFunc.Locked = State
                     if State then
+                        if not Dropdown:FindFirstChild("LockOverlay") then
+                            local LockOverlay = Instance.new("Frame")
+                            LockOverlay.Name = "LockOverlay"
+                            LockOverlay.Size = UDim2.new(1, 0, 1, 0)
+                            LockOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                            LockOverlay.BackgroundTransparency = 0.5
+                            LockOverlay.ZIndex = 99
+                            LockOverlay.Parent = Dropdown
+                            local UIC = Instance.new("UICorner")
+                            UIC.CornerRadius = UDim.new(0, 4)
+                            UIC.Parent = LockOverlay
+                            local LockIcon = Instance.new("ImageLabel")
+                            LockIcon.Size = UDim2.new(0, 24, 0, 24)
+                            LockIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+                            LockIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+                            LockIcon.BackgroundTransparency = 1
+                            LockIcon.Image = Icons["lock"] or "rbxassetid://7733920644"
+                            LockIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                            LockIcon.ZIndex = 100
+                            LockIcon.Parent = LockOverlay
+                        end
+                        Dropdown.LockOverlay.Visible = true
                         DropdownTitle.TextTransparency = 0.5
                         DropdownContent.TextTransparency = 0.8
                         OptionSelecting.TextTransparency = 0.8
                     else
+                        if Dropdown:FindFirstChild("LockOverlay") then
+                            Dropdown.LockOverlay.Visible = false
+                        end
                         DropdownTitle.TextTransparency = 0
                         DropdownContent.TextTransparency = 0.6
                         OptionSelecting.TextTransparency = 0.6
