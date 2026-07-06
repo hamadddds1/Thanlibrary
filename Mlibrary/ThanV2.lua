@@ -696,12 +696,13 @@ function Chloex:Window(GuiConfig)
         
         local SearchIcon = Instance.new("ImageLabel")
         SearchIcon.Name = "SearchIcon"
-        SearchIcon.Parent = SearchBox
+        SearchIcon.Parent = Main
         SearchIcon.BackgroundTransparency = 1
-        SearchIcon.Position = UDim2.new(0, 8, 0.5, -7)
+        SearchIcon.Position = UDim2.new(0, 17, 0, 54)
         SearchIcon.Size = UDim2.new(0, 14, 0, 14)
         SearchIcon.Image = Icons["scan"] or "rbxassetid://109869955247116"
         SearchIcon.ImageTransparency = 0.4
+        SearchIcon.ZIndex = 2
         
         SearchBox.Name = "SearchBox"
         SearchBox.Parent = Main
@@ -2063,6 +2064,8 @@ function Chloex:Window(GuiConfig)
                 UICorner20.Parent = Toggle
 
                 ToggleTitle.Font = Enum.Font.GothamBold
+                
+                local iconOffset = 10
                 if ToggleConfig.Icon and ToggleConfig.Icon ~= "" then
                     ToggleTitle.Text = ToggleConfig.Title
                     local IconImg = Instance.new("ImageLabel")
@@ -2078,19 +2081,20 @@ function Chloex:Window(GuiConfig)
 
                     local Sep = Instance.new("Frame")
                     Sep.Size = UDim2.new(0, 1, 0, 14)
-                    Sep.Position = UDim2.new(0, 35, 0, 9)
+                    Sep.Position = UDim2.new(0, 34, 0, 9)
                     Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     Sep.BackgroundTransparency = 0.5
                     Sep.BorderSizePixel = 0
                     Sep.Parent = Toggle
                     
-                    ToggleTitle.Position = UDim2.new(0, 44, 0, 10)
+                    iconOffset = 44
                     ToggleTitle.Size = UDim2.new(1, -130, 0, 13)
                 else
                     ToggleTitle.Text = ToggleConfig.Title
-                    ToggleTitle.Position = UDim2.new(0, 10, 0, 10)
                     ToggleTitle.Size = UDim2.new(1, -100, 0, 13)
                 end
+                
+                ToggleTitle.Position = UDim2.new(0, iconOffset, 0, 10)
                 ToggleTitle.TextSize = 13
                 ToggleTitle.TextColor3 = Color3.fromRGB(231, 231, 231)
                 ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -2107,6 +2111,7 @@ function Chloex:Window(GuiConfig)
                 ToggleTitle2.TextXAlignment = Enum.TextXAlignment.Left
                 ToggleTitle2.TextYAlignment = Enum.TextYAlignment.Top
                 ToggleTitle2.BackgroundTransparency = 1
+                ToggleTitle2.Position = UDim2.new(0, iconOffset, 0, 23)
                 ToggleTitle2.Size = UDim2.new(1, -100, 0, 12)
                 ToggleTitle2.Name = "ToggleTitle2"
                 ToggleTitle2.Parent = Toggle
@@ -2119,29 +2124,8 @@ function Chloex:Window(GuiConfig)
                 ToggleContent.TextXAlignment = Enum.TextXAlignment.Left
                 ToggleContent.TextYAlignment = Enum.TextYAlignment.Bottom
                 ToggleContent.BackgroundTransparency = 1
-                ToggleContent.Size = UDim2.new(1, -100, 0, 12)
                 ToggleContent.Name = "ToggleContent"
                 ToggleContent.Parent = Toggle
-
-                ToggleConfig.Icon = ToggleConfig.Icon or ""
-                local iconOffset = 10
-                if ToggleConfig.Icon ~= "" then
-                    local IconImg = Instance.new("ImageLabel")
-                    IconImg.Size = UDim2.new(0, 20, 0, 20)
-                    IconImg.Position = UDim2.new(0, 10, 0, 10)
-                    IconImg.BackgroundTransparency = 1
-                    IconImg.Name = "ToggleIcon"
-                    if Icons and Icons[ToggleConfig.Icon] then
-                        IconImg.Image = Icons[ToggleConfig.Icon]
-                    else
-                        IconImg.Image = ToggleConfig.Icon
-                    end
-                    IconImg.Parent = Toggle
-                    iconOffset = 36
-                end
-
-                ToggleTitle.Position = UDim2.new(0, iconOffset, 0, 10)
-                ToggleTitle2.Position = UDim2.new(0, iconOffset, 0, 23)
 
                 if ToggleConfig.Title2 ~= "" then
                     Toggle.Size = UDim2.new(1, 0, 0, 57)
