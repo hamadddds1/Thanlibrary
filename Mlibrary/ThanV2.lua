@@ -3535,19 +3535,16 @@ function Chloex:Window(GuiConfig)
             if Main:IsA("ImageLabel") then
                 Main.Image = "rbxassetid://" .. SelectedTheme.Theme
             end
-            if TextLabel then
-                TextLabel.TextColor3 = SelectedTheme.Color
-            end
             
             -- Update UI colors dynamically
             for _, obj in ipairs(Main:GetDescendants()) do
-                if obj:IsA("Frame") and obj.Name == "ChooseFrame" and obj.BackgroundTransparency == 0 then
+                if obj:IsA("TextLabel") and obj.Parent and obj.Parent.Name == "Top" and obj.Text == GuiConfig.Title then
+                    obj.TextColor3 = SelectedTheme.Color
+                elseif obj:IsA("Frame") and obj.Name == "ChooseFrame" and obj.BackgroundTransparency == 0 then
                     obj.BackgroundColor3 = SelectedTheme.Color
-                elseif obj:IsA("UIStroke") and obj.Name == "UIStroke2" then
+                elseif obj:IsA("UIStroke") and obj.Parent and obj.Parent.Name == "ChooseFrame" then
                     obj.Color = SelectedTheme.Color
-                elseif obj:IsA("UIStroke") and obj.Name == "UIStroke15" then
-                    obj.Color = SelectedTheme.Color
-                elseif obj:IsA("UIGradient") and obj.Name == "UIGradient" then
+                elseif obj:IsA("UIGradient") and obj.Parent and obj.Parent.Name == "ChooseFrame" then
                     obj.Color = ColorSequence.new({
                         ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
                         ColorSequenceKeypoint.new(0.5, SelectedTheme.Color),
@@ -3555,7 +3552,7 @@ function Chloex:Window(GuiConfig)
                     })
                 elseif obj:IsA("Frame") and (obj.Name == "SliderInput" or obj.Name == "SliderDraggable" or obj.Name == "SliderCircle") then
                     obj.BackgroundColor3 = SelectedTheme.Color
-                elseif obj:IsA("UIStroke") and obj.Name == "UIStroke6" then
+                elseif obj:IsA("UIStroke") and obj.Parent and obj.Parent.Name == "SliderCircle" then
                     obj.Color = SelectedTheme.Color
                 end
             end
