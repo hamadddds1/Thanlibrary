@@ -79,6 +79,8 @@ A simple clickable button. It can optionally have a sub-button attached to it.
 ```lua
 local MyButton = Section:AddButton({
     Title = "Click Me",
+    Content = "Optional description here",
+    Icon = "mouse-pointer-click", -- Just type the Lucide icon name!
     SubTitle = "Optional secondary button", -- Remove if not needed
     Callback = function()
         print("Main button clicked!")
@@ -109,6 +111,7 @@ A draggable slider for selecting a numeric value within a specific range.
 local MySlider = Section:AddSlider({
     Title = "Walk Speed",
     Content = "Adjust player speed",
+    Icon = "activity",
     Min = 16,
     Max = 100,
     Increment = 1,
@@ -125,6 +128,7 @@ A selectable list of options. Supports both single-selection and multi-selection
 local MyDropdown = Section:AddDropdown({
     Title = "Select Weapon",
     Content = "Choose your preferred weapon",
+    Icon = "swords",
     Options = {"Sword", "Gun", "Bow"},
     Multi = false, -- Set to true to allow multiple selections
     Default = "Sword", -- Use a table e.g., {"Sword"} if Multi is true
@@ -143,6 +147,7 @@ A text field allowing users to type custom strings or numbers.
 local MyInput = Section:AddInput({
     Title = "Webhook URL",
     Content = "Enter your Discord Webhook",
+    Icon = "link",
     Default = "",
     Callback = function(value)
         print("Input received:", value)

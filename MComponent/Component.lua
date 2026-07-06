@@ -35,6 +35,7 @@ local Section1 = MainTab:AddSection("Fitur Dasar", true)
 local myButton = Section1:AddButton({
     Title = "Klik Saya",
     Icon = "chevron-right",
+    content = "example",
     Callback = function()
         chloex("Tombol berhasil diklik!")
     end
@@ -44,6 +45,7 @@ local myButton = Section1:AddButton({
 local myToggle = Section1:AddToggle({
     Title = "Auto Farm",
     Icon = "swords", -- Menggunakan icon lucide
+    content = "example",
     Default = false,
     Callback = function(value)
         print("Auto Farm:", value)
