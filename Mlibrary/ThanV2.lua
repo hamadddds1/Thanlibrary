@@ -702,6 +702,48 @@ function Chloex:Window(GuiConfig)
             end
         end)
     end
+
+    local TooltipFrame = Instance.new("Frame")
+    TooltipFrame.Name = "TooltipFrame"
+    TooltipFrame.Parent = Chloeex
+    TooltipFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    TooltipFrame.BackgroundTransparency = 0.1
+    TooltipFrame.BorderSizePixel = 0
+    TooltipFrame.ZIndex = 100
+    TooltipFrame.Visible = false
+    TooltipFrame.AutomaticSize = Enum.AutomaticSize.XY
+
+    local TooltipCorner = Instance.new("UICorner")
+    TooltipCorner.CornerRadius = UDim.new(0, 4)
+    TooltipCorner.Parent = TooltipFrame
+
+    local TooltipStroke = Instance.new("UIStroke")
+    TooltipStroke.Color = GuiConfig.Color
+    TooltipStroke.Thickness = 1
+    TooltipStroke.Parent = TooltipFrame
+
+    local TooltipText = Instance.new("TextLabel")
+    TooltipText.Parent = TooltipFrame
+    TooltipText.BackgroundTransparency = 1
+    TooltipText.Font = Enum.Font.GothamMedium
+    TooltipText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TooltipText.TextSize = 12
+    TooltipText.AutomaticSize = Enum.AutomaticSize.XY
+    TooltipText.TextXAlignment = Enum.TextXAlignment.Left
+    TooltipText.TextYAlignment = Enum.TextYAlignment.Center
+
+    local TooltipPadding = Instance.new("UIPadding")
+    TooltipPadding.PaddingTop = UDim.new(0, 6)
+    TooltipPadding.PaddingBottom = UDim.new(0, 6)
+    TooltipPadding.PaddingLeft = UDim.new(0, 8)
+    TooltipPadding.PaddingRight = UDim.new(0, 8)
+    TooltipPadding.Parent = TooltipFrame
+
+    table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
+        if TooltipFrame.Visible and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            TooltipFrame.Position = UDim2.new(0, input.Position.X + 15, 0, input.Position.Y + 15)
+        end
+    end))
     local DropShadowHolder = Instance.new("Frame");
     local DropShadow = Instance.new("ImageLabel");
     local Main = Instance.new("Frame");
@@ -2084,6 +2126,18 @@ function Chloex:Window(GuiConfig)
                 KeybindFrame.LayoutOrder = CountItem
                 KeybindFrame.Parent = SectionAdd
 
+                local tooltipStr = KeybindConfig.Tooltip or KeybindConfig.Tooltips or nil
+                if tooltipStr then
+                    KeybindFrame.MouseEnter:Connect(function()
+                        TooltipText.Text = tooltipStr
+                        TooltipFrame.Visible = true
+                        TooltipFrame.Position = UDim2.new(0, Mouse.X + 15, 0, Mouse.Y + 15)
+                    end)
+                    KeybindFrame.MouseLeave:Connect(function()
+                        TooltipFrame.Visible = false
+                    end)
+                end
+
                 local UICorner = Instance.new("UICorner")
                 UICorner.CornerRadius = UDim.new(0, 4)
                 UICorner.Parent = KeybindFrame
@@ -2187,6 +2241,18 @@ function Chloex:Window(GuiConfig)
                 Button.Size = UDim2.new(1, 0, 0, 40)
                 Button.LayoutOrder = CountItem
                 Button.Parent = SectionAdd
+
+                local tooltipStr = ButtonConfig.Tooltip or ButtonConfig.Tooltips or nil
+                if tooltipStr then
+                    Button.MouseEnter:Connect(function()
+                        TooltipText.Text = tooltipStr
+                        TooltipFrame.Visible = true
+                        TooltipFrame.Position = UDim2.new(0, Mouse.X + 15, 0, Mouse.Y + 15)
+                    end)
+                    Button.MouseLeave:Connect(function()
+                        TooltipFrame.Visible = false
+                    end)
+                end
 
                 local UICorner = Instance.new("UICorner")
                 UICorner.CornerRadius = UDim.new(0, 4)
@@ -2370,6 +2436,18 @@ function Chloex:Window(GuiConfig)
                 Toggle.LayoutOrder = CountItem
                 Toggle.Name = "Toggle"
                 Toggle.Parent = SectionAdd
+
+                local tooltipStr = ToggleConfig.Tooltip or ToggleConfig.Tooltips or nil
+                if tooltipStr then
+                    Toggle.MouseEnter:Connect(function()
+                        TooltipText.Text = tooltipStr
+                        TooltipFrame.Visible = true
+                        TooltipFrame.Position = UDim2.new(0, Mouse.X + 15, 0, Mouse.Y + 15)
+                    end)
+                    Toggle.MouseLeave:Connect(function()
+                        TooltipFrame.Visible = false
+                    end)
+                end
 
                 UICorner20.CornerRadius = UDim.new(0, 4)
                 UICorner20.Parent = Toggle
@@ -2671,6 +2749,18 @@ function Chloex:Window(GuiConfig)
                 Slider.Size = UDim2.new(1, 0, 0, 46)
                 Slider.Name = "Slider"
                 Slider.Parent = SectionAdd
+
+                local tooltipStr = SliderConfig.Tooltip or SliderConfig.Tooltips or nil
+                if tooltipStr then
+                    Slider.MouseEnter:Connect(function()
+                        TooltipText.Text = tooltipStr
+                        TooltipFrame.Visible = true
+                        TooltipFrame.Position = UDim2.new(0, Mouse.X + 15, 0, Mouse.Y + 15)
+                    end)
+                    Slider.MouseLeave:Connect(function()
+                        TooltipFrame.Visible = false
+                    end)
+                end
 
                 UICorner15.CornerRadius = UDim.new(0, 4)
                 UICorner15.Parent = Slider
@@ -2988,6 +3078,18 @@ function Chloex:Window(GuiConfig)
                 Input.Name = "Input"
                 Input.Parent = SectionAdd
 
+                local tooltipStr = InputConfig.Tooltip or InputConfig.Tooltips or nil
+                if tooltipStr then
+                    Input.MouseEnter:Connect(function()
+                        TooltipText.Text = tooltipStr
+                        TooltipFrame.Visible = true
+                        TooltipFrame.Position = UDim2.new(0, Mouse.X + 15, 0, Mouse.Y + 15)
+                    end)
+                    Input.MouseLeave:Connect(function()
+                        TooltipFrame.Visible = false
+                    end)
+                end
+
                 UICorner12.CornerRadius = UDim.new(0, 4)
                 UICorner12.Parent = Input
 
@@ -3214,6 +3316,18 @@ function Chloex:Window(GuiConfig)
                 Dropdown.Size = UDim2.new(1, 0, 0, 46)
                 Dropdown.Name = "Dropdown"
                 Dropdown.Parent = SectionAdd
+
+                local tooltipStr = DropdownConfig.Tooltip or DropdownConfig.Tooltips or nil
+                if tooltipStr then
+                    Dropdown.MouseEnter:Connect(function()
+                        TooltipText.Text = tooltipStr
+                        TooltipFrame.Visible = true
+                        TooltipFrame.Position = UDim2.new(0, Mouse.X + 15, 0, Mouse.Y + 15)
+                    end)
+                    Dropdown.MouseLeave:Connect(function()
+                        TooltipFrame.Visible = false
+                    end)
+                end
 
                 DropdownButton.Text = ""
                 DropdownButton.BackgroundTransparency = 1
@@ -3849,6 +3963,10 @@ function Chloex:Window(GuiConfig)
 
             if WatermarkStroke then
                 WatermarkStroke.Color = SelectedTheme.Color
+            end
+
+            if TooltipStroke then
+                TooltipStroke.Color = SelectedTheme.Color
             end
             
             -- Update UI colors dynamically
