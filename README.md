@@ -36,6 +36,7 @@ local Window = Chloex:Window({
     Uicon   = "gamepad-2",               -- Top Bar Logo (rbxassetid or Lucide)
     Theme   = "Ruby",                    -- Custom Themes (e.g., "Dark", "Ruby", "Ocean") or a background Image ID
     Search  = true,                      -- Set to false to hide the search box
+    Watermark = true,                    -- Set to false to hide the live stats watermark (FPS, Ping, Time)
     Version = 1,                         -- Config Version (Resets config if changed)
 })
 ```
@@ -47,6 +48,7 @@ local Window = Chloex:Window({
 - **`Uicon`** (UI Icon): Controls the logo displayed inside the **Top Bar** of the UI (next to the Title). Accepts a Roblox Asset ID or a Lucide icon string.
 - **`Theme`**: You can enter a **Custom Theme Name** (e.g., `"Ruby"`, `"Ocean"`, `"Amethyst"`, `"Dark"`, `"Emerald"`, `"Sakura"`, `"Default"`) to automatically color the UI. Alternatively, you can input a custom Roblox Asset ID number for the background image.
 - **`Search`**: Boolean value (`true`/`false`). Enable or disable the built-in search box. Defaults to `true`.
+- **`Watermark`**: Boolean value (`true`/`false`). Shows a dynamic watermark tracking your game's FPS, Ping, and Local Time. Defaults to `true`.
 - **`Color`** *(Optional)*: The primary accent color for the UI. If you are using a Custom Theme Name, you can omit this entirely!
 - **`Version`**: Changing this number will automatically reset and clear old configurations for your users.
 
@@ -87,6 +89,7 @@ local MyButton = Section:AddButton({
     Title = "Click Me",
     Content = "Optional description here",
     Icon = "mouse-pointer-click", -- Just type the Lucide icon name!
+    Tooltip = "This is a smart hover tooltip!", -- 💡 Smart Tooltips Supported
     SubTitle = "Optional secondary button", -- Remove if not needed
     Callback = function()
         print("Main button clicked!")
@@ -104,6 +107,7 @@ local MyToggle = Section:AddToggle({
     Title = "Auto Farm",
     Content = "Automatically kill mobs",
     Icon = "swords", -- Just type the Lucide icon name!
+    Tooltip = "Turn this on to start farming.", -- 💡 Smart Tooltips Supported
     Default = false,
     Callback = function(state)
         print("Toggle is now:", state)
@@ -118,6 +122,7 @@ local MySlider = Section:AddSlider({
     Title = "Walk Speed",
     Content = "Adjust player speed",
     Icon = "activity",
+    Tooltip = "Drag to change your walk speed.", -- 💡 Smart Tooltips Supported
     Min = 16,
     Max = 100,
     Increment = 1,
@@ -135,6 +140,7 @@ local MyDropdown = Section:AddDropdown({
     Title = "Select Weapon",
     Content = "Choose your preferred weapon",
     Icon = "swords",
+    Tooltip = "Select a weapon for combat.", -- 💡 Smart Tooltips Supported
     Options = {"Sword", "Gun", "Bow"},
     Multi = false, -- Set to true to allow multiple selections
     Default = "Sword", -- Use a table e.g., {"Sword"} if Multi is true
@@ -166,6 +172,7 @@ local MyInput = Section:AddInput({
     Title = "Webhook URL",
     Content = "Enter your Discord Webhook",
     Icon = "link",
+    Tooltip = "Paste your webhook link here.", -- 💡 Smart Tooltips Supported
     Default = "",
     Callback = function(value)
         print("Input received:", value)
@@ -173,7 +180,20 @@ local MyInput = Section:AddInput({
 })
 ```
 
-### 6. Additional Layout Elements
+### 6. Keybind
+Assign a hotkey to trigger specific functions instantly. By default, ThanLibrary captures input efficiently without polling.
+```lua
+local MyKeybind = Section:AddKeybind({
+    Title = "Hide/Show UI",
+    Default = Enum.KeyCode.RightControl,
+    Tooltip = "Press this to toggle the UI visibility.", -- 💡 Smart Tooltips Supported
+    Callback = function()
+        print("Keybind Triggered!")
+    end
+})
+```
+
+### 7. Additional Layout Elements
 ```lua
 -- Paragraph: Display static text with an optional button
 Section:AddParagraph({

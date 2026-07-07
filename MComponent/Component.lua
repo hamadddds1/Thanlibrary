@@ -20,6 +20,7 @@ local Window = Chloex:Window({
     -- Color   = Color3.fromRGB(0, 208, 255), -- Not needed if using a custom theme
     Theme   = "Ruby", -- Custom themes: "Default", "Dark", "Ruby", "Emerald", "Amethyst", "Sakura", "Ocean"
     Search  = true,   -- Set to false to disable the search box
+    Watermark = true, -- Adds a real-time status watermark (FPS, Ping, Time)
     Version = 1,                        
 })
 
@@ -42,6 +43,7 @@ local myButton = Section1:AddButton({
     Title = "Klik Saya",
     Icon = "chevron-right",
     content = "example",
+    Tooltip = "Ini adalah tombol uji coba yang sangat keren!",
     Callback = function()
         chloex("Tombol berhasil diklik!")
     end
@@ -52,6 +54,7 @@ local myToggle = Section1:AddToggle({
     Title = "Auto Farm",
     Icon = "swords", -- Menggunakan icon lucide
     content = "example",
+    Tooltip = "Menyalakan mode farming secara otomatis.",
     Default = false,
     Callback = function(value)
         print("Auto Farm:", value)
@@ -63,6 +66,7 @@ local mySlider = Section1:AddSlider({
     Title = "Kecepatan",
     Content = "Atur kecepatan jalan",
     Icon = "gamepad-2",
+    Tooltip = "Geser untuk mempercepat atau memperlambat karakter.",
     Min = 16,
     Max = 100,
     Default = 16,
@@ -77,6 +81,7 @@ local myDropdown = Section1:AddDropdown({
     Title = "Pilih Senjata",
     Content = "Senjata utama untuk farm",
     Icon = "player",
+    Tooltip = "Pilih senjata yang ingin digunakan saat auto farm.",
     Options = {"Pedang", "Pistol", "Busur"},
     Default = "Pedang",
     Callback = function(value)
@@ -88,8 +93,19 @@ local myDropdown = Section1:AddDropdown({
 local myInput = Section1:AddInput({
     Title = "Masukkan Nama",
     Default = "",
+    Tooltip = "Ketikkan nama player target di sini.",
     Callback = function(value)
         print("Nama:", value)
+    end
+})
+
+-- KEYBIND
+local myKeybind = Section1:AddKeybind({
+    Title = "Hide/Show UI",
+    Default = Enum.KeyCode.RightControl,
+    Tooltip = "Tekan tombol ini untuk menyembunyikan menu.",
+    Callback = function()
+        print("Keybind ditekan!")
     end
 })
 
