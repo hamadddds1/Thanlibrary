@@ -1200,6 +1200,7 @@ function Chloex:Window(GuiConfig)
     --// Tabs
     local Tabs = {}
     local CountTab = 0
+    local FirstTabCreated = false
     local CountDropdown = 0
     local function InternalAddTab(TabConfig, ParentFrame, IsNested)
         local TabConfig = TabConfig or {}
@@ -1234,7 +1235,7 @@ function Chloex:Window(GuiConfig)
         local UICorner4 = Instance.new("UICorner");
 
         Tab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        if CountTab == 0 then
+        if not FirstTabCreated then
             Tab.BackgroundTransparency = 0.9200000166893005
         else
             Tab.BackgroundTransparency = 0.9990000128746033
@@ -1285,8 +1286,9 @@ function Chloex:Window(GuiConfig)
         FeatureImg.Size = UDim2.new(0, 16, 0, 16)
         FeatureImg.Name = "FeatureImg"
         FeatureImg.Parent = Tab
-        if CountTab == 0 then
-            LayersPageLayout:JumpToIndex(0)
+        if not FirstTabCreated then
+            FirstTabCreated = true
+            LayersPageLayout:JumpToIndex(Tab.LayoutOrder)
             NameTab.Text = TabConfig.Name
             local ChooseFrame = Instance.new("Frame");
             ChooseFrame.BackgroundColor3 = GuiConfig.Color
