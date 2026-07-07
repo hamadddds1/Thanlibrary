@@ -473,6 +473,119 @@ function Chloex:MakeNotify(NotifyConfig)
     return NotifyFunction
 end
 
+function Chloex:MakeWatermark(WatermarkConfig)
+    WatermarkConfig = WatermarkConfig or {}
+    local Title = WatermarkConfig.Title or "Than-Hub"
+    local UseTheme = WatermarkConfig.UseTheme or true
+
+    local WatermarkGui = Instance.new("ScreenGui")
+    WatermarkGui.Name = "WatermarkGui"
+    WatermarkGui.Parent = game:GetService("CoreGui")
+    WatermarkGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    local WatermarkFrame = Instance.new("Frame")
+    WatermarkFrame.Name = "WatermarkFrame"
+    WatermarkFrame.Parent = WatermarkGui
+    WatermarkFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    WatermarkFrame.BackgroundTransparency = 0.1
+    WatermarkFrame.BorderSizePixel = 0
+    WatermarkFrame.Position = UDim2.new(1, -300, 0, 20)
+    WatermarkFrame.Size = UDim2.new(0, 280, 0, 30)
+    
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 4)
+    UICorner.Parent = WatermarkFrame
+
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Color = Color3.fromRGB(0, 191, 255)
+    UIStroke.Thickness = 1.2
+    UIStroke.Parent = WatermarkFrame
+
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.Parent = WatermarkFrame
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.Font = Enum.Font.GothamSemibold
+    TextLabel.Text = Title .. " | FPS: 60 | Ping: 0ms | 00:00:00"
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextSize = 13
+    TextLabel.RichText = true
+
+    -- Draggable
+    local Dragging = false
+    local DragInput, DragStart, StartPosition
+    WatermarkFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            Dragging = true
+            DragStart = input.Position
+            StartPosition = WatermarkFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    Dragging = false
+                end
+            end)
+        end
+    end)
+    WatermarkFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            DragInput = input
+        end
+    end)
+    local UserInputService = game:GetService("UserInputService")
+    local RunService = game:GetService("RunService")
+    local dragConn = UserInputService.InputChanged:Connect(function(input)
+        if input == DragInput and Dragging then
+            local delta = input.Position - DragStart
+            WatermarkFrame.Position = UDim2.new(
+                StartPosition.X.Scale, StartPosition.X.Offset + delta.X,
+                StartPosition.Y.Scale, StartPosition.Y.Offset + delta.Y
+            )
+        end
+    end)
+
+    -- Update Logic
+    local FPS = 60
+    local renderConn = RunService.RenderStepped:Connect(function(step)
+        FPS = math.floor(1 / step)
+    end)
+
+    local runLoop = true
+    task.spawn(function()
+        while runLoop do
+            task.wait(1)
+            local ping = "0"
+            pcall(function()
+                local stats = game:GetService("Stats")
+                if stats and stats.Network and stats.Network.ServerStatsItem and stats.Network.ServerStatsItem["Data Ping"] then
+                    local pStr = stats.Network.ServerStatsItem["Data Ping"]:GetValueString()
+                    local pNum = string.match(pStr, "%d+")
+                    if pNum then ping = pNum end
+                end
+            end)
+            local timeStr = os.date("%X")
+            if WatermarkFrame and TextLabel then
+                TextLabel.Text = string.format("%s | FPS: <font color='rgb(100,255,100)'>%d</font> | Ping: <font color='rgb(255,150,150)'>%sms</font> | %s", Title, FPS, ping, timeStr)
+            end
+        end
+    end)
+
+    local WatermarkFunc = {}
+    function WatermarkFunc:Destroy()
+        runLoop = false
+        if renderConn then renderConn:Disconnect() end
+        if dragConn then dragConn:Disconnect() end
+        if WatermarkGui then WatermarkGui:Destroy() end
+    end
+    
+    function WatermarkFunc:SetTheme(color)
+        if UIStroke then
+            UIStroke.Color = color
+        end
+    end
+
+    return WatermarkFunc
+end
+
 function than(msg, delay, color, title, desc)
     return Chloex:MakeNotify({
         Title = title or "ThanHub",
@@ -1864,6 +1977,109 @@ function Chloex:Window(GuiConfig)
 
                 CountItem = CountItem + 1
                 return PanelFunc
+            end
+
+            function Items:AddKeybind(KeybindConfig)
+                KeybindConfig = KeybindConfig or {}
+                KeybindConfig.Title = KeybindConfig.Title or "Keybind"
+                KeybindConfig.Default = KeybindConfig.Default or Enum.KeyCode.E
+                KeybindConfig.Callback = KeybindConfig.Callback or function() end
+
+                local KeybindFunc = { Locked = false, Value = KeybindConfig.Default }
+                
+                table.insert(GuiFunc.ComponentRegistry, {
+                    Name = KeybindConfig.Title,
+                    JumpFunc = Sections.JumpFunc
+                })
+
+                local KeybindFrame = Instance.new("Frame")
+                KeybindFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                KeybindFrame.BackgroundTransparency = 0.935
+                KeybindFrame.Size = UDim2.new(1, 0, 0, 40)
+                KeybindFrame.LayoutOrder = CountItem
+                KeybindFrame.Parent = SectionAdd
+
+                local UICorner = Instance.new("UICorner")
+                UICorner.CornerRadius = UDim.new(0, 4)
+                UICorner.Parent = KeybindFrame
+
+                local Title = Instance.new("TextLabel")
+                Title.Font = Enum.Font.GothamBold
+                Title.Text = "          " .. KeybindConfig.Title
+                Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+                Title.TextSize = 13
+                Title.TextXAlignment = Enum.TextXAlignment.Left
+                Title.BackgroundTransparency = 1
+                Title.Size = UDim2.new(1, -80, 1, 0)
+                Title.Parent = KeybindFrame
+                
+                local IconImg = Instance.new("ImageLabel")
+                IconImg.Size = UDim2.new(0, 16, 0, 16)
+                IconImg.Position = UDim2.new(0, 10, 0.5, -8)
+                IconImg.BackgroundTransparency = 1
+                IconImg.Image = "rbxassetid://100588632617757"
+                IconImg.Parent = KeybindFrame
+
+                local BindButtonFrame = Instance.new("Frame")
+                BindButtonFrame.Size = UDim2.new(0, 70, 0, 24)
+                BindButtonFrame.Position = UDim2.new(1, -80, 0.5, -12)
+                BindButtonFrame.BackgroundColor3 = SelectedTheme.Color
+                BindButtonFrame.Parent = KeybindFrame
+                
+                local BindCorner = Instance.new("UICorner")
+                BindCorner.CornerRadius = UDim.new(0, 4)
+                BindCorner.Parent = BindButtonFrame
+                
+                local BindButton = Instance.new("TextButton")
+                BindButton.Size = UDim2.new(1, 0, 1, 0)
+                BindButton.BackgroundTransparency = 1
+                BindButton.Font = Enum.Font.GothamBold
+                BindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                BindButton.TextSize = 12
+                
+                local function UpdateBindText()
+                    local keyName = tostring(KeybindFunc.Value):gsub("Enum.KeyCode.", "")
+                    BindButton.Text = "[" .. keyName .. "]"
+                end
+                UpdateBindText()
+                BindButton.Parent = BindButtonFrame
+
+                local WaitingForBind = false
+                BindButton.MouseButton1Click:Connect(function()
+                    if KeybindFunc.Locked then return end
+                    CircleClick(BindButtonFrame, Mouse.X, Mouse.Y)
+                    BindButton.Text = "[...]"
+                    WaitingForBind = true
+                end)
+
+                table.insert(GuiFunc.Connections, UserInputService.InputBegan:Connect(function(input, gameProcessed)
+                    if WaitingForBind and input.UserInputType == Enum.UserInputType.Keyboard then
+                        WaitingForBind = false
+                        KeybindFunc.Value = input.KeyCode
+                        UpdateBindText()
+                    elseif not WaitingForBind and not gameProcessed then
+                        if input.KeyCode == KeybindFunc.Value then
+                            CircleClick(BindButtonFrame, BindButtonFrame.AbsolutePosition.X + BindButtonFrame.AbsoluteSize.X/2, BindButtonFrame.AbsolutePosition.Y + BindButtonFrame.AbsoluteSize.Y/2)
+                            KeybindConfig.Callback(KeybindFunc.Value)
+                        end
+                    end
+                end))
+
+                function KeybindFunc:Set(NewKey)
+                    KeybindFunc.Value = NewKey
+                    UpdateBindText()
+                end
+
+                function KeybindFunc:Lock()
+                    KeybindFunc.Locked = true
+                end
+
+                function KeybindFunc:Unlock()
+                    KeybindFunc.Locked = false
+                end
+
+                CountItem = CountItem + 1
+                return KeybindFunc
             end
 
             function Items:AddButton(ButtonConfig)
