@@ -610,6 +610,7 @@ function Chloex:Window(GuiConfig)
     GuiConfig.Color        = GuiConfig.Color or Color3.fromRGB(255, 0, 255)
     GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
     GuiConfig.Version      = GuiConfig.Version or 1
+    if GuiConfig.Watermark == nil then GuiConfig.Watermark = true end
 
     CURRENT_VERSION        = GuiConfig.Version
     LoadConfigFromFile()
@@ -617,6 +618,90 @@ function Chloex:Window(GuiConfig)
     local GuiFunc = { ComponentRegistry = {}, Connections = {} }
 
     local Chloeex = Instance.new("ScreenGui");
+    local WatermarkStroke = nil
+    if GuiConfig.Watermark then
+        local WatermarkFrame = Instance.new("Frame")
+        WatermarkFrame.Name = "WatermarkFrame"
+        WatermarkFrame.Parent = Chloeex
+        WatermarkFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        WatermarkFrame.BackgroundTransparency = 0.1
+        WatermarkFrame.BorderSizePixel = 0
+        WatermarkFrame.Position = UDim2.new(1, -300, 0, 20)
+        WatermarkFrame.Size = UDim2.new(0, 280, 0, 30)
+        
+        local UICorner = Instance.new("UICorner")
+        UICorner.CornerRadius = UDim.new(0, 4)
+        UICorner.Parent = WatermarkFrame
+
+        WatermarkStroke = Instance.new("UIStroke")
+        WatermarkStroke.Color = GuiConfig.Color
+        WatermarkStroke.Thickness = 1.2
+        WatermarkStroke.Parent = WatermarkFrame
+
+        local TextLabel = Instance.new("TextLabel")
+        TextLabel.Parent = WatermarkFrame
+        TextLabel.BackgroundTransparency = 1
+        TextLabel.Size = UDim2.new(1, 0, 1, 0)
+        TextLabel.Font = Enum.Font.GothamSemibold
+        TextLabel.Text = GuiConfig.Title .. " | FPS: 60 | Ping: 0ms | 00:00:00"
+        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextLabel.TextSize = 13
+        TextLabel.RichText = true
+
+        local Dragging = false
+        local DragInput, DragStart, StartPosition
+        WatermarkFrame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                Dragging = true
+                DragStart = input.Position
+                StartPosition = WatermarkFrame.Position
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        Dragging = false
+                    end
+                end)
+            end
+        end)
+        WatermarkFrame.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                DragInput = input
+            end
+        end)
+        table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
+            if input == DragInput and Dragging then
+                local delta = input.Position - DragStart
+                WatermarkFrame.Position = UDim2.new(
+                    StartPosition.X.Scale, StartPosition.X.Offset + delta.X,
+                    StartPosition.Y.Scale, StartPosition.Y.Offset + delta.Y
+                )
+            end
+        end))
+
+        local FPS = 60
+        local RunService = game:GetService("RunService")
+        table.insert(GuiFunc.Connections, RunService.RenderStepped:Connect(function(step)
+            FPS = math.floor(1 / step)
+        end))
+
+        task.spawn(function()
+            while Chloeex and Chloeex.Parent do
+                task.wait(1)
+                local ping = "0"
+                pcall(function()
+                    local stats = game:GetService("Stats")
+                    if stats and stats.Network and stats.Network.ServerStatsItem and stats.Network.ServerStatsItem["Data Ping"] then
+                        local pStr = stats.Network.ServerStatsItem["Data Ping"]:GetValueString()
+                        local pNum = string.match(pStr, "%d+")
+                        if pNum then ping = pNum end
+                    end
+                end)
+                local timeStr = os.date("%X")
+                if WatermarkFrame and TextLabel then
+                    TextLabel.Text = string.format("%s | FPS: <font color='rgb(100,255,100)'>%d</font> | Ping: <font color='rgb(255,150,150)'>%sms</font> | %s", GuiConfig.Title, FPS, ping, timeStr)
+                end
+            end
+        end)
+    end
     local DropShadowHolder = Instance.new("Frame");
     local DropShadow = Instance.new("ImageLabel");
     local Main = Instance.new("Frame");
@@ -3760,6 +3845,10 @@ function Chloex:Window(GuiConfig)
 
             if Main:IsA("ImageLabel") then
                 Main.Image = "rbxassetid://" .. SelectedTheme.Theme
+            end
+
+            if WatermarkStroke then
+                WatermarkStroke.Color = SelectedTheme.Color
             end
             
             -- Update UI colors dynamically
