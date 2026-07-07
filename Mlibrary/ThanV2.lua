@@ -165,11 +165,11 @@ local function MakeDraggable(topbarobject, object)
             end
         end)
 
-        UserInputService.InputChanged:Connect(function(input)
+        table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
             if input == DragInput and Dragging then
                 UpdatePos(input)
             end
-        end)
+        end))
     end
 
     local function CustomSize(object)
@@ -227,11 +227,11 @@ local function MakeDraggable(topbarobject, object)
             end
         end)
 
-        UserInputService.InputChanged:Connect(function(input)
+        table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
             if input == DragInput and Dragging then
                 UpdateSize(input)
             end
-        end)
+        end))
     end
 
     CustomSize(object)
@@ -501,7 +501,7 @@ function Chloex:Window(GuiConfig)
     CURRENT_VERSION        = GuiConfig.Version
     LoadConfigFromFile()
 
-    local GuiFunc = { ComponentRegistry = {} }
+    local GuiFunc = { ComponentRegistry = {}, Connections = {} }
 
     local Chloeex = Instance.new("ScreenGui");
     local DropShadowHolder = Instance.new("Frame");
@@ -2550,7 +2550,7 @@ function Chloex:Window(GuiConfig)
                     end
                 end)
 
-                UserInputService.InputChanged:Connect(function(Input)
+                table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(Input)
                     if Dragging and (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
                         local SizeScale = math.clamp(
                             (Input.Position.X - SliderFrame.AbsolutePosition.X) / SliderFrame.AbsoluteSize.X,
@@ -2559,7 +2559,7 @@ function Chloex:Window(GuiConfig)
                         )
                         SliderFunc:Set(SliderConfig.Min + ((SliderConfig.Max - SliderConfig.Min) * SizeScale))
                     end
-                end)
+                end))
 
                 TextBox:GetPropertyChangedSignal("Text"):Connect(function()
                     if SliderFunc.Locked then return end
@@ -3558,6 +3558,23 @@ function Chloex:Window(GuiConfig)
                     obj.Color = SelectedTheme.Color
                 end
             end
+        end
+    end
+
+    function Tabs:Destroy()
+        if Chloeex then
+            Chloeex:Destroy()
+        end
+        if game.CoreGui:FindFirstChild("ToggleUIButton") then
+            game.CoreGui.ToggleUIButton:Destroy()
+        end
+        if GuiFunc.Connections then
+            for _, conn in ipairs(GuiFunc.Connections) do
+                if conn.Connected then
+                    conn:Disconnect()
+                end
+            end
+            table.clear(GuiFunc.Connections)
         end
     end
 
