@@ -1005,6 +1005,14 @@ function Chloex:Window(GuiConfig)
             if game.CoreGui:FindFirstChild("ToggleUIButton") then
                 game.CoreGui.ToggleUIButton:Destroy()
             end
+            if GuiFunc.Connections then
+                for _, conn in ipairs(GuiFunc.Connections) do
+                    if conn.Connected then
+                        conn:Disconnect()
+                    end
+                end
+                table.clear(GuiFunc.Connections)
+            end
         end)
 
         Cancel.MouseButton1Click:Connect(function()
