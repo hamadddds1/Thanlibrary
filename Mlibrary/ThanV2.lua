@@ -631,6 +631,12 @@ function Chloex:Window(GuiConfig)
     CURRENT_VERSION        = GuiConfig.Version
     LoadConfigFromFile()
 
+    if ConfigData.ActiveTheme and CustomThemes[ConfigData.ActiveTheme] then
+        local SelectedTheme = CustomThemes[ConfigData.ActiveTheme]
+        GuiConfig.Theme = SelectedTheme.Theme
+        GuiConfig.Color = SelectedTheme.Color
+    end
+
     local GuiFunc = { ComponentRegistry = {}, Connections = {} }
 
     local Chloeex = Instance.new("ScreenGui");
@@ -3999,6 +4005,8 @@ function Chloex:Window(GuiConfig)
 
     function Tabs:ChangeTheme(ThemeName)
         if CustomThemes[ThemeName] then
+            ConfigData.ActiveTheme = ThemeName
+            SaveConfig()
             local SelectedTheme = CustomThemes[ThemeName]
             GuiConfig.Theme = SelectedTheme.Theme
             GuiConfig.Color = SelectedTheme.Color
