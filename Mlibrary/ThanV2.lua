@@ -1599,18 +1599,34 @@ function Chloex:Window(GuiConfig)
             if FrameChoose ~= nil and Tab.LayoutOrder ~= LayersPageLayout.CurrentPage.LayoutOrder then
                 for _, TabFrame in ipairs(ScrollTab:GetDescendants()) do
                     if TabFrame.Name == "Tab" then
+                        TabFrame:SetAttribute("IsActiveTab", false)
                         TweenService:Create(
                             TabFrame,
                             TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
                             { BackgroundTransparency = 0.9990000128746033 }
                         ):Play()
+                        for _, child in ipairs(TabFrame:GetChildren()) do
+                            if child.Name == "TabName" then
+                                TweenService:Create(child, TweenInfo.new(0.3), { TextColor3 = Color3.fromRGB(255, 255, 255) }):Play()
+                            elseif child.Name == "FeatureImg" or child.Name == "ArrowImg" then
+                                TweenService:Create(child, TweenInfo.new(0.3), { ImageColor3 = Color3.fromRGB(255, 255, 255) }):Play()
+                            end
+                        end
                     end
                 end
+                Tab:SetAttribute("IsActiveTab", true)
                 TweenService:Create(
                     Tab,
                     TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
                     { BackgroundTransparency = 0.9200000166893005 }
                 ):Play()
+                for _, child in ipairs(Tab:GetChildren()) do
+                    if child.Name == "TabName" then
+                        TweenService:Create(child, TweenInfo.new(0.3), { TextColor3 = GuiConfig.Color }):Play()
+                    elseif child.Name == "FeatureImg" or child.Name == "ArrowImg" then
+                        TweenService:Create(child, TweenInfo.new(0.3), { ImageColor3 = GuiConfig.Color }):Play()
+                    end
+                end
                 local oldAbsoluteY = FrameChoose.AbsolutePosition.Y
                 FrameChoose.Parent = Tab
                 FrameChoose.Position = UDim2.new(0, 2, 0, oldAbsoluteY - Tab.AbsolutePosition.Y)
@@ -2628,6 +2644,10 @@ function Chloex:Window(GuiConfig)
                         State = true
                     end
                     ToggleFunc.Locked = State
+                    if State and ToggleFunc.Value == true then
+                        ToggleFunc.Value = false
+                        ToggleFunc:Set(false)
+                    end
                     if State then
                         if not Toggle:FindFirstChild("LockOverlay") then
                             local LockOverlay = Instance.new("Frame")
@@ -2693,6 +2713,7 @@ function Chloex:Window(GuiConfig)
                 end
 
                 function ToggleFunc:Set(Value)
+                    if ToggleFunc.Locked and Value == true then return end
                     if typeof(ToggleConfig.Callback) == "function" then
                         local ok, err = pcall(function()
                             ToggleConfig.Callback(Value)
@@ -4001,6 +4022,10 @@ function Chloex:Window(GuiConfig)
             for _, obj in ipairs(Main:GetDescendants()) do
                 if obj:IsA("TextLabel") and obj.Parent and obj.Parent.Name == "Top" and obj.Text == GuiConfig.Title then
                     obj.TextColor3 = SelectedTheme.Color
+                elseif obj:IsA("TextLabel") and obj.Name == "TabName" and obj.Parent and obj.Parent:GetAttribute("IsActiveTab") == true then
+                    obj.TextColor3 = SelectedTheme.Color
+                elseif obj:IsA("ImageLabel") and (obj.Name == "FeatureImg" or obj.Name == "ArrowImg") and obj.Parent and obj.Parent:GetAttribute("IsActiveTab") == true then
+                    obj.ImageColor3 = SelectedTheme.Color
                 elseif obj:IsA("Frame") and obj.Name == "ChooseFrame" and obj.BackgroundTransparency == 0 then
                     obj.BackgroundColor3 = SelectedTheme.Color
                 elseif obj:IsA("UIStroke") and obj.Parent and obj.Parent.Name == "ChooseFrame" then
