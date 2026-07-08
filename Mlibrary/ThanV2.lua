@@ -4043,6 +4043,12 @@ function Chloex:Window(GuiConfig)
                         ColorSequenceKeypoint.new(0.5, SelectedTheme.Color),
                         ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
                     })
+                elseif obj:IsA("UIGradient") and obj.Parent and obj.Parent.Name == "SectionDecideFrame" then
+                    obj.Color = ColorSequence.new({
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 20)),
+                        ColorSequenceKeypoint.new(0.5, SelectedTheme.Color),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 20))
+                    })
                 elseif obj:IsA("Frame") and (obj.Name == "SliderInput" or obj.Name == "SliderDraggable" or obj.Name == "SliderCircle") then
                     obj.BackgroundColor3 = SelectedTheme.Color
                 elseif obj:IsA("UIStroke") and obj.Parent and obj.Parent.Name == "SliderCircle" then
