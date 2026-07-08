@@ -711,7 +711,7 @@ function Chloex:Window(GuiConfig)
     TooltipFrame.BorderSizePixel = 0
     TooltipFrame.ZIndex = 100
     TooltipFrame.Visible = false
-    TooltipFrame.AutomaticSize = Enum.AutomaticSize.XY
+    TooltipFrame.Size = UDim2.new(0, 100, 0, 30)
 
     local TooltipCorner = Instance.new("UICorner")
     TooltipCorner.CornerRadius = UDim.new(0, 4)
@@ -728,9 +728,15 @@ function Chloex:Window(GuiConfig)
     TooltipText.Font = Enum.Font.GothamMedium
     TooltipText.TextColor3 = Color3.fromRGB(255, 255, 255)
     TooltipText.TextSize = 12
-    TooltipText.AutomaticSize = Enum.AutomaticSize.XY
-    TooltipText.TextXAlignment = Enum.TextXAlignment.Left
+    TooltipText.Size = UDim2.new(1, 0, 1, 0)
+    TooltipText.TextXAlignment = Enum.TextXAlignment.Center
     TooltipText.TextYAlignment = Enum.TextYAlignment.Center
+
+    TooltipText:GetPropertyChangedSignal("TextBounds"):Connect(function()
+        if TooltipText.TextBounds.X > 0 then
+            TooltipFrame.Size = UDim2.new(0, TooltipText.TextBounds.X + 16, 0, TooltipText.TextBounds.Y + 12)
+        end
+    end)
 
     local TooltipPadding = Instance.new("UIPadding")
     TooltipPadding.PaddingTop = UDim.new(0, 6)
@@ -3961,13 +3967,17 @@ function Chloex:Window(GuiConfig)
                 Main.Image = "rbxassetid://" .. SelectedTheme.Theme
             end
 
-            if WatermarkStroke then
-                WatermarkStroke.Color = SelectedTheme.Color
-            end
+            pcall(function()
+                if WatermarkStroke then
+                    WatermarkStroke.Color = SelectedTheme.Color
+                end
+            end)
 
-            if TooltipStroke then
-                TooltipStroke.Color = SelectedTheme.Color
-            end
+            pcall(function()
+                if TooltipStroke then
+                    TooltipStroke.Color = SelectedTheme.Color
+                end
+            end)
             
             -- Update UI colors dynamically
             for _, obj in ipairs(Main:GetDescendants()) do
