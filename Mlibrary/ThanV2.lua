@@ -130,7 +130,7 @@ local function safeSize(pxWidth, pxHeight)
     return UDim2.new(scaleX, 0, scaleY, 0)
 end
 
-local function MakeDraggable(topbarobject, object)
+local function MakeDraggable(topbarobject, object, connectionsTable)
     local function CustomPos(topbarobject, object)
         local Dragging, DragInput, DragStart, StartPosition
 
@@ -165,11 +165,19 @@ local function MakeDraggable(topbarobject, object)
             end
         end)
 
-        table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
-            if input == DragInput and Dragging then
-                UpdatePos(input)
-            end
-        end))
+        if connectionsTable then
+            table.insert(connectionsTable, UserInputService.InputChanged:Connect(function(input)
+                if input == DragInput and Dragging then
+                    UpdatePos(input)
+                end
+            end))
+        else
+            UserInputService.InputChanged:Connect(function(input)
+                if input == DragInput and Dragging then
+                    UpdatePos(input)
+                end
+            end)
+        end
     end
 
     local function CustomSize(object)
@@ -227,11 +235,19 @@ local function MakeDraggable(topbarobject, object)
             end
         end)
 
-        table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
-            if input == DragInput and Dragging then
-                UpdateSize(input)
-            end
-        end))
+        if connectionsTable then
+            table.insert(connectionsTable, UserInputService.InputChanged:Connect(function(input)
+                if input == DragInput and Dragging then
+                    UpdateSize(input)
+                end
+            end))
+        else
+            UserInputService.InputChanged:Connect(function(input)
+                if input == DragInput and Dragging then
+                    UpdateSize(input)
+                end
+            end)
+        end
     end
 
     CustomSize(object)
@@ -1340,7 +1356,7 @@ function Chloex:Window(GuiConfig)
     GuiFunc:ToggleUI()
 
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
-    MakeDraggable(Top, DropShadowHolder)
+    MakeDraggable(Top, DropShadowHolder, GuiFunc.Connections)
 
     local MoreBlur = Instance.new("Frame");
     local DropShadowHolder1 = Instance.new("Frame");
