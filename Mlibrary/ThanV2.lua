@@ -2722,6 +2722,7 @@ function Chloex:Window(GuiConfig)
                     end
                     ConfigData[configKey] = Value
                     SaveConfig()
+                    Toggle:SetAttribute("IsOn", Value)
                     if Value then
                         TweenService:Create(ToggleTitle, TweenInfo.new(0.2), { TextColor3 = GuiConfig.Color }):Play()
                         TweenService:Create(ToggleCircle, TweenInfo.new(0.2), { Position = UDim2.new(0, 15, 0, 0) })
@@ -4024,6 +4025,12 @@ function Chloex:Window(GuiConfig)
                     obj.TextColor3 = SelectedTheme.Color
                 elseif obj:IsA("TextLabel") and obj.Name == "TabName" and obj.Parent and obj.Parent:GetAttribute("IsActiveTab") == true then
                     obj.TextColor3 = SelectedTheme.Color
+                elseif obj:IsA("TextLabel") and (obj.Name == "ToggleTitle" or obj.Name == "ToggleTitle2") and obj.Parent and obj.Parent:GetAttribute("IsOn") == true then
+                    obj.TextColor3 = SelectedTheme.Color
+                elseif obj:IsA("Frame") and obj.Name == "FeatureFrame" and obj.Parent and obj.Parent.Name == "Toggle" and obj.Parent:GetAttribute("IsOn") == true then
+                    obj.BackgroundColor3 = SelectedTheme.Color
+                elseif obj:IsA("UIStroke") and obj.Parent and obj.Parent.Name == "FeatureFrame" and obj.Parent.Parent and obj.Parent.Parent:GetAttribute("IsOn") == true then
+                    obj.Color = SelectedTheme.Color
                 elseif obj:IsA("ImageLabel") and (obj.Name == "FeatureImg" or obj.Name == "ArrowImg") and obj.Parent and obj.Parent:GetAttribute("IsActiveTab") == true then
                     obj.ImageColor3 = SelectedTheme.Color
                 elseif obj:IsA("Frame") and obj.Name == "ChooseFrame" and obj.BackgroundTransparency == 0 then
