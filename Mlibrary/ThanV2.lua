@@ -2840,7 +2840,7 @@ function Chloex:Window(GuiConfig)
                     SliderTitle.Position = UDim2.new(0, 10, 0, 10)
                     SliderTitle.Size = UDim2.new(1, -180, 0, 13)
                 end
-                SliderTitle.TextColor3 = Color3.fromRGB(230.77, 230.77, 230.77)
+                SliderTitle.TextColor3 = GuiConfig.Color
                 SliderTitle.TextSize = 13
                 SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
                 SliderTitle.TextYAlignment = Enum.TextYAlignment.Top
@@ -3168,7 +3168,7 @@ function Chloex:Window(GuiConfig)
                     InputTitle.Position = UDim2.new(0, 10, 0, 10)
                     InputTitle.Size = UDim2.new(1, -180, 0, 13)
                 end
-                InputTitle.TextColor3 = Color3.fromRGB(230.77, 230.77, 230.77)
+                InputTitle.TextColor3 = GuiConfig.Color
                 InputTitle.TextSize = 13
                 InputTitle.TextXAlignment = Enum.TextXAlignment.Left
                 InputTitle.TextYAlignment = Enum.TextYAlignment.Top
@@ -3413,7 +3413,7 @@ function Chloex:Window(GuiConfig)
                     DropdownTitle.Position = UDim2.new(0, 10, 0, 10)
                     DropdownTitle.Size = UDim2.new(1, -180, 0, 13)
                 end
-                DropdownTitle.TextColor3 = Color3.fromRGB(230, 230, 230)
+                DropdownTitle.TextColor3 = GuiConfig.Color
                 DropdownTitle.TextSize = 13
                 DropdownTitle.TextXAlignment = Enum.TextXAlignment.Left
                 DropdownTitle.BackgroundTransparency = 1
@@ -4026,6 +4026,8 @@ function Chloex:Window(GuiConfig)
                 elseif obj:IsA("TextLabel") and obj.Name == "TabName" and obj.Parent and obj.Parent:GetAttribute("IsActiveTab") == true then
                     obj.TextColor3 = SelectedTheme.Color
                 elseif obj:IsA("TextLabel") and (obj.Name == "ToggleTitle" or obj.Name == "ToggleTitle2") and obj.Parent and obj.Parent:GetAttribute("IsOn") == true then
+                    obj.TextColor3 = SelectedTheme.Color
+                elseif obj:IsA("TextLabel") and (obj.Name == "SliderTitle" or obj.Name == "DropdownTitle" or obj.Name == "InputTitle") then
                     obj.TextColor3 = SelectedTheme.Color
                 elseif obj:IsA("Frame") and obj.Name == "FeatureFrame" and obj.Parent and obj.Parent.Name == "Toggle" and obj.Parent:GetAttribute("IsOn") == true then
                     obj.BackgroundColor3 = SelectedTheme.Color
