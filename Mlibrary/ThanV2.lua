@@ -700,20 +700,22 @@ function Chloex:Window(GuiConfig)
         end))
 
         task.spawn(function()
-            while Chloeex and Chloeex.Parent do
-                task.wait(1)
-                local ping = "0"
-                pcall(function()
-                    local stats = game:GetService("Stats")
-                    if stats and stats.Network and stats.Network.ServerStatsItem and stats.Network.ServerStatsItem["Data Ping"] then
-                        local pStr = stats.Network.ServerStatsItem["Data Ping"]:GetValueString()
-                        local pNum = string.match(pStr, "%d+")
-                        if pNum then ping = pNum end
+            while task.wait(1) do
+                if not WatermarkFrame or not WatermarkFrame.Parent then break end
+                if Chloeex and Chloeex.Parent then
+                    local ping = "0"
+                    pcall(function()
+                        local stats = game:GetService("Stats")
+                        if stats and stats.Network and stats.Network.ServerStatsItem and stats.Network.ServerStatsItem["Data Ping"] then
+                            local pStr = stats.Network.ServerStatsItem["Data Ping"]:GetValueString()
+                            local pNum = string.match(pStr, "%d+")
+                            if pNum then ping = pNum end
+                        end
+                    end)
+                    local timeStr = os.date("%X")
+                    if TextLabel then
+                        TextLabel.Text = string.format("%s | FPS: <font color='rgb(100,255,100)'>%d</font> | Ping: <font color='rgb(255,150,150)'>%sms</font> | %s", GuiConfig.Title, FPS, ping, timeStr)
                     end
-                end)
-                local timeStr = os.date("%X")
-                if WatermarkFrame and TextLabel then
-                    TextLabel.Text = string.format("%s | FPS: <font color='rgb(100,255,100)'>%d</font> | Ping: <font color='rgb(255,150,150)'>%sms</font> | %s", GuiConfig.Title, FPS, ping, timeStr)
                 end
             end
         end)
