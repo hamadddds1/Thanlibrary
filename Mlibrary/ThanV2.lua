@@ -1,4 +1,5 @@
 local HttpService = game:GetService("HttpService")
+local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
 
 if not isfolder("ThanHub") then
     makefolder("ThanHub")
@@ -303,6 +304,7 @@ function Chloex:MakeNotify(NotifyConfig)
     spawn(function()
         if not CoreGui:FindFirstChild("NotifyGui") then
             local NotifyGui = Instance.new("ScreenGui");
+            ProtectGui(NotifyGui)
             NotifyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
             NotifyGui.Name = "NotifyGui"
             NotifyGui.Parent = CoreGui
@@ -495,6 +497,7 @@ function Chloex:MakeWatermark(WatermarkConfig)
     local UseTheme = WatermarkConfig.UseTheme or true
 
     local WatermarkGui = Instance.new("ScreenGui")
+    ProtectGui(WatermarkGui)
     WatermarkGui.Name = "WatermarkGui"
     WatermarkGui.Parent = game:GetService("CoreGui")
     WatermarkGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -640,6 +643,7 @@ function Chloex:Window(GuiConfig)
     local GuiFunc = { ComponentRegistry = {}, Connections = {} }
 
     local Chloeex = Instance.new("ScreenGui");
+    ProtectGui(Chloeex)
     local WatermarkStroke = nil
     if GuiConfig.Watermark then
         local WatermarkFrame = Instance.new("Frame")
@@ -1292,6 +1296,7 @@ function Chloex:Window(GuiConfig)
 
     function GuiFunc:ToggleUI()
         local ScreenGui = Instance.new("ScreenGui")
+        ProtectGui(ScreenGui)
         ScreenGui.Parent = game:GetService("CoreGui")
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         ScreenGui.Name = "ToggleUIButton"
