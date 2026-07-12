@@ -1371,6 +1371,49 @@ function Chloex:Window(GuiConfig)
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
     MakeDraggable(Top, DropShadowHolder, GuiFunc.Connections)
 
+    local ResizeButton = Instance.new("TextButton")
+    ResizeButton.Name = "ResizeButton"
+    ResizeButton.Size = UDim2.new(0, 20, 0, 20)
+    ResizeButton.Position = UDim2.new(1, -5, 1, -5)
+    ResizeButton.AnchorPoint = Vector2.new(1, 1)
+    ResizeButton.BackgroundColor3 = GuiConfig.Color or Color3.fromRGB(80, 80, 80)
+    ResizeButton.BackgroundTransparency = 0.5
+    ResizeButton.Text = "↘"
+    ResizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ResizeButton.TextSize = 14
+    ResizeButton.ZIndex = 50
+    ResizeButton.Parent = Main
+
+    local ResizeCorner = Instance.new("UICorner")
+    ResizeCorner.CornerRadius = UDim.new(1, 0)
+    ResizeCorner.Parent = ResizeButton
+
+    local resizing = false
+    local resizeStart, startSize
+
+    ResizeButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            resizing = true
+            resizeStart = input.Position
+            startSize = DropShadowHolder.Size
+        end
+    end)
+
+    table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
+        if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - resizeStart
+            local newWidth = math.max(400, startSize.X.Offset + delta.X)
+            local newHeight = math.max(250, startSize.Y.Offset + delta.Y)
+            DropShadowHolder.Size = UDim2.new(0, newWidth, 0, newHeight)
+        end
+    end))
+
+    table.insert(GuiFunc.Connections, UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            resizing = false
+        end
+    end))
+
     local MoreBlur = Instance.new("Frame");
     local DropShadowHolder1 = Instance.new("Frame");
     local DropShadow1 = Instance.new("ImageLabel");
