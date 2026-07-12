@@ -2790,13 +2790,8 @@ function Chloex:Window(GuiConfig)
                 local TextBox = Instance.new("TextBox");
                 local SliderFrame = Instance.new("Frame");
                 local UICorner17 = Instance.new("UICorner");
-                local SliderDraggable = Instance.new("Frame");
-                local UICorner18 = Instance.new("UICorner");
-                local UIStroke5 = Instance.new("UIStroke");
-                local SliderCircle = Instance.new("Frame");
-                local UICorner19 = Instance.new("UICorner");
-                local UIStroke6 = Instance.new("UIStroke");
-                local UIStroke7 = Instance.new("UIStroke");
+                local SliderDraggable = Instance.new("Frame")
+                local UICorner18 = Instance.new("UICorner")
 
                 Slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Slider.BackgroundTransparency = 0.9350000023841858
@@ -2916,16 +2911,25 @@ function Chloex:Window(GuiConfig)
                 TextBox.Size = UDim2.new(1, 0, 1, 0)
                 TextBox.Parent = SliderInput
 
-                SliderFrame.AnchorPoint = Vector2.new(1, 0.5)
-                SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SliderFrame.BackgroundTransparency = 0.800000011920929
-                SliderFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                SliderFrame.BorderSizePixel = 0
-                SliderFrame.Position = UDim2.new(1, -20, 0.5, 0)
-                SliderFrame.Size = UDim2.new(0, 100, 0, 3)
-                SliderFrame.Name = "SliderFrame"
-                SliderFrame.Parent = Slider
+                local SliderHitbox = Instance.new("TextButton")
+                SliderHitbox.AnchorPoint = Vector2.new(1, 0.5)
+                SliderHitbox.BackgroundTransparency = 1
+                SliderHitbox.Position = UDim2.new(1, -20, 0.5, 0)
+                SliderHitbox.Size = UDim2.new(0, 100, 0, 30)
+                SliderHitbox.Text = ""
+                SliderHitbox.Name = "SliderHitbox"
+                SliderHitbox.Parent = Slider
 
+                SliderFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+                SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                SliderFrame.BackgroundTransparency = 0.8
+                SliderFrame.BorderSizePixel = 0
+                SliderFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+                SliderFrame.Size = UDim2.new(1, 0, 0, 6)
+                SliderFrame.Name = "SliderFrame"
+                SliderFrame.Parent = SliderHitbox
+
+                UICorner17.CornerRadius = UDim.new(1, 0)
                 UICorner17.Parent = SliderFrame
 
                 SliderDraggable.AnchorPoint = Vector2.new(0, 0.5)
@@ -2933,25 +2937,12 @@ function Chloex:Window(GuiConfig)
                 SliderDraggable.BorderColor3 = Color3.fromRGB(0, 0, 0)
                 SliderDraggable.BorderSizePixel = 0
                 SliderDraggable.Position = UDim2.new(0, 0, 0.5, 0)
-                SliderDraggable.Size = UDim2.new(0.899999976, 0, 0, 1)
+                SliderDraggable.Size = UDim2.new(0.5, 0, 1, 0)
                 SliderDraggable.Name = "SliderDraggable"
                 SliderDraggable.Parent = SliderFrame
 
+                UICorner18.CornerRadius = UDim.new(1, 0)
                 UICorner18.Parent = SliderDraggable
-
-                SliderCircle.AnchorPoint = Vector2.new(1, 0.5)
-                SliderCircle.BackgroundColor3 = GuiConfig.Color
-                SliderCircle.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                SliderCircle.BorderSizePixel = 0
-                SliderCircle.Position = UDim2.new(1, 4, 0.5, 0)
-                SliderCircle.Size = UDim2.new(0, 8, 0, 8)
-                SliderCircle.Name = "SliderCircle"
-                SliderCircle.Parent = SliderDraggable
-
-                UICorner19.Parent = SliderCircle
-
-                UIStroke6.Color = GuiConfig.Color
-                UIStroke6.Parent = SliderCircle
 
                 local Dragging = false
                 local function Round(Number, Factor)
@@ -2976,14 +2967,14 @@ function Chloex:Window(GuiConfig)
                     SaveConfig()
                 end
 
-                SliderFrame.InputBegan:Connect(function(Input)
+                SliderHitbox.InputBegan:Connect(function(Input)
                     if SliderFunc.Locked then return end
                     if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
                         Dragging = true
                         TweenService:Create(
-                            SliderCircle,
+                            SliderFrame,
                             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            { Size = UDim2.new(0, 14, 0, 14) }
+                            { Size = UDim2.new(1, 0, 0, 8) }
                         ):Play()
                         local SizeScale = math.clamp(
                             (Input.Position.X - SliderFrame.AbsolutePosition.X) / SliderFrame.AbsoluteSize.X,
@@ -2994,14 +2985,14 @@ function Chloex:Window(GuiConfig)
                     end
                 end)
 
-                SliderFrame.InputEnded:Connect(function(Input)
+                SliderHitbox.InputEnded:Connect(function(Input)
                     if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
                         Dragging = false
                         SliderConfig.Callback(SliderFunc.Value)
                         TweenService:Create(
-                            SliderCircle,
+                            SliderFrame,
                             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            { Size = UDim2.new(0, 8, 0, 8) }
+                            { Size = UDim2.new(1, 0, 0, 6) }
                         ):Play()
                     end
                 end)
@@ -4064,10 +4055,8 @@ function Chloex:Window(GuiConfig)
                         ColorSequenceKeypoint.new(0.5, SelectedTheme.Color),
                         ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 20))
                     })
-                elseif obj:IsA("Frame") and (obj.Name == "SliderInput" or obj.Name == "SliderDraggable" or obj.Name == "SliderCircle") then
+                elseif obj:IsA("Frame") and (obj.Name == "SliderInput" or obj.Name == "SliderDraggable") then
                     obj.BackgroundColor3 = SelectedTheme.Color
-                elseif obj:IsA("UIStroke") and obj.Parent and obj.Parent.Name == "SliderCircle" then
-                    obj.Color = SelectedTheme.Color
                 end
             end
         end
