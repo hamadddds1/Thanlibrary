@@ -1371,40 +1371,86 @@ function Chloex:Window(GuiConfig)
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
     MakeDraggable(Top, DropShadowHolder, GuiFunc.Connections)
 
-    local ResizeButton = Instance.new("TextButton")
-    ResizeButton.Name = "ResizeButton"
-    ResizeButton.Size = UDim2.new(0, 20, 0, 20)
-    ResizeButton.Position = UDim2.new(1, -5, 1, -5)
-    ResizeButton.AnchorPoint = Vector2.new(1, 1)
-    ResizeButton.BackgroundColor3 = GuiConfig.Color or Color3.fromRGB(80, 80, 80)
-    ResizeButton.BackgroundTransparency = 0.5
-    ResizeButton.Text = "↘"
-    ResizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ResizeButton.TextSize = 14
-    ResizeButton.ZIndex = 50
-    ResizeButton.Parent = Main
+    local BottomDragHitbox = Instance.new("TextButton")
+    BottomDragHitbox.Name = "BottomDragHitbox"
+    BottomDragHitbox.Size = UDim2.new(0, 150, 0, 20)
+    BottomDragHitbox.Position = UDim2.new(0.5, 0, 1, 0)
+    BottomDragHitbox.AnchorPoint = Vector2.new(0.5, 0)
+    BottomDragHitbox.BackgroundTransparency = 1
+    BottomDragHitbox.Text = ""
+    BottomDragHitbox.Parent = DropShadowHolder
 
-    local ResizeCorner = Instance.new("UICorner")
-    ResizeCorner.CornerRadius = UDim.new(1, 0)
-    ResizeCorner.Parent = ResizeButton
+    local BottomDragLine = Instance.new("Frame")
+    BottomDragLine.Size = UDim2.new(1, -20, 0, 4)
+    BottomDragLine.Position = UDim2.new(0.5, 0, 0.5, 0)
+    BottomDragLine.AnchorPoint = Vector2.new(0.5, 0.5)
+    BottomDragLine.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    BottomDragLine.BorderSizePixel = 0
+    BottomDragLine.Parent = BottomDragHitbox
+    local DragLineCorner = Instance.new("UICorner")
+    DragLineCorner.CornerRadius = UDim.new(1, 0)
+    DragLineCorner.Parent = BottomDragLine
+
+    MakeDraggable(BottomDragHitbox, DropShadowHolder, GuiFunc.Connections)
+
+    local ResizeHitbox = Instance.new("TextButton")
+    ResizeHitbox.Name = "ResizeButton"
+    ResizeHitbox.Size = UDim2.new(0, 20, 0, 20)
+    ResizeHitbox.Position = UDim2.new(1, -5, 1, -5)
+    ResizeHitbox.AnchorPoint = Vector2.new(1, 1)
+    ResizeHitbox.BackgroundTransparency = 1
+    ResizeHitbox.Text = ""
+    ResizeHitbox.ZIndex = 50
+    ResizeHitbox.Parent = Main
+
+    local GripV = Instance.new("Frame")
+    GripV.Size = UDim2.new(0, 2, 0, 10)
+    GripV.Position = UDim2.new(1, -2, 1, -2)
+    GripV.AnchorPoint = Vector2.new(1, 1)
+    GripV.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
+    GripV.BorderSizePixel = 0
+    GripV.Parent = ResizeHitbox
+    local GripVCorner = Instance.new("UICorner")
+    GripVCorner.CornerRadius = UDim.new(1, 0)
+    GripVCorner.Parent = GripV
+
+    local GripH = Instance.new("Frame")
+    GripH.Size = UDim2.new(0, 10, 0, 2)
+    GripH.Position = UDim2.new(1, -2, 1, -2)
+    GripH.AnchorPoint = Vector2.new(1, 1)
+    GripH.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
+    GripH.BorderSizePixel = 0
+    GripH.Parent = ResizeHitbox
+    local GripHCorner = Instance.new("UICorner")
+    GripHCorner.CornerRadius = UDim.new(1, 0)
+    GripHCorner.Parent = GripH
 
     local resizing = false
-    local resizeStart, startSize
+    local resizeStart, startSize, startPos
 
-    ResizeButton.InputBegan:Connect(function(input)
+    ResizeHitbox.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             resizing = true
             resizeStart = input.Position
             startSize = DropShadowHolder.Size
+            startPos = DropShadowHolder.Position
         end
     end)
 
     table.insert(GuiFunc.Connections, UserInputService.InputChanged:Connect(function(input)
         if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - resizeStart
-            local newWidth = math.max(400, startSize.X.Offset + delta.X)
-            local newHeight = math.max(250, startSize.Y.Offset + delta.Y)
+            local newWidth = math.max(500, startSize.X.Offset + delta.X)
+            local newHeight = math.max(350, startSize.Y.Offset + delta.Y)
+            
+            local actualDeltaX = newWidth - startSize.X.Offset
+            local actualDeltaY = newHeight - startSize.Y.Offset
+
             DropShadowHolder.Size = UDim2.new(0, newWidth, 0, newHeight)
+            DropShadowHolder.Position = UDim2.new(
+                startPos.X.Scale, startPos.X.Offset + (actualDeltaX / 2),
+                startPos.Y.Scale, startPos.Y.Offset + (actualDeltaY / 2)
+            )
         end
     end))
 
