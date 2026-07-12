@@ -2885,12 +2885,12 @@ function Chloex:Window(GuiConfig)
                     UpdateSizeSection()
                 end)
 
-                SliderInput.AnchorPoint = Vector2.new(0, 0.5)
+                SliderInput.AnchorPoint = Vector2.new(1, 0.5)
                 SliderInput.BackgroundColor3 = GuiConfig.Color
                 SliderInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
                 SliderInput.BackgroundTransparency = 1
                 SliderInput.BorderSizePixel = 0
-                SliderInput.Position = UDim2.new(1, -155, 0.5, 0)
+                SliderInput.Position = UDim2.new(1, -152, 0.5, 0)
                 SliderInput.Size = UDim2.new(0, 28, 0, 20)
                 SliderInput.Name = "SliderInput"
                 SliderInput.Parent = Slider
@@ -2911,11 +2911,41 @@ function Chloex:Window(GuiConfig)
                 TextBox.Size = UDim2.new(1, 0, 1, 0)
                 TextBox.Parent = SliderInput
 
+                local MinusButton = Instance.new("TextButton")
+                MinusButton.AnchorPoint = Vector2.new(1, 0.5)
+                MinusButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                MinusButton.Position = UDim2.new(1, -127, 0.5, 0)
+                MinusButton.Size = UDim2.new(0, 20, 0, 20)
+                MinusButton.Font = Enum.Font.GothamBold
+                MinusButton.Text = "-"
+                MinusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                MinusButton.TextSize = 14
+                MinusButton.Name = "SliderMinus"
+                MinusButton.Parent = Slider
+                local UICornerMinus = Instance.new("UICorner")
+                UICornerMinus.CornerRadius = UDim.new(0, 4)
+                UICornerMinus.Parent = MinusButton
+
+                local PlusButton = Instance.new("TextButton")
+                PlusButton.AnchorPoint = Vector2.new(1, 0.5)
+                PlusButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                PlusButton.Position = UDim2.new(1, -7, 0.5, 0)
+                PlusButton.Size = UDim2.new(0, 20, 0, 20)
+                PlusButton.Font = Enum.Font.GothamBold
+                PlusButton.Text = "+"
+                PlusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                PlusButton.TextSize = 14
+                PlusButton.Name = "SliderPlus"
+                PlusButton.Parent = Slider
+                local UICornerPlus = Instance.new("UICorner")
+                UICornerPlus.CornerRadius = UDim.new(0, 4)
+                UICornerPlus.Parent = PlusButton
+
                 local SliderHitbox = Instance.new("TextButton")
                 SliderHitbox.AnchorPoint = Vector2.new(1, 0.5)
                 SliderHitbox.BackgroundTransparency = 1
-                SliderHitbox.Position = UDim2.new(1, -20, 0.5, 0)
-                SliderHitbox.Size = UDim2.new(0, 100, 0, 30)
+                SliderHitbox.Position = UDim2.new(1, -32, 0.5, 0)
+                SliderHitbox.Size = UDim2.new(0, 90, 0, 30)
                 SliderHitbox.Text = ""
                 SliderHitbox.Name = "SliderHitbox"
                 SliderHitbox.Parent = Slider
@@ -3008,7 +3038,7 @@ function Chloex:Window(GuiConfig)
                     end
                 end))
 
-                TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+                TextBox.FocusLost:Connect(function()
                     if SliderFunc.Locked then return end
                     local Valid = TextBox.Text:gsub("[^%d]", "")
                     if Valid ~= "" then
@@ -3017,6 +3047,16 @@ function Chloex:Window(GuiConfig)
                     else
                         SliderFunc:Set(SliderConfig.Min)
                     end
+                end)
+
+                MinusButton.MouseButton1Click:Connect(function()
+                    if SliderFunc.Locked then return end
+                    SliderFunc:Set(SliderFunc.Value - SliderConfig.Increment)
+                end)
+
+                PlusButton.MouseButton1Click:Connect(function()
+                    if SliderFunc.Locked then return end
+                    SliderFunc:Set(SliderFunc.Value + SliderConfig.Increment)
                 end)
 
                 function SliderFunc:Lock(State, Reason)
