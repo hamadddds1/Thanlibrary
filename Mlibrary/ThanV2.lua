@@ -3002,7 +3002,7 @@ function Chloex:Window(GuiConfig)
 
                 local MinusButton = Instance.new("TextButton")
                 MinusButton.AnchorPoint = Vector2.new(1, 0.5)
-                MinusButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                MinusButton.BackgroundTransparency = 1
                 MinusButton.Position = UDim2.new(1, -127, 0.5, 0)
                 MinusButton.Size = UDim2.new(0, 20, 0, 20)
                 MinusButton.Font = Enum.Font.GothamBold
@@ -3011,13 +3011,10 @@ function Chloex:Window(GuiConfig)
                 MinusButton.TextSize = 14
                 MinusButton.Name = "SliderMinus"
                 MinusButton.Parent = Slider
-                local UICornerMinus = Instance.new("UICorner")
-                UICornerMinus.CornerRadius = UDim.new(0, 4)
-                UICornerMinus.Parent = MinusButton
 
                 local PlusButton = Instance.new("TextButton")
                 PlusButton.AnchorPoint = Vector2.new(1, 0.5)
-                PlusButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                PlusButton.BackgroundTransparency = 1
                 PlusButton.Position = UDim2.new(1, -7, 0.5, 0)
                 PlusButton.Size = UDim2.new(0, 20, 0, 20)
                 PlusButton.Font = Enum.Font.GothamBold
@@ -3026,9 +3023,6 @@ function Chloex:Window(GuiConfig)
                 PlusButton.TextSize = 14
                 PlusButton.Name = "SliderPlus"
                 PlusButton.Parent = Slider
-                local UICornerPlus = Instance.new("UICorner")
-                UICornerPlus.CornerRadius = UDim.new(0, 4)
-                UICornerPlus.Parent = PlusButton
 
                 local SliderHitbox = Instance.new("TextButton")
                 SliderHitbox.AnchorPoint = Vector2.new(1, 0.5)
