@@ -1542,14 +1542,14 @@ function Chloex:Window(GuiConfig)
     UICorner36.CornerRadius = UDim.new(0, 3)
     UICorner36.Parent = DropdownSelect
 
-    UIStroke14.Color = Color3.fromRGB(12, 159, 255)
-    UIStroke14.Thickness = 2.5
-    UIStroke14.Transparency = 0.8
+    UIStroke14.Color = GuiConfig.Color
+    UIStroke14.Thickness = 1.5
+    UIStroke14.Transparency = 0.1
     UIStroke14.Parent = DropdownSelect
 
     DropdownSelectReal.AnchorPoint = Vector2.new(0.5, 0.5)
-    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(0, 27, 98)
-    DropdownSelectReal.BackgroundTransparency = 0.7
+    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+    DropdownSelectReal.BackgroundTransparency = 0.5
     DropdownSelectReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
     DropdownSelectReal.BorderSizePixel = 0
     DropdownSelectReal.LayoutOrder = 1
@@ -3613,18 +3613,28 @@ function Chloex:Window(GuiConfig)
                 SearchBox.Text = ""
                 SearchBox.TextSize = 12
                 SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-                SearchBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-                SearchBox.BackgroundTransparency = 0.9
+                SearchBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                SearchBox.BackgroundTransparency = 0.6
                 SearchBox.BorderSizePixel = 0
-                SearchBox.Size = UDim2.new(1, 0, 0, 25)
-                SearchBox.Position = UDim2.new(0, 0, 0, 0)
+                SearchBox.Size = UDim2.new(1, -12, 0, 26)
+                SearchBox.Position = UDim2.new(0, 6, 0, 6)
                 SearchBox.ClearTextOnFocus = false
                 SearchBox.Name = "SearchBox"
                 SearchBox.Parent = DropdownContainer
 
+                local SearchCorner = Instance.new("UICorner")
+                SearchCorner.CornerRadius = UDim.new(0, 4)
+                SearchCorner.Parent = SearchBox
+
+                local SearchStroke = Instance.new("UIStroke")
+                SearchStroke.Color = Color3.fromRGB(255, 255, 255)
+                SearchStroke.Transparency = 0.8
+                SearchStroke.Thickness = 1
+                SearchStroke.Parent = SearchBox
+
                 local ScrollSelect = Instance.new("ScrollingFrame")
-                ScrollSelect.Size = UDim2.new(1, 0, 1, -30)
-                ScrollSelect.Position = UDim2.new(0, 0, 0, 30)
+                ScrollSelect.Size = UDim2.new(1, 0, 1, -38)
+                ScrollSelect.Position = UDim2.new(0, 0, 0, 38)
                 ScrollSelect.ScrollBarImageTransparency = 1
                 ScrollSelect.BorderSizePixel = 0
                 ScrollSelect.BackgroundTransparency = 1
