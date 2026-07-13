@@ -2400,13 +2400,21 @@ function Chloex:Window(GuiConfig)
 
                 local MainButton = Instance.new("TextButton")
                 MainButton.Font = Enum.Font.GothamBold
+                MainButton.TextSize = 12
+                MainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                MainButton.TextTransparency = 0.1
+                MainButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                MainButton.BackgroundTransparency = 0.92
+                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
+                MainButton.Position = UDim2.new(0, 6, 0, 5)
+                MainButton.Parent = Button
+
                 if ButtonConfig.Icon and ButtonConfig.Icon ~= "" then
-                    MainButton.Text = "          " .. ButtonConfig.Title
-                    MainButton.TextXAlignment = Enum.TextXAlignment.Left
+                    MainButton.Text = ""
 
                     local IconImg = Instance.new("ImageLabel")
                     IconImg.Size = UDim2.new(0, 16, 0, 16)
-                    IconImg.Position = UDim2.new(0, 10, 0.5, -8)
+                    IconImg.Position = UDim2.new(0, 12, 0.5, -8)
                     IconImg.BackgroundTransparency = 1
                     if Icons[ButtonConfig.Icon] then
                         IconImg.Image = Icons[ButtonConfig.Icon]
@@ -2416,23 +2424,27 @@ function Chloex:Window(GuiConfig)
                     IconImg.Parent = MainButton
 
                     local Sep = Instance.new("Frame")
-                    Sep.Size = UDim2.new(0, 1, 0, 14)
-                    Sep.Position = UDim2.new(0, 32, 0.5, -7)
+                    Sep.Size = UDim2.new(0, 1, 0, 16)
+                    Sep.Position = UDim2.new(0, 38, 0.5, -8)
                     Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     Sep.BackgroundTransparency = 0.8
                     Sep.BorderSizePixel = 0
                     Sep.Parent = MainButton
+
+                    local TitleLabel = Instance.new("TextLabel")
+                    TitleLabel.BackgroundTransparency = 1
+                    TitleLabel.Size = UDim2.new(1, -48, 1, 0)
+                    TitleLabel.Position = UDim2.new(0, 48, 0, 0)
+                    TitleLabel.Font = Enum.Font.GothamBold
+                    TitleLabel.Text = ButtonConfig.Title
+                    TitleLabel.TextSize = 12
+                    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    TitleLabel.TextTransparency = 0.1
+                    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    TitleLabel.Parent = MainButton
                 else
                     MainButton.Text = ButtonConfig.Title
                 end
-                MainButton.TextSize = 12
-                MainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                MainButton.TextTransparency = 0.3
-                MainButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                MainButton.BackgroundTransparency = 0.935
-                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
-                MainButton.Position = UDim2.new(0, 6, 0, 5)
-                MainButton.Parent = Button
 
                 local mainCorner = Instance.new("UICorner")
                 mainCorner.CornerRadius = UDim.new(0, 4)
