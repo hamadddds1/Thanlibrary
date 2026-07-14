@@ -2439,7 +2439,7 @@ function Chloex:Window(GuiConfig)
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
-                MainButton.MouseButton1Click:Connect(function()
+                MainButton.MouseButton1Down:Connect(function()
                     if ButtonFunc.Locked then return end
                     ButtonConfig.Callback()
                 end)
@@ -2462,7 +2462,7 @@ function Chloex:Window(GuiConfig)
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
 
-                    SubButton.MouseButton1Click:Connect(function()
+                    SubButton.MouseButton1Down:Connect(function()
                         if ButtonFunc.Locked then return end
                         ButtonConfig.SubCallback()
                     end)
