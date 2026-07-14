@@ -2450,9 +2450,11 @@ function Chloex:Window(GuiConfig)
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
-                MainButton.Activated:Connect(function()
-                    if ButtonFunc.Locked then return end
-                    ButtonConfig.Callback()
+                MainButton.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                        if ButtonFunc.Locked then return end
+                        ButtonConfig.Callback()
+                    end
                 end)
 
                 local SubButton
@@ -2473,9 +2475,11 @@ function Chloex:Window(GuiConfig)
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
 
-                    SubButton.Activated:Connect(function()
-                        if ButtonFunc.Locked then return end
-                        ButtonConfig.SubCallback()
+                    SubButton.InputBegan:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                            if ButtonFunc.Locked then return end
+                            ButtonConfig.SubCallback()
+                        end
                     end)
                 end
 
