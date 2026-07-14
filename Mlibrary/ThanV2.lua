@@ -2400,8 +2400,17 @@ function Chloex:Window(GuiConfig)
 
                 local MainButton = Instance.new("TextButton")
                 MainButton.Font = Enum.Font.GothamBold
+                MainButton.TextSize = 12
+                MainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                MainButton.TextTransparency = 0.1
+                MainButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                MainButton.BackgroundTransparency = 0.92
+                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
+                MainButton.Position = UDim2.new(0, 6, 0, 5)
+                MainButton.Parent = Button
+
                 if ButtonConfig.Icon and ButtonConfig.Icon ~= "" then
-                    MainButton.Text = "          " .. ButtonConfig.Title
+                    MainButton.Text = "                " .. ButtonConfig.Title
                     MainButton.TextXAlignment = Enum.TextXAlignment.Left
 
                     local IconImg = Instance.new("ImageLabel")
@@ -2425,14 +2434,6 @@ function Chloex:Window(GuiConfig)
                 else
                     MainButton.Text = ButtonConfig.Title
                 end
-                MainButton.TextSize = 12
-                MainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                MainButton.TextTransparency = 0.3
-                MainButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                MainButton.BackgroundTransparency = 0.935
-                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
-                MainButton.Position = UDim2.new(0, 6, 0, 5)
-                MainButton.Parent = Button
 
                 local mainCorner = Instance.new("UICorner")
                 mainCorner.CornerRadius = UDim.new(0, 4)
