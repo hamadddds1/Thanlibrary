@@ -2408,18 +2408,14 @@ function Chloex:Window(GuiConfig)
                 MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
                 MainButton.Position = UDim2.new(0, 6, 0, 5)
                 MainButton.Parent = Button
-                MainButton.Text = ButtonConfig.Title
 
                 if ButtonConfig.Icon and ButtonConfig.Icon ~= "" then
+                    MainButton.Text = "               " .. ButtonConfig.Title
                     MainButton.TextXAlignment = Enum.TextXAlignment.Left
-
-                    local UIPadding = Instance.new("UIPadding")
-                    UIPadding.PaddingLeft = UDim.new(0, 48)
-                    UIPadding.Parent = MainButton
 
                     local IconImg = Instance.new("ImageLabel")
                     IconImg.Size = UDim2.new(0, 16, 0, 16)
-                    IconImg.Position = UDim2.new(0, 12 - 48, 0.5, -8)
+                    IconImg.Position = UDim2.new(0, 12, 0.5, -8)
                     IconImg.BackgroundTransparency = 1
                     if Icons[ButtonConfig.Icon] then
                         IconImg.Image = Icons[ButtonConfig.Icon]
@@ -2430,11 +2426,13 @@ function Chloex:Window(GuiConfig)
 
                     local Sep = Instance.new("Frame")
                     Sep.Size = UDim2.new(0, 1, 0, 16)
-                    Sep.Position = UDim2.new(0, 38 - 48, 0.5, -8)
+                    Sep.Position = UDim2.new(0, 38, 0.5, -8)
                     Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     Sep.BackgroundTransparency = 0.8
                     Sep.BorderSizePixel = 0
                     Sep.Parent = MainButton
+                else
+                    MainButton.Text = ButtonConfig.Title
                 end
 
                 local mainCorner = Instance.new("UICorner")
