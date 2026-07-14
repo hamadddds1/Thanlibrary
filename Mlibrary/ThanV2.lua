@@ -2408,13 +2408,18 @@ function Chloex:Window(GuiConfig)
                 MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
                 MainButton.Position = UDim2.new(0, 6, 0, 5)
                 MainButton.Parent = Button
+                MainButton.Text = ButtonConfig.Title
 
                 if ButtonConfig.Icon and ButtonConfig.Icon ~= "" then
-                    MainButton.Text = ""
+                    MainButton.TextXAlignment = Enum.TextXAlignment.Left
+
+                    local UIPadding = Instance.new("UIPadding")
+                    UIPadding.PaddingLeft = UDim.new(0, 48)
+                    UIPadding.Parent = MainButton
 
                     local IconImg = Instance.new("ImageLabel")
                     IconImg.Size = UDim2.new(0, 16, 0, 16)
-                    IconImg.Position = UDim2.new(0, 12, 0.5, -8)
+                    IconImg.Position = UDim2.new(0, 12 - 48, 0.5, -8)
                     IconImg.BackgroundTransparency = 1
                     if Icons[ButtonConfig.Icon] then
                         IconImg.Image = Icons[ButtonConfig.Icon]
@@ -2425,39 +2430,18 @@ function Chloex:Window(GuiConfig)
 
                     local Sep = Instance.new("Frame")
                     Sep.Size = UDim2.new(0, 1, 0, 16)
-                    Sep.Position = UDim2.new(0, 38, 0.5, -8)
+                    Sep.Position = UDim2.new(0, 38 - 48, 0.5, -8)
                     Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     Sep.BackgroundTransparency = 0.8
                     Sep.BorderSizePixel = 0
                     Sep.Parent = MainButton
-
-                    local TitleLabel = Instance.new("TextLabel")
-                    TitleLabel.BackgroundTransparency = 1
-                    TitleLabel.Size = UDim2.new(1, -48, 1, 0)
-                    TitleLabel.Position = UDim2.new(0, 48, 0, 0)
-                    TitleLabel.Font = Enum.Font.GothamBold
-                    TitleLabel.Text = ButtonConfig.Title
-                    TitleLabel.TextSize = 12
-                    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    TitleLabel.TextTransparency = 0.1
-                    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-                    TitleLabel.Parent = MainButton
-                else
-                    MainButton.Text = ButtonConfig.Title
                 end
 
                 local mainCorner = Instance.new("UICorner")
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
-                local HitboxMain = Instance.new("TextButton")
-                HitboxMain.Size = UDim2.new(1, 0, 1, 0)
-                HitboxMain.BackgroundTransparency = 1
-                HitboxMain.Text = ""
-                HitboxMain.ZIndex = 100
-                HitboxMain.Parent = MainButton
-
-                HitboxMain.MouseButton1Click:Connect(function()
+                MainButton.MouseButton1Click:Connect(function()
                     if ButtonFunc.Locked then return end
                     ButtonConfig.Callback()
                 end)
@@ -2480,14 +2464,7 @@ function Chloex:Window(GuiConfig)
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
 
-                    local HitboxSub = Instance.new("TextButton")
-                    HitboxSub.Size = UDim2.new(1, 0, 1, 0)
-                    HitboxSub.BackgroundTransparency = 1
-                    HitboxSub.Text = ""
-                    HitboxSub.ZIndex = 100
-                    HitboxSub.Parent = SubButton
-
-                    HitboxSub.MouseButton1Click:Connect(function()
+                    SubButton.MouseButton1Click:Connect(function()
                         if ButtonFunc.Locked then return end
                         ButtonConfig.SubCallback()
                     end)
