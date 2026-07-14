@@ -41,11 +41,14 @@ local Section1 = MainTab:AddSection("Fitur Dasar", true)
 -- BUTTON
 local myButton = Section1:AddButton({
     Title = "Klik Saya",
-    Icon = "chevron-right",
-    content = "example",
-    Tooltip = "Ini adalah tombol uji coba yang sangat keren!",
+    Icon = "mouse-pointer-click",
+    Tooltip = "Ini adalah tombol uji coba utama!",
+    SubTitle = "Opsi Lain",
     Callback = function()
-        chloex("Tombol berhasil diklik!")
+        print("Tombol utama berhasil diklik!")
+    end,
+    SubCallback = function()
+        print("Sub-tombol berhasil diklik!")
     end
 })
 
