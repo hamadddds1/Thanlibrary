@@ -2450,11 +2450,16 @@ function Chloex:Window(GuiConfig)
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
-                MainButton.InputBegan:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                        if ButtonFunc.Locked then return end
-                        ButtonConfig.Callback()
-                    end
+                local HitboxMain = Instance.new("TextButton")
+                HitboxMain.Size = UDim2.new(1, 0, 1, 0)
+                HitboxMain.BackgroundTransparency = 1
+                HitboxMain.Text = ""
+                HitboxMain.ZIndex = 100
+                HitboxMain.Parent = MainButton
+
+                HitboxMain.MouseButton1Click:Connect(function()
+                    if ButtonFunc.Locked then return end
+                    ButtonConfig.Callback()
                 end)
 
                 local SubButton
@@ -2475,11 +2480,16 @@ function Chloex:Window(GuiConfig)
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
 
-                    SubButton.InputBegan:Connect(function(input)
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                            if ButtonFunc.Locked then return end
-                            ButtonConfig.SubCallback()
-                        end
+                    local HitboxSub = Instance.new("TextButton")
+                    HitboxSub.Size = UDim2.new(1, 0, 1, 0)
+                    HitboxSub.BackgroundTransparency = 1
+                    HitboxSub.Text = ""
+                    HitboxSub.ZIndex = 100
+                    HitboxSub.Parent = SubButton
+
+                    HitboxSub.MouseButton1Click:Connect(function()
+                        if ButtonFunc.Locked then return end
+                        ButtonConfig.SubCallback()
                     end)
                 end
 
