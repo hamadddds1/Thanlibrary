@@ -598,27 +598,69 @@ function Chloex:MakeNotify(NotifyConfig)
 
         -- Start progress bar animation
         local totalDelay = tonumber(NotifyConfig.Delay) or 5
-        TweenService:Create(
-            ProgressBar,
-            TweenInfo.new(totalDelay, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut),
-            { Size = UDim2.new(0, 0, 1, 0) }
-        ):Play()
+        local customCountdown = false
+
+        function NotifyFunction:UpdateDescription(newText)
+            DescLabel.Text = tostring(newText)
+        end
+
+        function NotifyFunction:UpdateContent(newText)
+            ContentLabel.Text = tostring(newText)
+            ContentLabel.Size = UDim2.new(1, -(contentXOffset + 10), 0, preset.ContentSize + 2)
+            ContentLabel.Size = UDim2.new(1, -(contentXOffset + 10), 0, (preset.ContentSize + 2) + ((preset.ContentSize + 2) * (ContentLabel.TextBounds.X // ContentLabel.AbsoluteSize.X)))
+            
+            local contentHeight = ContentLabel.TextBounds.Y
+            if contentHeight < (preset.ContentSize + 4) then
+                contentHeight = preset.ContentSize + 4
+            end
+            local frameHeight = preset.TopHeight + contentHeight + 10
+            NotifyFrame.Size = UDim2.new(1, 0, 0, frameHeight)
+        end
+
+        function NotifyFunction:UpdateCountdown(newText)
+            customCountdown = true
+            TimerLabel.Text = tostring(newText)
+        end
+
+        if totalDelay > 0 then
+            TweenService:Create(
+                ProgressBar,
+                TweenInfo.new(totalDelay, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut),
+                { Size = UDim2.new(0, 0, 1, 0) }
+            ):Play()
+        end
 
         -- Start countdown timer
         task.spawn(function()
-            local remaining = delaySeconds
-            while remaining > 0 and timerRunning do
-                TimerLabel.Text = tostring(remaining) .. "s"
-                task.wait(1)
-                remaining = remaining - 1
-            end
-            if timerRunning then
-                TimerLabel.Text = "0s"
+            if totalDelay > 0 then
+                local remaining = delaySeconds
+                while remaining > 0 and timerRunning do
+                    if not customCountdown then
+                        TimerLabel.Text = tostring(remaining) .. "s"
+                    end
+                    task.wait(1)
+                    if not customCountdown then
+                        remaining = remaining - 1
+                    end
+                end
+                if timerRunning and not customCountdown then
+                    TimerLabel.Text = "0s"
+                end
+            else
+                -- If Delay is 0, keep it alive indefinitely until Closed
+                if not customCountdown then
+                    TimerLabel.Text = "∞"
+                end
+                while timerRunning do
+                    task.wait(1)
+                end
             end
         end)
 
-        task.wait(totalDelay)
-        NotifyFunction:Close()
+        if totalDelay > 0 then
+            task.wait(totalDelay)
+            NotifyFunction:Close()
+        end
     end)
     return NotifyFunction
 end
@@ -4178,7 +4220,14 @@ function Chloex:Window(GuiConfig)
         InnerLayout.SortOrder = Enum.SortOrder.LayoutOrder
         InnerLayout.Parent = InnerFrame
 
-        local opened = false
+        local opened = SectionConfig.Opened or false
+
+        if opened then
+            SectionName.TextTransparency = 0
+            FeatureImg.ImageTransparency = 0
+            ArrowImg.ImageTransparency = 0
+            ArrowImg.Rotation = 180
+        end
 
         local function UpdateSectionSize()
             local innerHeight = InnerLayout.AbsoluteContentSize.Y
