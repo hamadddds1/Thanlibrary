@@ -298,10 +298,23 @@ function Chloex:MakeNotify(NotifyConfig)
     NotifyConfig.Description = NotifyConfig.Description or "Notification"
     NotifyConfig.Content = NotifyConfig.Content or "Content"
     NotifyConfig.Color = NotifyConfig.Color or Color3.fromRGB(255, 0, 255)
+    NotifyConfig.TitleColor = NotifyConfig.TitleColor or Color3.fromRGB(255, 255, 255)
+    NotifyConfig.DescColor = NotifyConfig.DescColor or NotifyConfig.Color
+    NotifyConfig.ContentColor = NotifyConfig.ContentColor or Color3.fromRGB(150, 150, 150)
     NotifyConfig.Time = NotifyConfig.Time or 0.5
     NotifyConfig.Delay = NotifyConfig.Delay or 5
     NotifyConfig.Image = NotifyConfig.Image or nil
+    NotifyConfig.Size = NotifyConfig.Size or "Normal" -- "Small", "Normal", "Large"
     local NotifyFunction = {}
+
+    -- Size presets
+    local sizePresets = {
+        Small = { Width = 260, TitleSize = 12, DescSize = 12, ContentSize = 11, TopHeight = 30, ImgSize = 30, ImgOffset = 52 },
+        Normal = { Width = 320, TitleSize = 14, DescSize = 14, ContentSize = 13, TopHeight = 36, ImgSize = 38, ImgOffset = 62 },
+        Large = { Width = 400, TitleSize = 16, DescSize = 16, ContentSize = 14, TopHeight = 42, ImgSize = 48, ImgOffset = 72 },
+    }
+    local preset = sizePresets[NotifyConfig.Size] or sizePresets["Normal"]
+
     spawn(function()
         if not CoreGui:FindFirstChild("NotifyGui") then
             local NotifyGui = Instance.new("ScreenGui");
@@ -318,7 +331,7 @@ function Chloex:MakeNotify(NotifyConfig)
             NotifyLayout.BorderColor3 = Color3.fromRGB(0, 0, 0)
             NotifyLayout.BorderSizePixel = 0
             NotifyLayout.Position = UDim2.new(1, -30, 1, -30)
-            NotifyLayout.Size = UDim2.new(0, 320, 1, 0)
+            NotifyLayout.Size = UDim2.new(0, preset.Width, 1, 0)
             NotifyLayout.Name = "NotifyLayout"
             NotifyLayout.Parent = CoreGui.NotifyGui
             local Count = 0
@@ -333,6 +346,9 @@ function Chloex:MakeNotify(NotifyConfig)
                     Count = Count + 1
                 end
             end)
+        else
+            -- Update layout width if different preset
+            CoreGui.NotifyGui.NotifyLayout.Size = UDim2.new(0, preset.Width, 1, 0)
         end
         local NotifyPosHeigh = 0
         for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
@@ -353,19 +369,19 @@ function Chloex:MakeNotify(NotifyConfig)
                 end
             end
         end
-        local contentXOffset = hasImage and 62 or 10
+        local contentXOffset = hasImage and preset.ImgOffset or 10
 
         local NotifyFrame = Instance.new("Frame");
         local NotifyFrameReal = Instance.new("Frame");
         local UICorner = Instance.new("UICorner");
         local DropShadowHolder = Instance.new("Frame");
         local Top = Instance.new("Frame");
-        local TextLabel = Instance.new("TextLabel");
+        local TitleLabel = Instance.new("TextLabel");
         local UICorner1 = Instance.new("UICorner");
-        local TextLabel1 = Instance.new("TextLabel");
+        local DescLabel = Instance.new("TextLabel");
         local Close = Instance.new("TextButton");
         local CloseIcon = Instance.new("ImageLabel");
-        local TextLabel2 = Instance.new("TextLabel");
+        local ContentLabel = Instance.new("TextLabel");
 
         NotifyFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         NotifyFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -401,8 +417,8 @@ function Chloex:MakeNotify(NotifyConfig)
         if hasImage then
             local NotifyImage = Instance.new("ImageLabel")
             NotifyImage.Name = "NotifyImage"
-            NotifyImage.Size = UDim2.new(0, 38, 0, 38)
-            NotifyImage.Position = UDim2.new(0, 10, 0.5, -19)
+            NotifyImage.Size = UDim2.new(0, preset.ImgSize, 0, preset.ImgSize)
+            NotifyImage.Position = UDim2.new(0, 10, 0.5, -(preset.ImgSize / 2))
             NotifyImage.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
             NotifyImage.BackgroundTransparency = 0.5
             NotifyImage.BorderSizePixel = 0
@@ -416,8 +432,8 @@ function Chloex:MakeNotify(NotifyConfig)
 
             local Sep = Instance.new("Frame")
             Sep.Name = "ImageSep"
-            Sep.Size = UDim2.new(0, 1, 0.6, 0)
-            Sep.Position = UDim2.new(0, 54, 0.2, 0)
+            Sep.Size = UDim2.new(0, 1, 0.55, 0)
+            Sep.Position = UDim2.new(0, preset.ImgOffset - 8, 0.225, 0)
             Sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             Sep.BackgroundTransparency = 0.8
             Sep.BorderSizePixel = 0
@@ -429,108 +445,101 @@ function Chloex:MakeNotify(NotifyConfig)
         Top.BackgroundTransparency = 0.9990000128746033
         Top.BorderColor3 = Color3.fromRGB(0, 0, 0)
         Top.BorderSizePixel = 0
-        Top.Size = UDim2.new(1, 0, 0, 36)
+        Top.Size = UDim2.new(1, 0, 0, preset.TopHeight)
         Top.Name = "Top"
         Top.Parent = NotifyFrameReal
 
         -- Title
-        TextLabel.Font = Enum.Font.GothamBold
-        TextLabel.Text = NotifyConfig.Title
-        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel.TextSize = 14
-        TextLabel.TextXAlignment = Enum.TextXAlignment.Left
-        TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel.BackgroundTransparency = 0.9990000128746033
-        TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        TextLabel.BorderSizePixel = 0
-        TextLabel.Size = UDim2.new(1, 0, 1, 0)
-        TextLabel.Parent = Top
-        TextLabel.Position = UDim2.new(0, contentXOffset, 0, 0)
+        TitleLabel.Font = Enum.Font.GothamBold
+        TitleLabel.Text = NotifyConfig.Title
+        TitleLabel.TextColor3 = NotifyConfig.TitleColor
+        TitleLabel.TextSize = preset.TitleSize
+        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
+        TitleLabel.BackgroundTransparency = 1
+        TitleLabel.BorderSizePixel = 0
+        TitleLabel.Size = UDim2.new(0, TitleLabel.TextBounds.X + 4, 1, 0)
+        TitleLabel.Parent = Top
+        TitleLabel.Position = UDim2.new(0, contentXOffset, 0, 0)
 
         UICorner1.Parent = Top
         UICorner1.CornerRadius = UDim.new(0, 5)
 
         -- Description (colored label next to title)
-        TextLabel1.Font = Enum.Font.GothamBold
-        TextLabel1.Text = NotifyConfig.Description
-        TextLabel1.TextColor3 = NotifyConfig.Color
-        TextLabel1.TextSize = 14
-        TextLabel1.TextXAlignment = Enum.TextXAlignment.Left
-        TextLabel1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel1.BackgroundTransparency = 0.9990000128746033
-        TextLabel1.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        TextLabel1.BorderSizePixel = 0
-        TextLabel1.Size = UDim2.new(1, 0, 1, 0)
-        TextLabel1.Position = UDim2.new(0, contentXOffset + TextLabel.TextBounds.X + 5, 0, 0)
-        TextLabel1.Parent = Top
+        DescLabel.Font = Enum.Font.GothamBold
+        DescLabel.Text = NotifyConfig.Description
+        DescLabel.TextColor3 = NotifyConfig.DescColor
+        DescLabel.TextSize = preset.DescSize
+        DescLabel.TextXAlignment = Enum.TextXAlignment.Left
+        DescLabel.TextYAlignment = Enum.TextYAlignment.Center
+        DescLabel.BackgroundTransparency = 1
+        DescLabel.BorderSizePixel = 0
+        DescLabel.Size = UDim2.new(1, -(contentXOffset + 60), 1, 0)
+        DescLabel.Position = UDim2.new(0, contentXOffset + TitleLabel.TextBounds.X + 6, 0, 0)
+        DescLabel.Parent = Top
 
-        -- === COUNTDOWN TIMER ===
-        local delaySeconds = math.floor(tonumber(NotifyConfig.Delay) or 5)
-        local TimerLabel = Instance.new("TextLabel")
-        TimerLabel.Name = "TimerLabel"
-        TimerLabel.Font = Enum.Font.GothamSemibold
-        TimerLabel.Text = tostring(delaySeconds) .. "s"
-        TimerLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-        TimerLabel.TextTransparency = 0.3
-        TimerLabel.TextSize = 10
-        TimerLabel.BackgroundTransparency = 1
-        TimerLabel.BorderSizePixel = 0
-        TimerLabel.Size = UDim2.new(0, 25, 0, 14)
-        TimerLabel.AnchorPoint = Vector2.new(1, 0)
-        TimerLabel.Position = UDim2.new(1, -32, 0, 3)
-        TimerLabel.TextXAlignment = Enum.TextXAlignment.Right
-        TimerLabel.Parent = Top
-
-        -- === CLOSE BUTTON ===
+        -- === CLOSE BUTTON (top-right) ===
         Close.Font = Enum.Font.SourceSans
         Close.Text = ""
         Close.TextColor3 = Color3.fromRGB(0, 0, 0)
         Close.TextSize = 14
-        Close.AnchorPoint = Vector2.new(1, 0.5)
+        Close.AnchorPoint = Vector2.new(1, 0)
         Close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Close.BackgroundTransparency = 0.9990000128746033
-        Close.BorderColor3 = Color3.fromRGB(0, 0, 0)
         Close.BorderSizePixel = 0
-        Close.Position = UDim2.new(1, -5, 0.5, 0)
-        Close.Size = UDim2.new(0, 25, 0, 25)
+        Close.Position = UDim2.new(1, -5, 0, 4)
+        Close.Size = UDim2.new(0, 22, 0, 22)
         Close.Name = "Close"
         Close.Parent = Top
 
         CloseIcon.Image = "rbxassetid://9886659671"
         CloseIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-        CloseIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        CloseIcon.BackgroundTransparency = 0.9990000128746033
-        CloseIcon.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        CloseIcon.BackgroundTransparency = 1
         CloseIcon.BorderSizePixel = 0
-        CloseIcon.Position = UDim2.new(0.49000001, 0, 0.5, 0)
-        CloseIcon.Size = UDim2.new(1, -8, 1, -8)
+        CloseIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+        CloseIcon.Size = UDim2.new(1, -6, 1, -6)
         CloseIcon.Parent = Close
 
-        -- === CONTENT TEXT ===
-        TextLabel2.Font = Enum.Font.GothamBold
-        TextLabel2.TextColor3 = Color3.fromRGB(150, 150, 150)
-        TextLabel2.TextSize = 13
-        TextLabel2.Text = NotifyConfig.Content
-        TextLabel2.TextXAlignment = Enum.TextXAlignment.Left
-        TextLabel2.TextYAlignment = Enum.TextYAlignment.Top
-        TextLabel2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel2.BackgroundTransparency = 0.9990000128746033
-        TextLabel2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        TextLabel2.BorderSizePixel = 0
-        TextLabel2.Position = UDim2.new(0, contentXOffset, 0, 27)
-        TextLabel2.Parent = NotifyFrameReal
-        TextLabel2.Size = UDim2.new(1, -(contentXOffset + 10), 0, 13)
+        -- === COUNTDOWN TIMER (below X icon) ===
+        local delaySeconds = math.floor(tonumber(NotifyConfig.Delay) or 5)
+        local TimerLabel = Instance.new("TextLabel")
+        TimerLabel.Name = "TimerLabel"
+        TimerLabel.Font = Enum.Font.GothamBold
+        TimerLabel.Text = tostring(delaySeconds) .. "s"
+        TimerLabel.TextColor3 = Color3.fromRGB(160, 160, 160)
+        TimerLabel.TextTransparency = 0.15
+        TimerLabel.TextSize = 11
+        TimerLabel.BackgroundTransparency = 1
+        TimerLabel.BorderSizePixel = 0
+        TimerLabel.Size = UDim2.new(0, 22, 0, 16)
+        TimerLabel.AnchorPoint = Vector2.new(1, 0)
+        TimerLabel.Position = UDim2.new(1, -5, 0, 27)
+        TimerLabel.TextXAlignment = Enum.TextXAlignment.Center
+        TimerLabel.Parent = Top
 
-        TextLabel2.Size = UDim2.new(1, -(contentXOffset + 10), 0, 13 + (13 * (TextLabel2.TextBounds.X // TextLabel2.AbsoluteSize.X)))
-        TextLabel2.TextWrapped = true
+        -- === CONTENT TEXT ===
+        ContentLabel.Font = Enum.Font.GothamSemibold
+        ContentLabel.TextColor3 = NotifyConfig.ContentColor
+        ContentLabel.TextSize = preset.ContentSize
+        ContentLabel.Text = NotifyConfig.Content
+        ContentLabel.RichText = true
+        ContentLabel.TextXAlignment = Enum.TextXAlignment.Left
+        ContentLabel.TextYAlignment = Enum.TextYAlignment.Center
+        ContentLabel.BackgroundTransparency = 1
+        ContentLabel.BorderSizePixel = 0
+        ContentLabel.Position = UDim2.new(0, contentXOffset, 0, preset.TopHeight - 6)
+        ContentLabel.Parent = NotifyFrameReal
+        ContentLabel.Size = UDim2.new(1, -(contentXOffset + 10), 0, preset.ContentSize + 2)
+
+        ContentLabel.Size = UDim2.new(1, -(contentXOffset + 10), 0, (preset.ContentSize + 2) + ((preset.ContentSize + 2) * (ContentLabel.TextBounds.X // ContentLabel.AbsoluteSize.X)))
+        ContentLabel.TextWrapped = true
 
         -- === CALCULATE FRAME HEIGHT ===
-        local frameHeight
-        if TextLabel2.AbsoluteSize.Y < 27 then
-            frameHeight = 68
-        else
-            frameHeight = TextLabel2.AbsoluteSize.Y + 44
+        local contentHeight = ContentLabel.TextBounds.Y
+        if contentHeight < (preset.ContentSize + 4) then
+            contentHeight = preset.ContentSize + 4
         end
+        local frameHeight = preset.TopHeight + contentHeight + 10
         NotifyFrame.Size = UDim2.new(1, 0, 0, frameHeight)
 
         -- === PROGRESS BAR ===
