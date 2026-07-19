@@ -131,3 +131,26 @@ local lockedButton = SectionWIP:AddButton({
 })
 -- Mengunci tombol
 lockedButton:Lock("Coming Soon")
+
+-- ==========================================
+-- CONTOH NOTIFIKASI
+-- ==========================================
+
+-- Notifikasi standar (dengan progress bar & countdown timer)
+Chloex:MakeNotify({
+    Title = "System",
+    Description = "Info",
+    Content = "Script berhasil dimuat!",
+    Color = Color3.fromRGB(0, 208, 255),
+    Delay = 4
+})
+
+-- Notifikasi dengan gambar di sebelah kiri
+Chloex:MakeNotify({
+    Title = "Fish Predicted",
+    Description = "Legendary",
+    Content = "Kamu sedang menangkap Golden Fish!",
+    Image = "rbxassetid://12345678", -- Gambar muncul di kiri + separator
+    Color = Color3.fromRGB(255, 215, 0),
+    Delay = 5
+})

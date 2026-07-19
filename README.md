@@ -235,10 +235,10 @@ To unlock it later, simply call: `lockedToggle:Lock(false)`
 
 ## 🔔 Notifications
 
-Trigger beautiful, non-intrusive popup notifications on the screen.
+Trigger beautiful, non-intrusive popup notifications on the screen. Notifications feature a **cooldown progress bar** that visually shows the remaining time, and a **countdown timer** in the corner.
 
 ```lua
--- Detailed Notification
+-- Standard Notification
 Chloex:MakeNotify({
     Title = "System",
     Description = "Loaded Successfully!",
@@ -246,6 +246,21 @@ Chloex:MakeNotify({
     Color = Color3.fromRGB(0, 208, 255),
     Delay = 3 -- Time in seconds before it disappears
 })
+
+-- Notification with Image (NEW!)
+Chloex:MakeNotify({
+    Title = "Fish Predicted",
+    Description = "Legendary",
+    Content = "You are catching a Golden Fish!",
+    Image = "rbxassetid://12345678", -- Asset ID for the image (left side)
+    Color = Color3.fromRGB(255, 215, 0),
+    Delay = 5
+})
+
+-- Image parameter accepts multiple formats:
+-- Image = "rbxassetid://12345678"  (full string)
+-- Image = 12345678                  (number)
+-- Image = "12345678"                (string number, auto-prefixed)
 
 -- Short Notification (Quick Pop-up)
 chloex("Welcome back!") 
