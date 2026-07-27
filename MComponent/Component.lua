@@ -162,6 +162,7 @@ Chloex:MakeNotify({
 Section:AddParagraph({
     Title = "Live Server Info",
     Content = "Menghitung data...", -- Teks awal sebelum callback dipanggil pertama kali
+    Info = "Data ini akan direfresh dalam 2 detik",
     Refresh = 2, -- (CONTOH) Refresh otomatis setiap 2 detik
     RefreshCallback = function()
         -- Fungsi ini akan dijalankan otomatis setiap 2 detik
@@ -185,9 +186,4 @@ Section:AddParagraph({
         -- Apapun string yang di return akan langsung mengganti teks paragraph tersebut!
         return newText
     end
-})
-
-Section:AddParagraph({
-    Title = "Info",
-    Content = "<i><font color='rgb(150,150,150)'>Data ini akan diupdate setiap 2 detik.</font></i>",
 })

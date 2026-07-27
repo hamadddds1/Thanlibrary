@@ -2220,7 +2220,6 @@ function Chloex:Window(GuiConfig)
                 local ParagraphButton
                 if ParagraphConfig.ButtonText then
                     ParagraphButton = Instance.new("TextButton")
-                    ParagraphButton.Position = UDim2.new(0, 10, 0, 42)
                     ParagraphButton.Size = UDim2.new(1, -22, 0, 28)
                     ParagraphButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     ParagraphButton.BackgroundTransparency = 0.935
@@ -2240,17 +2239,45 @@ function Chloex:Window(GuiConfig)
                     end
                 end
 
+                local ParagraphInfo
+                if ParagraphConfig.Info then
+                    ParagraphInfo = Instance.new("TextLabel")
+                    ParagraphInfo.Font = Enum.Font.GothamItalic
+                    ParagraphInfo.Text = ParagraphConfig.Info
+                    ParagraphInfo.TextColor3 = Color3.fromRGB(150, 150, 150)
+                    ParagraphInfo.TextSize = 12
+                    ParagraphInfo.TextXAlignment = Enum.TextXAlignment.Left
+                    ParagraphInfo.TextYAlignment = Enum.TextYAlignment.Top
+                    ParagraphInfo.BackgroundTransparency = 1
+                    ParagraphInfo.Name = "ParagraphInfo"
+                    ParagraphInfo.RichText = true
+                    ParagraphInfo.TextWrapped = true
+                    ParagraphInfo.Parent = Paragraph
+                end
+
                 local function UpdateSize()
-                    local totalHeight = ParagraphContent.TextBounds.Y + 33
+                    local totalHeight = ParagraphContent.TextBounds.Y + 36
+                    
                     if ParagraphButton then
-                        totalHeight = totalHeight + ParagraphButton.Size.Y.Offset + 5
+                        ParagraphButton.Position = UDim2.new(0, 10, 0, totalHeight)
+                        totalHeight = totalHeight + ParagraphButton.Size.Y.Offset + 8
                     end
+                    
+                    if ParagraphInfo then
+                        ParagraphInfo.Size = UDim2.new(1, -16, 0, ParagraphInfo.TextBounds.Y)
+                        ParagraphInfo.Position = UDim2.new(0, iconOffset, 0, totalHeight)
+                        totalHeight = totalHeight + ParagraphInfo.TextBounds.Y + 8
+                    end
+                    
                     Paragraph.Size = UDim2.new(1, 0, 0, totalHeight)
                 end
 
                 UpdateSize()
 
                 ParagraphContent:GetPropertyChangedSignal("TextBounds"):Connect(UpdateSize)
+                if ParagraphInfo then
+                    ParagraphInfo:GetPropertyChangedSignal("TextBounds"):Connect(UpdateSize)
+                end
 
                 function ParagraphFunc:SetContent(content)
                     content = content or "Content"
