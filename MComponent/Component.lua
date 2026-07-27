@@ -160,13 +160,34 @@ Chloex:MakeNotify({
 -- ==========================================
 
 Section:AddParagraph({
-    Title = "Server Info",
-    Content = "Loading...",
-    Refresh = 30, -- Refresh otomatis setiap 30 detik
+    Title = "Live Server Info",
+    Content = "Menghitung data...", -- Teks awal sebelum callback dipanggil pertama kali
+    Refresh = 2, -- (CONTOH) Refresh otomatis setiap 2 detik
     RefreshCallback = function()
-        -- Fungsi ini akan dipanggil setiap 30 detik
-        -- Return string baru untuk mengubah text kontennya
-        local timeNow = os.date("%X")
-        return "Waktu saat ini: " .. timeNow .. "\nPing: " .. math.random(50, 120) .. "ms"
+        -- Fungsi ini akan dijalankan otomatis setiap 2 detik
+        
+        -- Mengambil waktu lokal pemain
+        local timeNow = os.date("%X") 
+        
+        -- Simulasi ping (karena mengambil real ping agak sulit jika tidak di sisi Client/Core)
+        local ping = math.random(30, 80)
+        
+        -- Menghitung total pemain di server saat ini
+        local playersCount = #game:GetService("Players"):GetPlayers()
+        local maxPlayers = game:GetService("Players").MaxPlayers
+        
+        -- Merangkai string yang ingin ditampilkan di paragraph (mendukung RichText)
+        local newText = string.format(
+            "<b>Waktu:</b> %s\n<b>Ping:</b> %dms\n<b>Pemain:</b> %d/%d",
+            timeNow, ping, playersCount, maxPlayers
+        )
+        
+        -- Apapun string yang di return akan langsung mengganti teks paragraph tersebut!
+        return newText
     end
+})
+
+Section:AddParagraph({
+    Title = "Info",
+    Content = "<i><font color='rgb(150,150,150)'>Data ini akan diupdate setiap 2 detik.</font></i>",
 })

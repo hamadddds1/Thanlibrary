@@ -2208,10 +2208,11 @@ function Chloex:Window(GuiConfig)
                 ParagraphContent.TextXAlignment = Enum.TextXAlignment.Left
                 ParagraphContent.TextYAlignment = Enum.TextYAlignment.Top
                 ParagraphContent.BackgroundTransparency = 1
-                ParagraphContent.Position = UDim2.new(0, iconOffset, 0, 25)
+                ParagraphContent.Position = UDim2.new(0, iconOffset, 0, 27) -- Increased vertical spacing from title
                 ParagraphContent.Name = "ParagraphContent"
                 ParagraphContent.TextWrapped = false
                 ParagraphContent.RichText = true
+                ParagraphContent.LineHeight = 1.2 -- Added line spacing between texts
                 ParagraphContent.Parent = Paragraph
 
                 ParagraphContent.Size = UDim2.new(1, -16, 0, ParagraphContent.TextBounds.Y)
