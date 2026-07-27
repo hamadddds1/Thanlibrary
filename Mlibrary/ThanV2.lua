@@ -2081,13 +2081,14 @@ function Chloex:Window(GuiConfig)
                         end
                     end
                     TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
-                    TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
-                        :Play()
-                    TweenService:Create(SectionAdd, TweenInfo.new(0.5),
-                        { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
+                    TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) }):Play()
+                    TweenService:Create(SectionAdd, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
                     TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, 2) }):Play()
-                    task.wait(0.5)
-                    UpdateSizeScroll()
+                    
+                    task.spawn(function()
+                        task.wait(0.5)
+                        UpdateSizeScroll()
+                    end)
                 end
             end
 
@@ -2109,11 +2110,12 @@ function Chloex:Window(GuiConfig)
                     if OpenSection then
                         TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 0 }):Play()
                         TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, 30) }):Play()
-                        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(0, 0, 0, 2) })
-                            :Play()
+                        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(0, 0, 0, 2) }):Play()
                         OpenSection = false
-                        task.wait(0.5)
-                        UpdateSizeScroll()
+                        task.spawn(function()
+                            task.wait(0.5)
+                            UpdateSizeScroll()
+                        end)
                     else
                         OpenSection = true
                         UpdateSizeSection()
@@ -2136,8 +2138,11 @@ function Chloex:Window(GuiConfig)
                 UpdateSizeScroll()
             end
 
-            SectionAdd.ChildAdded:Connect(UpdateSizeSection)
-            SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
+            UIListLayout2:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                if OpenSection then
+                    UpdateSizeSection()
+                end
+            end)
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then
