@@ -2242,8 +2242,8 @@ function Chloex:Window(GuiConfig)
                 local ParagraphInfo
                 if ParagraphConfig.Info then
                     ParagraphInfo = Instance.new("TextLabel")
-                    ParagraphInfo.Font = Enum.Font.GothamItalic
-                    ParagraphInfo.Text = ParagraphConfig.Info
+                    ParagraphInfo.Font = Enum.Font.Gotham
+                    ParagraphInfo.Text = "<i>" .. ParagraphConfig.Info .. "</i>"
                     ParagraphInfo.TextColor3 = Color3.fromRGB(150, 150, 150)
                     ParagraphInfo.TextSize = 12
                     ParagraphInfo.TextXAlignment = Enum.TextXAlignment.Left
