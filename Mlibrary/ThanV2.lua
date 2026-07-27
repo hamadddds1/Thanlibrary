@@ -2242,6 +2242,7 @@ function Chloex:Window(GuiConfig)
                 local ParagraphInfo
                 if ParagraphConfig.Info then
                     ParagraphInfo = Instance.new("TextLabel")
+                    ParagraphInfo.Size = UDim2.new(1, -16, 0, 15) -- Provide initial width so TextWrapped works
                     ParagraphInfo.Font = Enum.Font.Gotham
                     ParagraphInfo.Text = "<i>" .. ParagraphConfig.Info .. "</i>"
                     ParagraphInfo.TextColor3 = Color3.fromRGB(150, 150, 150)
@@ -2264,9 +2265,11 @@ function Chloex:Window(GuiConfig)
                     end
                     
                     if ParagraphInfo then
-                        ParagraphInfo.Size = UDim2.new(1, -16, 0, ParagraphInfo.TextBounds.Y)
+                        local infoHeight = ParagraphInfo.TextBounds.Y
+                        if infoHeight < 12 then infoHeight = 13 end -- Fallback height if TextBounds is 0
+                        ParagraphInfo.Size = UDim2.new(1, -16, 0, infoHeight)
                         ParagraphInfo.Position = UDim2.new(0, iconOffset, 0, totalHeight)
-                        totalHeight = totalHeight + ParagraphInfo.TextBounds.Y + 8
+                        totalHeight = totalHeight + infoHeight + 8
                     end
                     
                     Paragraph.Size = UDim2.new(1, 0, 0, totalHeight)
