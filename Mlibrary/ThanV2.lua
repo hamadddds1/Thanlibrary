@@ -803,6 +803,7 @@ function Chloex:Window(GuiConfig)
     GuiConfig.Color        = GuiConfig.Color or Color3.fromRGB(255, 0, 255)
     GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
     GuiConfig.Version      = GuiConfig.Version or 1
+    GuiConfig.ToggleKey    = GuiConfig.ToggleKey or Enum.KeyCode.RightControl
     if GuiConfig.Watermark == nil then GuiConfig.Watermark = true end
 
     CURRENT_VERSION        = GuiConfig.Version
@@ -1484,7 +1485,12 @@ function Chloex:Window(GuiConfig)
             if Icons[GuiConfig.Micon] then
                 MainButton.Image = Icons[GuiConfig.Micon]
             else
-                MainButton.Image = "rbxassetid://" .. tostring(GuiConfig.Micon)
+                local miconStr = tostring(GuiConfig.Micon)
+                if string.find(miconStr, "rbxassetid://") then
+                    MainButton.Image = miconStr
+                else
+                    MainButton.Image = "rbxassetid://" .. miconStr
+                end
             end
         else
             MainButton.Image = "rbxassetid://9996720172"
@@ -1541,6 +1547,16 @@ function Chloex:Window(GuiConfig)
     end
 
     GuiFunc:ToggleUI()
+
+    if GuiConfig.ToggleKey then
+        table.insert(GuiFunc.Connections, UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if not gameProcessed and input.KeyCode == GuiConfig.ToggleKey then
+                if DropShadowHolder then
+                    DropShadowHolder.Visible = not DropShadowHolder.Visible
+                end
+            end
+        end))
+    end
 
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
     MakeDraggable(Top, DropShadowHolder, GuiFunc.Connections)
