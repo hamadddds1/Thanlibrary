@@ -154,3 +154,19 @@ Chloex:MakeNotify({
     Color = Color3.fromRGB(255, 215, 0),
     Delay = 5
 })
+
+-- ==========================================
+-- CONTOH PARAGRAPH AUTO REFRESH
+-- ==========================================
+
+Section:AddParagraph({
+    Title = "Server Info",
+    Content = "Loading...",
+    Refresh = 30, -- Refresh otomatis setiap 30 detik
+    RefreshCallback = function()
+        -- Fungsi ini akan dipanggil setiap 30 detik
+        -- Return string baru untuk mengubah text kontennya
+        local timeNow = os.date("%X")
+        return "Waktu saat ini: " .. timeNow .. "\nPing: " .. math.random(50, 120) .. "ms"
+    end
+})

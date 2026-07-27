@@ -2257,6 +2257,19 @@ function Chloex:Window(GuiConfig)
                     UpdateSize()
                 end
 
+                if ParagraphConfig.Refresh and type(ParagraphConfig.Refresh) == "number" and ParagraphConfig.RefreshCallback then
+                    task.spawn(function()
+                        while true do
+                            task.wait(ParagraphConfig.Refresh)
+                            if not Paragraph or not Paragraph.Parent then break end
+                            local success, result = pcall(ParagraphConfig.RefreshCallback)
+                            if success and type(result) == "string" then
+                                ParagraphFunc:SetContent(result)
+                            end
+                        end
+                    end)
+                end
+
                 CountItem = CountItem + 1
                 return ParagraphFunc
             end
